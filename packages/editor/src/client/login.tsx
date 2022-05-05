@@ -24,7 +24,7 @@ import {
 } from './api'
 
 import {useTranslation} from 'react-i18next'
-import {Button, Form, Divider, Alert} from 'rsuite'
+import {Button, Form, Divider, toaster, Message} from 'rsuite'
 import {SVGIcon} from 'rsuite/lib/@types/common'
 import {IconNames} from 'rsuite/lib/Icon/Icon'
 
@@ -103,7 +103,12 @@ export function Login() {
 
   useEffect(() => {
     const error = errorLogin?.message ?? errorOAuth2?.message ?? errorJWT?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [errorLogin, errorOAuth2, errorJWT])
 
   async function login(e: FormEvent) {
@@ -131,7 +136,11 @@ export function Login() {
     }, [] as string[])
 
     if (!permissions.includes('CAN_LOGIN_EDITOR')) {
-      Alert.error(t('login.unauthorized'), 0)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {t('login.unauthorized')}
+        </Message>
+      )
       return
     }
 

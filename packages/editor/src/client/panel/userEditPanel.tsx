@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {Alert, Button, CheckPicker, Drawer, Form, Modal, Panel, Toggle} from 'rsuite'
+import {toaster, Message, Button, CheckPicker, Drawer, Form, Modal, Panel, Toggle} from 'rsuite'
 
 import {
   useCreateUserMutation,
@@ -122,7 +122,12 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
       createError?.message ??
       updateError?.message ??
       loadUserRoleError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [loadError, createError, updateError, loadUserRoleError])
 
   async function handleSave() {
@@ -307,12 +312,17 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                   onClick={async () => {
                     try {
                       await sendWebsiteLogin({variables: {email}})
-                      Alert.success(
-                        t('userList.panels.sendWebsiteLoginSuccessMessage', {email}),
-                        2000
+                      toaster.push(
+                        <Message type="success" showIcon closable duration={2000}>
+                          {t('userList.panels.sendWebsiteLoginSuccessMessage', {email})}
+                        </Message>
                       )
                     } catch (error) {
-                      Alert.error(t('userList.panel.sendWebsiteLoginFailureMessage', {error}), 0)
+                      toaster.push(
+                        <Message type="error" showIcon closable duration={0}>
+                          {t('userList.panel.sendWebsiteLoginFailureMessage', {error})}
+                        </Message>
+                      )
                     }
                   }}>
                   {t('userList.panels.sendWebsiteLogin')}

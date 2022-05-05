@@ -28,7 +28,8 @@ import {
   Modal,
   Button,
   Dropdown,
-  Alert,
+  toaster,
+  Message,
   Panel
 } from 'rsuite'
 
@@ -114,7 +115,12 @@ export function CommentList() {
   useEffect(() => {
     const error =
       errorApprove?.message ?? errorRequestingChanges?.message ?? errorRejecting?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [errorApprove, errorRequestingChanges, errorRejecting])
 
   const commentListVariables = {

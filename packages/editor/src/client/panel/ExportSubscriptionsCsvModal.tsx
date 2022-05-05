@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 import {useTranslation} from 'react-i18next'
-import {Alert, Button, Divider, IconButton, Placeholder} from 'rsuite'
+import {toaster, Message, Button, Divider, IconButton, Placeholder} from 'rsuite'
 
 import {useSubscriptionsAsCsvLazyQuery} from '../api'
 
@@ -17,7 +17,12 @@ export function SubscriptionAsCsvModal() {
   })
 
   useEffect(() => {
-    if (getSubsErr?.message) Alert.error(getSubsErr.message, 0)
+    if (getSubsErr?.message)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {getSubsErr.message}
+        </Message>
+      )
   }, [getSubsErr])
 
   return (

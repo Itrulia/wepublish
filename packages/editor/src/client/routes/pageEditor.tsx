@@ -26,7 +26,7 @@ import {useUnsavedChangesDialog} from '../unsavedChangesDialog'
 import {BlockMap} from '../blocks/blockMap'
 
 import {useTranslation} from 'react-i18next'
-import {Alert, Badge, Drawer, IconButton, Modal, Tag, Notification} from 'rsuite'
+import {toaster, Message, Badge, Drawer, IconButton, Modal, Tag, Notification} from 'rsuite'
 import {StateColor} from '../utility'
 
 export interface PageEditorProps {
@@ -183,7 +183,12 @@ export function PageEditor({id}: PageEditorProps) {
 
   useEffect(() => {
     const error = createError?.message ?? updateError?.message ?? publishError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [createError, updateError, publishError])
 
   function createInput(): PageInput {
@@ -277,7 +282,11 @@ export function PageEditor({id}: PageEditorProps) {
 
   useEffect(() => {
     if (isNotFound) {
-      Alert.error(t('pageEditor.overview.pageNotFound'), 0)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {t('pageEditor.overview.pageNotFound')}
+        </Message>
+      )
     }
   }, [isNotFound])
 

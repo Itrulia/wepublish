@@ -9,7 +9,8 @@ import {
 } from '../api'
 
 import {
-  Alert,
+  toaster,
+  Message,
   Avatar,
   FlexboxGrid,
   Input,
@@ -93,7 +94,11 @@ export function PeerArticleList() {
 
   useEffect(() => {
     if (peerArticleListError) {
-      Alert.error(peerArticleListError!.message, 0)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {peerArticleListError!.message}
+        </Message>
+      )
     }
   }, [peerArticleListError])
 

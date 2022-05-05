@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 
 import {ListValue, ListInput} from '../atoms/listInput'
 
-import {Button, Drawer, Form, Panel, Alert, Toggle, CheckPicker, TagPicker} from 'rsuite'
+import {Button, Drawer, Form, Panel, toaster, Message, Toggle, CheckPicker, TagPicker} from 'rsuite'
 
 import {ImagedEditPanel} from './imageEditPanel'
 import {ImageSelectPanel} from './imageSelectPanel'
@@ -127,7 +127,12 @@ export function MemberPlanEditPanel({id, onClose, onSave}: MemberPlanEditPanelPr
       createError?.message ??
       updateError?.message ??
       paymentMethodLoadError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [loadError, createError, updateError, paymentMethodLoadError])
 
   function handleImageChange(image: ImageRefFragment) {

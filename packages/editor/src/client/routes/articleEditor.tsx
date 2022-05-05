@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react'
 
-import {Alert, Badge, Drawer, IconButton, Modal, Notification, Tag} from 'rsuite'
+import {toaster, Message, Badge, Drawer, IconButton, Modal, Notification, Tag} from 'rsuite'
 
 import {BlockList, useBlockMap} from '../atoms/blockList'
 import {EditorTemplate} from '../atoms/editorTemplate'
@@ -236,7 +236,12 @@ export function ArticleEditor({id}: ArticleEditorProps) {
 
   useEffect(() => {
     const error = createError?.message ?? updateError?.message ?? publishError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [createError, updateError, publishError])
 
   function countRichtextChars(blocksCharLength: number, nodes: any) {
@@ -374,7 +379,11 @@ export function ArticleEditor({id}: ArticleEditorProps) {
 
   async function handlePublish(publishedAt: Date, publishAt: Date, updatedAt?: Date) {
     if (!metadata.slug) {
-      Alert.error(t('articleEditor.overview.noSlug'), 0)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {t('articleEditor.overview.noSlug')}
+        </Message>
+      )
       return
     }
 
@@ -423,7 +432,11 @@ export function ArticleEditor({id}: ArticleEditorProps) {
 
   useEffect(() => {
     if (isNotFound) {
-      Alert.error(t('articleEditor.overview.notFound'), 0)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {t('articleEditor.overview.notFound')}
+        </Message>
+      )
     }
   }, [isNotFound])
 

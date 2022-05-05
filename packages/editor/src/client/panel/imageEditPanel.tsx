@@ -15,7 +15,7 @@ import {Link} from '../route'
 import {useTranslation} from 'react-i18next'
 import {FocalPointInput} from '../atoms/focalPointInput'
 import {Point} from '../atoms/draggable'
-import {Button, Drawer, Form, Panel, TagPicker, Alert} from 'rsuite'
+import {Button, Drawer, Form, Panel, TagPicker, toaster, Message} from 'rsuite'
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 import imageCompression from 'browser-image-compression'
 import {ImageMetaData} from './imageUploadAndEditPanel'
@@ -142,7 +142,11 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
         setFocalPoint(image.focalPoint ?? undefined)
         setLoading(false)
       } else {
-        Alert.error(t('images.panels.notFound'), 0)
+        toaster.push(
+          <Message type="error" showIcon closable duration={0}>
+            {t('images.panels.notFound')}
+          </Message>
+        )
       }
     }
 
@@ -153,7 +157,12 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
 
   useEffect(() => {
     const error = loadingError?.message ?? savingError?.message ?? uploadError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [loadingError, savingError, uploadError])
 
   async function handleSave() {
@@ -186,7 +195,11 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
         variables: {id: id!, input: commonInput}
       })
 
-      Alert.success(t('images.panels.imageUpdated'), 2000)
+      toaster.push(
+        <Message type="success" showIcon closable duration={2000}>
+          {t('images.panels.imageUpdated')}
+        </Message>
+      )
 
       if (data?.updateImage) {
         onSave?.(data.updateImage)

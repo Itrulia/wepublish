@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {Button, Drawer, Form, Panel, Input, SelectPicker, Alert} from 'rsuite'
+import {Button, Drawer, Form, Panel, Input, SelectPicker, toaster, Message} from 'rsuite'
 
 import {
   useCreateNavigationMutation,
@@ -133,7 +133,12 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
       updateError?.message ??
       pageLoadError?.message ??
       articleLoadError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [loadError, createError, updateError, articleLoadError, pageLoadError])
 
   function unionForNavigationLink(item: ListValue<NavigationLink>): NavigationLinkInput {

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {Alert, Button, Drawer, Input, Message, Panel} from 'rsuite'
+import {toaster, Button, Drawer, Input, Message, Panel} from 'rsuite'
 
 import {useCreateTokenMutation, TokenListDocument} from '../api'
 import {getOperationNameFromDocument} from '../utility'
@@ -25,7 +25,12 @@ export function TokenGeneratePanel({onClose}: TokenGeneratePanelProps) {
   const {t} = useTranslation()
 
   useEffect(() => {
-    if (createError?.message) Alert.error(createError.message, 0)
+    if (createError?.message)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {createError.message}
+        </Message>
+      )
   }, [createError])
 
   async function handleSave() {

@@ -27,7 +27,18 @@ import {IconButtonTooltip} from '../atoms/iconButtonTooltip'
 import {PeerEditPanel} from '../panel/peerEditPanel'
 
 import {Trans, useTranslation} from 'react-i18next'
-import {Drawer, FlexboxGrid, List, Avatar, IconButton, Button, Divider, Modal, Alert} from 'rsuite'
+import {
+  Drawer,
+  FlexboxGrid,
+  List,
+  Avatar,
+  IconButton,
+  Button,
+  Divider,
+  Modal,
+  toaster,
+  Message
+} from 'rsuite'
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 import {NavigationBar} from '../atoms/navigationBar'
 import {PeerInfoEditPanel} from '../panel/peerProfileEditPanel'
@@ -75,7 +86,12 @@ export function PeerList() {
 
   useEffect(() => {
     const error = peerInfoError?.message ?? peerListError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [peerInfoError, peerListError])
 
   useEffect(() => {
@@ -256,9 +272,10 @@ export function PeerList() {
             onSave={() => {
               setEditModalOpen(false)
 
-              Alert.success(
-                editID ? t('peerList.panels.peerUpdated') : t('peerList.panels.peerCreated'),
-                2000
+              toaster.push(
+                <Message type="success" showIcon closable duration={2000}>
+                  {editID ? t('peerList.panels.peerUpdated') : t('peerList.panels.peerCreated')}
+                </Message>
               )
 
               dispatch({

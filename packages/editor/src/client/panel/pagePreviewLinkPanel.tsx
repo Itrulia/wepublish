@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {useTranslation} from 'react-i18next'
-import {Alert, Button, Form, Message, Modal, Slider} from 'rsuite'
+import {toaster, Button, Form, Message, Modal, Slider} from 'rsuite'
 
 import {usePagePreviewLinkQuery} from '../api'
 
@@ -32,7 +32,11 @@ export function PagePreviewLinkPanel({props, onClose}: PagePreviewLinkPanelProps
 
   useEffect(() => {
     if (loadError?.message) {
-      Alert.error(loadError.message, 0)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {loadError.message}
+        </Message>
+      )
     }
   }, [loadError])
 

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 
 import {
-  Alert,
+  toaster,
   Button,
   DatePicker,
   Drawer,
@@ -191,7 +191,12 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
       updateError?.message ??
       paymentMethodLoadError?.message ??
       userLoadError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [loadError, updateError, loadMemberPlanError, paymentMethodLoadError, userLoadError])
 
   async function handleSave() {

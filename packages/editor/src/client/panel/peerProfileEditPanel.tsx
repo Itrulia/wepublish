@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {Button, Drawer, Panel, Form, Alert, Message} from 'rsuite'
+import {Button, Drawer, Panel, Form, toaster, Message} from 'rsuite'
 
 import {
   usePeerProfileQuery,
@@ -73,7 +73,12 @@ export function PeerInfoEditPanel({onClose, onSave}: ImageEditPanelProps) {
 
   useEffect(() => {
     const error = fetchError?.message ?? saveError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [fetchError, saveError])
 
   useEffect(() => {
@@ -100,7 +105,11 @@ export function PeerInfoEditPanel({onClose, onSave}: ImageEditPanelProps) {
         }
       }
     })
-    Alert.success(t('peerList.panels.peerInfoUpdated'), 2000)
+    toaster.push(
+      <Message type="success" showIcon closable duration={2000}>
+        {t('peerList.panels.peerInfoUpdated')}
+      </Message>
+    )
     onClose?.()
   }
 

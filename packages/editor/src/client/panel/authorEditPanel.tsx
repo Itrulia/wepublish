@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {Button, Drawer, Form, Panel, Input, Alert, PanelGroup, InputGroup} from 'rsuite'
+import {Button, Drawer, Form, Panel, Input, toaster, Message, PanelGroup, InputGroup} from 'rsuite'
 
 import {ListInput, ListValue} from '../atoms/listInput'
 
@@ -84,7 +84,12 @@ export function AuthorEditPanel({id, onClose, onSave}: AuthorEditPanelProps) {
 
   useEffect(() => {
     const error = loadError?.message ?? createError?.message ?? updateError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [loadError, createError, updateError])
 
   function handleImageChange(image: ImageRefFragment) {

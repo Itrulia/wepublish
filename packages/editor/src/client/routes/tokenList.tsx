@@ -24,7 +24,17 @@ import {getOperationNameFromDocument} from '../utility'
 import {TokenGeneratePanel} from '../panel/tokenGeneratePanel'
 
 import {useTranslation} from 'react-i18next'
-import {Button, FlexboxGrid, List, Loader, IconButton, Drawer, Modal, Alert} from 'rsuite'
+import {
+  Button,
+  FlexboxGrid,
+  List,
+  Loader,
+  IconButton,
+  Drawer,
+  Modal,
+  toaster,
+  Message
+} from 'rsuite'
 import TrashIcon from '@rsuite/icons/legacy/Trash'
 
 export function TokenList() {
@@ -55,7 +65,12 @@ export function TokenList() {
 
   useEffect(() => {
     const error = tokenListError?.message ?? deleteTokenError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [tokenListError, deleteTokenError])
 
   useEffect(() => {

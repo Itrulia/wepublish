@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {Alert, Button, CheckPicker, Drawer, Form} from 'rsuite'
+import {toaster, Message, Button, CheckPicker, Drawer, Form} from 'rsuite'
 
 import {
   Permission,
@@ -75,7 +75,12 @@ export function UserRoleEditPanel({id, onClose, onSave}: UserRoleEditPanelProps)
       createError?.message ??
       updateError?.message ??
       loadPermissionError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [loadError, createError, updateError, loadPermissionError])
 
   async function handleSave() {

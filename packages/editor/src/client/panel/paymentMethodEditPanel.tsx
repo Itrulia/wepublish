@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {Button, Drawer, Form, Panel, Alert, Toggle, SelectPicker} from 'rsuite'
+import {Button, Drawer, Form, Panel, toaster, Message, Toggle, SelectPicker} from 'rsuite'
 
 import {
   FullPaymentMethodFragment,
@@ -85,7 +85,12 @@ export function PaymentMethodEditPanel({id, onClose, onSave}: PaymentMethodEditP
       createError?.message ??
       updateError?.message ??
       loadPaymentProviderError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [loadError, createError, updateError, loadPaymentProviderError])
 
   async function handleSave() {

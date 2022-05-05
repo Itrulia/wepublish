@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {Alert, Button, Drawer, Form, Panel} from 'rsuite'
+import {toaster, Message, Button, Drawer, Form, Panel} from 'rsuite'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
 
 import {
@@ -61,7 +61,11 @@ export function PeerEditPanel({id, hostURL, onClose, onSave}: PeerEditPanelProps
       })
       setProfile(remote?.remotePeerProfile ? remote.remotePeerProfile : null)
     } catch (error) {
-      Alert.error(error.message, 0)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error.message}
+        </Message>
+      )
     }
   }
 
@@ -80,7 +84,12 @@ export function PeerEditPanel({id, hostURL, onClose, onSave}: PeerEditPanelProps
 
   useEffect(() => {
     const error = loadError?.message ?? createError?.message ?? updateError?.message
-    if (error) Alert.error(error, 0)
+    if (error)
+      toaster.push(
+        <Message type="error" showIcon closable duration={0}>
+          {error}
+        </Message>
+      )
   }, [loadError, createError, updateError])
 
   useEffect(() => {
