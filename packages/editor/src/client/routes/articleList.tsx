@@ -22,6 +22,12 @@ import {useTranslation} from 'react-i18next'
 import {FlexboxGrid, Input, InputGroup, IconButton, Table, Modal, Button, Message} from 'rsuite'
 import {DEFAULT_TABLE_PAGE_SIZES, StateColor, mapTableSortTypeToGraphQLSortOrder} from '../utility'
 import {ArticlePreviewLinkPanel} from '../panel/articlePreviewLinkPanel'
+import SearchIcon from '@rsuite/icons/legacy/Search'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
+import CopyIcon from '@rsuite/icons/legacy/Copy'
+import EyeIcon from '@rsuite/icons/legacy/Eye'
+import BtnOffIcon from '@rsuite/icons/legacy/BtnOff'
+
 const {Column, HeaderCell, Cell, Pagination} = Table
 
 enum ConfirmAction {
@@ -114,7 +120,7 @@ export function ArticleList() {
           <InputGroup>
             <Input value={filter} onChange={value => setFilter(value)} />
             <InputGroup.Addon>
-              <Icon icon="search" />
+              <SearchIcon />
             </InputGroup.Addon>
           </InputGroup>
         </FlexboxGrid.Item>
@@ -221,7 +227,7 @@ export function ArticleList() {
                 <>
                   <IconButtonTooltip caption={t('articleEditor.overview.unpublish')}>
                     <IconButton
-                      icon={<Icon icon="btn-off" />}
+                      icon={<BtnOffIcon />}
                       circle
                       disabled={!(rowData.published || rowData.pending)}
                       size="sm"
@@ -235,7 +241,7 @@ export function ArticleList() {
 
                   <IconButtonTooltip caption={t('articleEditor.overview.delete')}>
                     <IconButton
-                      icon={<Icon icon="trash" />}
+                      icon={<TrashIcon />}
                       circle
                       size="sm"
                       style={{marginLeft: '5px'}}
@@ -248,7 +254,7 @@ export function ArticleList() {
                   </IconButtonTooltip>
                   <IconButtonTooltip caption={t('articleEditor.overview.duplicate')}>
                     <IconButton
-                      icon={<Icon icon="copy" />}
+                      icon={<CopyIcon />}
                       circle
                       size="sm"
                       style={{marginLeft: '5px'}}
@@ -261,7 +267,7 @@ export function ArticleList() {
                   </IconButtonTooltip>
                   <IconButtonTooltip caption={t('articleEditor.overview.preview')}>
                     <IconButton
-                      icon={<Icon icon="eye" />}
+                      icon={<EyeIcon />}
                       circle
                       disabled={!rowData.draft}
                       size="sm"

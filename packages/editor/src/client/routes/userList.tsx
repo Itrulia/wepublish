@@ -23,6 +23,8 @@ import {Button, Drawer, FlexboxGrid, IconButton, Input, InputGroup, Modal, Table
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 import {DEFAULT_TABLE_PAGE_SIZES, mapTableSortTypeToGraphQLSortOrder} from '../utility'
 import TrashIcon from '@rsuite/icons/legacy/Trash'
+import SearchIcon from '@rsuite/icons/legacy/Search'
+import LockIcon from '@rsuite/icons/legacy/Lock'
 
 const {Column, HeaderCell, Cell, Pagination} = Table
 
@@ -130,7 +132,7 @@ export function UserList() {
           <InputGroup>
             <Input value={filter} onChange={value => setFilter(value)} />
             <InputGroup.Addon>
-              <Icon icon="search" />
+              <SearchIcon />
             </InputGroup.Addon>
           </InputGroup>
         </FlexboxGrid.Item>
@@ -201,7 +203,7 @@ export function UserList() {
                 <>
                   <IconButtonTooltip caption={t('userList.overview.resetPassword')}>
                     <IconButton
-                      icon={<Icon icon="lock" />}
+                      icon={<LockIcon />}
                       circle
                       size="sm"
                       style={{marginLeft: '5px'}}

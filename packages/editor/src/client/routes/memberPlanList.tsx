@@ -28,6 +28,7 @@ import {
 import {IconButtonTooltip} from '../atoms/iconButtonTooltip'
 import {MemberPlanEditPanel} from '../panel/memberPlanEditPanel'
 import TrashIcon from '@rsuite/icons/legacy/Trash'
+import SearchIcon from '@rsuite/icons/legacy/Search'
 const {Column, HeaderCell, Cell /*, Pagination */} = Table
 
 export function MemberPlanList() {
@@ -115,7 +116,7 @@ export function MemberPlanList() {
           <InputGroup>
             <Input value={filter} onChange={value => setFilter(value)} />
             <InputGroup.Addon>
-              <Icon icon="search" />
+              <SearchIcon />
             </InputGroup.Addon>
           </InputGroup>
         </FlexboxGrid.Item>

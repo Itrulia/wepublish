@@ -23,6 +23,7 @@ import {
 import {useTranslation} from 'react-i18next'
 import {Link} from '../route'
 import {DEFAULT_TABLE_PAGE_SIZES, mapTableSortTypeToGraphQLSortOrder} from '../utility'
+import SearchIcon from '@rsuite/icons/legacy/Search'
 
 export function PeerArticleList() {
   const [page, setPage] = useState(1)
@@ -113,13 +114,14 @@ export function PeerArticleList() {
           <InputGroup>
             <Input value={filter.title || ''} onChange={value => setFilter({title: value})} />
             <InputGroup.Addon>
-              <Icon icon="search" />
+              <SearchIcon />
             </InputGroup.Addon>
           </InputGroup>
         </FlexboxGrid.Item>
       </FlexboxGrid>
 
       <SelectPicker
+        virtualized
         data={allPeers.map(peer => ({
           value: peer.name,
           label: peer.profile?.name
@@ -128,7 +130,8 @@ export function PeerArticleList() {
         placeholder={t('peerArticles.filterByPeer')}
         searchable={true}
         onSelect={value => setPeerFilter(value)}
-        onClean={() => setPeerFilter('')}></SelectPicker>
+        onClean={() => setPeerFilter('')}
+      />
 
       <div
         style={{

@@ -351,6 +351,7 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
               <Form.ControlLabel>{t('userSubscriptionEdit.selectMemberPlan')}</Form.ControlLabel>
               <SelectPicker
                 block
+                virtualized
                 disabled={isDisabled || isDeactivated}
                 data={memberPlans.map(mp => ({value: mp.id, label: mp.name}))}
                 value={memberPlan?.id}
@@ -370,6 +371,7 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
               <Form.ControlLabel>{t('userSubscriptionEdit.selectUser')}</Form.ControlLabel>
               <SelectPicker
                 block
+                virtualized
                 disabled={isDisabled || isDeactivated}
                 data={users.map(usr => ({value: usr?.id, label: usr?.name}))}
                 value={user?.id}
@@ -394,6 +396,7 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
             <Form.Group>
               <Form.ControlLabel>{t('memberPlanList.paymentPeriodicities')}</Form.ControlLabel>
               <SelectPicker
+                virtualized
                 value={paymentPeriodicity}
                 data={ALL_PAYMENT_PERIODICITIES.map(pp => ({
                   value: pp,
@@ -434,6 +437,7 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
               <Form.ControlLabel>{t('userSubscriptionEdit.paymentMethod')}</Form.ControlLabel>
               <SelectPicker
                 block
+                virtualized
                 disabled={isDisabled || hasNoMemberPlanSelected || isDeactivated}
                 data={paymentMethods.map(pm => ({value: pm.id, label: pm.name}))}
                 value={paymentMethod?.id}

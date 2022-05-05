@@ -19,6 +19,8 @@ import {
 import {FileDropInput} from '../atoms/fileDropInput'
 import {Typography} from '../atoms/typography'
 import {getImgMinSizeToCompress} from '../utility'
+import UploadIcon from '@rsuite/icons/legacy/Upload'
+import SearchIcon from '@rsuite/icons/legacy/Search'
 
 export interface ImageSelectPanelProps {
   onClose(): void
@@ -88,7 +90,7 @@ export function ImageSelectPanel({onClose, onSelect}: ImageSelectPanelProps) {
       <Drawer.Body>
         <Panel bodyFill={true} style={{height: '150px'}}>
           <FileDropInput
-            icon={<Icon icon="upload" />}
+            icon={<UploadIcon />}
             text={t('articleEditor.panels.dropImage')}
             onDrop={handleDrop}
           />
@@ -102,7 +104,7 @@ export function ImageSelectPanel({onClose, onSelect}: ImageSelectPanelProps) {
           <InputGroup>
             <Input value={filter} onChange={value => setFilter(value)} />
             <InputGroup.Addon>
-              <Icon icon="search" />
+              <SearchIcon />
             </InputGroup.Addon>
           </InputGroup>
         </Panel>

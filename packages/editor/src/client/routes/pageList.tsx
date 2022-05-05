@@ -22,6 +22,10 @@ import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 import {DEFAULT_TABLE_PAGE_SIZES, StateColor, mapTableSortTypeToGraphQLSortOrder} from '../utility'
 import {PagePreviewLinkPanel} from '../panel/pagePreviewLinkPanel'
 import TrashIcon from '@rsuite/icons/legacy/Trash'
+import SearchIcon from '@rsuite/icons/legacy/Search'
+import CopyIcon from '@rsuite/icons/legacy/Copy'
+import EyeIcon from '@rsuite/icons/legacy/Eye'
+import BtnOffIcon from '@rsuite/icons/legacy/BtnOff'
 
 const {Column, HeaderCell, Cell, Pagination} = Table
 
@@ -113,7 +117,7 @@ export function PageList() {
           <InputGroup>
             <Input value={filter} onChange={value => setFilter(value)} />
             <InputGroup.Addon>
-              <Icon icon="search" />
+              <SearchIcon />
             </InputGroup.Addon>
           </InputGroup>
         </FlexboxGrid.Item>
@@ -210,7 +214,7 @@ export function PageList() {
                 <>
                   <IconButtonTooltip caption={t('pageEditor.overview.unpublish')}>
                     <IconButton
-                      icon={<Icon icon="btn-off" />}
+                      icon={<BtnOffIcon />}
                       circle
                       disabled={!(rowData.published || rowData.pending)}
                       size="sm"
@@ -236,7 +240,7 @@ export function PageList() {
                   </IconButtonTooltip>
                   <IconButtonTooltip caption={t('pageEditor.overview.duplicate')}>
                     <IconButton
-                      icon={<Icon icon="copy" />}
+                      icon={<CopyIcon />}
                       circle
                       size="sm"
                       style={{marginLeft: '5px'}}
@@ -250,7 +254,7 @@ export function PageList() {
 
                   <IconButtonTooltip caption={t('pageEditor.overview.preview')}>
                     <IconButton
-                      icon={<Icon icon="eye" />}
+                      icon={<EyeIcon />}
                       disabled={!rowData.draft}
                       circle
                       size="sm"

@@ -165,6 +165,7 @@ export function PaymentMethodEditPanel({id, onClose, onSave}: PaymentMethodEditP
             <Form.Group>
               <Form.ControlLabel>{t('paymentMethodList.adapter')}</Form.ControlLabel>
               <SelectPicker
+                virtualized
                 value={paymentProvider?.id}
                 data={paymentProviders.map(pp => ({value: pp.id, label: pp.name}))}
                 searchable={false}

@@ -249,7 +249,8 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
                   }}
                 />
                 <SelectPicker
-                  block={true}
+                  block
+                  virtualized
                   label={t('navigation.panels.linkType')}
                   value={value.type}
                   style={{marginBottom: 4}}
@@ -261,7 +262,8 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
                 />
                 {value.type === 'PageNavigationLink' || value.type === 'ArticleNavigationLink' ? (
                   <SelectPicker
-                    block={true}
+                    block
+                    virtualized
                     placeholder={
                       value.type === 'PageNavigationLink'
                         ? t('navigation.panels.selectPage')

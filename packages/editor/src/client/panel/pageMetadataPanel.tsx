@@ -11,6 +11,9 @@ import {useTranslation} from 'react-i18next'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
 import {ListInput, ListValue} from '../atoms/listInput'
 import {generateID} from '../utility'
+import CogIcon from '@rsuite/icons/legacy/Cog'
+import ShareAltIcon from '@rsuite/icons/legacy/ShareAlt'
+import ListIcon from '@rsuite/icons/legacy/List'
 
 export interface PageMetadataProperty {
   readonly key: string
@@ -259,13 +262,13 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
           activeKey={activeKey}
           onSelect={activeKey => setActiveKey(activeKey)}
           style={{marginBottom: 20}}>
-          <Nav.Item eventKey={MetaDataType.General} icon={<Icon icon="cog" />}>
+          <Nav.Item eventKey={MetaDataType.General} icon={<CogIcon />}>
             {t('articleEditor.panels.general')}
           </Nav.Item>
-          <Nav.Item eventKey={MetaDataType.SocialMedia} icon={<Icon icon="share-alt" />}>
+          <Nav.Item eventKey={MetaDataType.SocialMedia} icon={<ShareAltIcon />}>
             {t('articleEditor.panels.socialMedia')}
           </Nav.Item>
-          <Nav.Item eventKey={MetaDataType.Properties} icon={<Icon icon="list" />}>
+          <Nav.Item eventKey={MetaDataType.Properties} icon={<ListIcon />}>
             {t('pageEditor.panels.properties')}
           </Nav.Item>
         </Nav>

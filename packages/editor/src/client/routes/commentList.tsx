@@ -41,6 +41,10 @@ import {useTranslation} from 'react-i18next'
 import {DEFAULT_TABLE_PAGE_SIZES, mapTableSortTypeToGraphQLSortOrder} from '../utility'
 import {ApolloCache} from '@apollo/client'
 import CloseIcon from '@rsuite/icons/legacy/Close'
+import SearchIcon from '@rsuite/icons/legacy/Search'
+import EditIcon from '@rsuite/icons/legacy/Edit'
+import CheckIcon from '@rsuite/icons/legacy/Check'
+import ReplyIcon from '@rsuite/icons/legacy/Reply'
 
 const {Column, HeaderCell, Cell, Pagination} = Table
 
@@ -203,7 +207,7 @@ export function CommentList() {
           <InputGroup>
             <Input value={filter} onChange={value => setFilter(value)} />
             <InputGroup.Addon>
-              <Icon icon="search" />
+              <SearchIcon />
             </InputGroup.Addon>
           </InputGroup>
         </FlexboxGrid.Item>
@@ -304,7 +308,7 @@ export function CommentList() {
                 <>
                   <IconButtonTooltip caption={t('comments.overview.approve')}>
                     <IconButton
-                      icon={<Icon icon="check" />}
+                      icon={<CheckIcon />}
                       color="green"
                       circle
                       size="sm"
@@ -318,7 +322,7 @@ export function CommentList() {
                   </IconButtonTooltip>
                   <IconButtonTooltip caption={t('comments.overview.requestChange')}>
                     <IconButton
-                      icon={<Icon icon="edit" />}
+                      icon={<EditIcon />}
                       color="yellow"
                       circle
                       size="sm"
@@ -423,7 +427,7 @@ export function CommentList() {
                       </>
                     </Panel>
                     <div style={{marginTop: 8, marginLeft: 10}}>
-                      <Icon icon="reply" rotate={180} />
+                      <ReplyIcon rotate={180} />
                     </div>
                   </DescriptionListItem>
                 </>

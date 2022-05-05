@@ -31,6 +31,8 @@ import {FlexboxGrid, Input, InputGroup, IconButton, Drawer, Modal, Button, Table
 
 import {DEFAULT_TABLE_IMAGE_PAGE_SIZES} from '../utility'
 import TrashIcon from '@rsuite/icons/legacy/Trash'
+import SearchIcon from '@rsuite/icons/legacy/Search'
+import EditIcon from '@rsuite/icons/legacy/Edit'
 
 const {Column, HeaderCell, Cell, Pagination} = Table
 
@@ -121,7 +123,7 @@ export function ImageList() {
           <InputGroup>
             <Input value={filter} onChange={value => setFilter(value)} />
             <InputGroup.Addon>
-              <Icon icon="search" />
+              <SearchIcon />
             </InputGroup.Addon>
           </InputGroup>
         </FlexboxGrid.Item>
@@ -188,7 +190,7 @@ export function ImageList() {
                   <IconButtonTooltip caption={t('images.overview.edit')}>
                     <Link route={ImageEditRoute.create({id: rowData.id}, current ?? undefined)}>
                       <IconButton
-                        icon={<Icon icon="edit" />}
+                        icon={<EditIcon />}
                         circle
                         size="sm"
                         style={{marginLeft: '5px'}}

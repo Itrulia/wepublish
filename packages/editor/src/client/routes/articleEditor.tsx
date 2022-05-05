@@ -42,6 +42,11 @@ import {useTranslation} from 'react-i18next'
 import {StateColor} from '../utility'
 import {ClientSettings} from '../../shared/types'
 import {ElementID} from '../../shared/elementID'
+import ArrowLeftIcon from '@rsuite/icons/legacy/ArrowLeft'
+import EyeIcon from '@rsuite/icons/legacy/Eye'
+import SaveIcon from '@rsuite/icons/legacy/Save'
+import NewspaperOIcon from '@rsuite/icons/legacy/NewspaperO'
+import CloudUploadIcon from '@rsuite/icons/legacy/CloudUpload'
 
 export interface ArticleEditorProps {
   readonly id?: string
@@ -463,7 +468,7 @@ export function ArticleEditor({id}: ArticleEditorProps) {
                 <IconButtonLink
                   style={{marginTop: '4px'}}
                   size={'lg'}
-                  icon={<Icon icon="arrow-left" />}
+                  icon={<ArrowLeftIcon />}
                   route={ArticleListRoute.create({})}
                   onClick={e => {
                     if (!unsavedChangesDialog()) e.preventDefault()
@@ -474,7 +479,7 @@ export function ArticleEditor({id}: ArticleEditorProps) {
               centerChildren={
                 <div style={{marginTop: '4px', marginBottom: '20px'}}>
                   <IconButton
-                    icon={<Icon icon="newspaper-o" />}
+                    icon={<NewspaperOIcon />}
                     size={'lg'}
                     disabled={isDisabled}
                     onClick={() => {
@@ -490,7 +495,7 @@ export function ArticleEditor({id}: ArticleEditorProps) {
                         marginLeft: '10px'
                       }}
                       size={'lg'}
-                      icon={<Icon icon="save" />}
+                      icon={<SaveIcon />}
                       disabled={isDisabled}
                       onClick={() => handleSave()}>
                       {t('articleEditor.overview.create')}
@@ -503,7 +508,7 @@ export function ArticleEditor({id}: ArticleEditorProps) {
                             marginLeft: '10px'
                           }}
                           size={'lg'}
-                          icon={<Icon icon="save" />}
+                          icon={<SaveIcon />}
                           disabled={isDisabled}
                           onClick={() => handleSave()}>
                           {t('articleEditor.overview.save')}
@@ -520,7 +525,7 @@ export function ArticleEditor({id}: ArticleEditorProps) {
                             marginLeft: '10px'
                           }}
                           size={'lg'}
-                          icon={<Icon icon="cloud-upload" />}
+                          icon={<CloudUploadIcon />}
                           disabled={isDisabled}
                           onClick={() => {
                             setPublishDialogOpen(true)
@@ -537,7 +542,7 @@ export function ArticleEditor({id}: ArticleEditorProps) {
                   disabled={hasChanged || !id}
                   style={{marginTop: '4px'}}
                   size={'lg'}
-                  icon={<Icon icon="eye" />}
+                  icon={<EyeIcon />}
                   onClick={e => {
                     previewLinkFetch({
                       variables: {

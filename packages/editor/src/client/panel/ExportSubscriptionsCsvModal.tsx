@@ -3,6 +3,7 @@ import {useTranslation} from 'react-i18next'
 import {toaster, Message, Button, Divider, IconButton, Placeholder} from 'rsuite'
 
 import {useSubscriptionsAsCsvLazyQuery} from '../api'
+import CopyIcon from '@rsuite/icons/legacy/Copy'
 
 export function SubscriptionAsCsvModal() {
   const {t} = useTranslation()
@@ -43,7 +44,7 @@ export function SubscriptionAsCsvModal() {
         )}
         <IconButton
           appearance="primary"
-          icon={<Icon size="lg" icon="copy" />}
+          icon={<CopyIcon size="lg" />}
           disabled={!subscriptionsCsvData?.csv}
           onClick={() => navigator.clipboard.writeText(subscriptionsCsvData!.csv!)}
         />

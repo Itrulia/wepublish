@@ -49,6 +49,7 @@ export function LinkPageBreakEditPanel({value, onClose, onChange}: LinkPageBreak
             <Form.ControlLabel>{t('linkPageBreakEditPanel.style.label')}</Form.ControlLabel>
             <SelectPicker
               block
+              virtualized
               data={STYLE_OPTIONS.map(style => ({
                 value: style.id,
                 label: t(`linkPageBreakEditPanel.style.${style.id}`)
@@ -69,6 +70,7 @@ export function LinkPageBreakEditPanel({value, onClose, onChange}: LinkPageBreak
             <Form.ControlLabel>{t('linkPageBreakEditPanel.layout.label')}</Form.ControlLabel>
             <SelectPicker
               block
+              virtualized
               data={LAYOUT_OPTIONS.filter(
                 layout => styleOption !== STYLE_OPTIONS[2].id || !layout.disabledIfImageStyle
               ).map(layout => ({
@@ -84,6 +86,7 @@ export function LinkPageBreakEditPanel({value, onClose, onChange}: LinkPageBreak
             <Form.ControlLabel>{t('linkPageBreakEditPanel.template.label')}</Form.ControlLabel>
             <SelectPicker
               block
+              virtualized
               data={TEMPLATE_OPTIONS.map(template => ({
                 value: template.id,
                 label: t(`linkPageBreakEditPanel.template.${template?.id}`)

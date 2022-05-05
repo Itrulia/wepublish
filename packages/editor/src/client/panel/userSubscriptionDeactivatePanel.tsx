@@ -70,6 +70,7 @@ export function UserSubscriptionDeactivatePanel({
             <Form.Group>
               <Form.ControlLabel>{t('userSubscriptionEdit.deactivation.reason')}</Form.ControlLabel>
               <SelectPicker
+                virtualized
                 searchable={false}
                 data={[
                   {

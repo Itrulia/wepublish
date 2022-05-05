@@ -24,6 +24,7 @@ import {RichTextBlockValue} from '../blocks/types'
 
 import {useTranslation} from 'react-i18next'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
+import LinkIcon from '@rsuite/icons/legacy/Link'
 
 export interface AuthorEditPanelProps {
   id?: string
@@ -198,7 +199,7 @@ export function AuthorEditPanel({id, onClose, onSave}: AuthorEditPanelProps) {
                   />
                   <InputGroup inside>
                     <InputGroup.Addon>
-                      <Icon icon="link" />
+                      <LinkIcon />
                     </InputGroup.Addon>
                     <Input
                       placeholder={t('authors.panels.link')}

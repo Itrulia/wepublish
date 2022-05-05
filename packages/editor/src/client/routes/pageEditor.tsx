@@ -28,6 +28,11 @@ import {BlockMap} from '../blocks/blockMap'
 import {useTranslation} from 'react-i18next'
 import {toaster, Message, Badge, Drawer, IconButton, Modal, Tag, Notification} from 'rsuite'
 import {StateColor} from '../utility'
+import ArrowLeftIcon from '@rsuite/icons/legacy/ArrowLeft'
+import NewspaperOIcon from '@rsuite/icons/legacy/NewspaperO'
+import SaveIcon from '@rsuite/icons/legacy/Save'
+import CloudUploadIcon from '@rsuite/icons/legacy/CloudUpload'
+import EyeIcon from '@rsuite/icons/legacy/Eye'
 
 export interface PageEditorProps {
   readonly id?: string
@@ -303,7 +308,7 @@ export function PageEditor({id}: PageEditorProps) {
                 <IconButtonLink
                   style={{marginTop: '4px', marginBottom: '20px'}}
                   size={'lg'}
-                  icon={<Icon icon="arrow-left" />}
+                  icon={<ArrowLeftIcon />}
                   route={PageListRoute.create({})}
                   onClick={e => {
                     if (!unsavedChangesDialog()) e.preventDefault()
@@ -314,7 +319,7 @@ export function PageEditor({id}: PageEditorProps) {
               centerChildren={
                 <div style={{marginTop: '4px'}}>
                   <IconButton
-                    icon={<Icon icon="newspaper-o" />}
+                    icon={<NewspaperOIcon />}
                     size={'lg'}
                     disabled={isDisabled}
                     onClick={() => setMetaDrawerOpen(true)}>
@@ -327,7 +332,7 @@ export function PageEditor({id}: PageEditorProps) {
                         marginLeft: '10px'
                       }}
                       size={'lg'}
-                      icon={<Icon icon="save" />}
+                      icon={<SaveIcon />}
                       disabled={isDisabled}
                       onClick={() => handleSave()}>
                       {t('pageEditor.overview.create')}
@@ -340,7 +345,7 @@ export function PageEditor({id}: PageEditorProps) {
                             marginLeft: '10px'
                           }}
                           size={'lg'}
-                          icon={<Icon icon="save" />}
+                          icon={<SaveIcon />}
                           disabled={isDisabled}
                           onClick={() => handleSave()}>
                           {t('pageEditor.overview.save')}
@@ -355,7 +360,7 @@ export function PageEditor({id}: PageEditorProps) {
                             marginLeft: '10px'
                           }}
                           size={'lg'}
-                          icon={<Icon icon="cloud-upload" />}
+                          icon={<CloudUploadIcon />}
                           disabled={isDisabled}
                           onClick={() => {
                             setPublishDialogOpen(true)
@@ -372,7 +377,7 @@ export function PageEditor({id}: PageEditorProps) {
                   disabled={hasChanged || !id}
                   style={{marginTop: '4px'}}
                   size={'lg'}
-                  icon={<Icon icon="eye" />}
+                  icon={<EyeIcon />}
                   onClick={e => {
                     previewLinkFetch({
                       variables: {

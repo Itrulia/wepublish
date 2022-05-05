@@ -29,6 +29,7 @@ import {ListInput, ListValue} from '../atoms/listInput'
 import CogIcon from '@rsuite/icons/legacy/Cog'
 import ListIcon from '@rsuite/icons/legacy/List'
 import ShareAltIcon from '@rsuite/icons/legacy/ShareAlt'
+import MagicIcon from '@rsuite/icons/legacy/Magic'
 
 export interface ArticleMetadataProperty {
   readonly key: string
@@ -342,7 +343,7 @@ export function ArticleMetadataPanel({
                     trigger="hover"
                     speaker={<Tooltip>{t('articleEditor.panels.slugifySeoTitle')}</Tooltip>}>
                     <IconButton
-                      icon={<Icon icon="magic" />}
+                      icon={<MagicIcon />}
                       onClick={() => {
                         onChange?.({...value, title, slug: slugify(seoTitle)})
                       }}

@@ -19,6 +19,9 @@ import i18next from 'i18next'
 import PencilIcon from '@rsuite/icons/legacy/Pencil'
 import TrashIcon from '@rsuite/icons/legacy/Trash'
 import FileIcon from '@rsuite/icons/legacy/File'
+import PlusSquareOIcon from '@rsuite/icons/legacy/PlusSquareO'
+import LockIcon from '@rsuite/icons/legacy/Lock'
+import UnlockIcon from '@rsuite/icons/legacy/Unlock'
 
 export function FlexTeaserBlock({
   teaser,
@@ -186,7 +189,7 @@ export function TeaserGridFlexBlock({value, onChange}: BlockProps<TeaserGridFlex
     <>
       <IconButtonTooltip caption={t('blocks.flexTeaser.addBlock')}>
         <IconButton
-          icon={<Icon icon="plus-square-o" />}
+          icon={<PlusSquareOIcon />}
           appearance="primary"
           circle
           size="md"
@@ -242,7 +245,7 @@ export function TeaserGridFlexBlock({value, onChange}: BlockProps<TeaserGridFlex
                 <IconButton
                   block
                   appearance="subtle"
-                  icon={<Icon icon={!flexTeaser.alignment.static ? 'unlock' : 'lock'} />}
+                  icon={flexTeaser.alignment.static ? <LockIcon /> : <UnlockIcon />}
                   onClick={() => handlePinTeaserBlock(flexTeaser.alignment.i)}
                 />
               </IconButtonTooltip>

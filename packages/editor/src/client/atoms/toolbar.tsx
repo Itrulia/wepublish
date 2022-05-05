@@ -16,6 +16,7 @@ import './toolbar.less'
 import {WepublishEditor} from '../blocks/richTextBlock/editor/wepublishEditor'
 import {Format} from '../blocks/richTextBlock/editor/formats'
 import {useSlate} from 'slate-react'
+import CloseIcon from '@rsuite/icons/legacy/Close'
 
 export interface ToolbarProps {
   readonly onMouseDown?: ReactEventHandler
@@ -153,12 +154,20 @@ export const SubMenuButton = forwardRef<PopoverProps, SubMenuButtonProps>(
               e.preventDefault()
               isMenuOpen ? closeMenu() : openMenu()
             }}>
-            <Icon
-              style={{
-                minWidth: '15px' // width of close icon (14px) so that element does not change size as long as the provided icon is < 15px.
-              }}
-              icon={isMenuOpen ? 'close' : icon}
-            />
+            {isMenuOpen ? (
+              <CloseIcon
+                style={{
+                  minWidth: '15px' // width of close icon (14px) so that element does not change size as long as the provided icon is < 15px.
+                }}
+              />
+            ) : (
+              <Icon
+                style={{
+                  minWidth: '15px' // width of close icon (14px) so that element does not change size as long as the provided icon is < 15px.
+                }}
+                icon={icon}
+              />
+            )}
           </ToolbarButton>
         </Whisper>
       </SubMenuContext.Provider>
