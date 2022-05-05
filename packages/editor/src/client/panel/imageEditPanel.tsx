@@ -322,6 +322,7 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.tags')}</Form.ControlLabel>
                   <TagPicker
+                    virtualized
                     block={true}
                     creatable={true}
                     disabled={isDisabled}

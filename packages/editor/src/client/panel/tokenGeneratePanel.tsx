@@ -47,12 +47,9 @@ export function TokenGeneratePanel({onClose}: TokenGeneratePanelProps) {
           <>
             <p>{t('tokenList.panels.creationSuccess')}</p>
             <Panel bordered>{token}</Panel>
-            <Message
-              showIcon
-              style={{marginTop: 5}}
-              type="warning"
-              description={t('tokenList.panels.tokenWarning')}
-            />
+            <Message showIcon style={{marginTop: 5}} type="warning">
+              {t('tokenList.panels.tokenWarning')}
+            </Message>
           </>
         ) : (
           <Input

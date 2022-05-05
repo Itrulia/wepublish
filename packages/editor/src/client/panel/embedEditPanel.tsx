@@ -117,7 +117,7 @@ export function EmbedEditPanel({value, onClose, onConfirm}: EmbedEditPanel) {
           value={input}
           onChange={input => setInput(input)}
         />
-        {errorMessage && <Message type="error" description={errorMessage} />}
+        {errorMessage && <Message type="error">{errorMessage}</Message>}
         <div style={{marginBottom: 8}}>
           <p>{t('blocks.embeds.panels.socialMediaList')}</p>
           <code>{t('blocks.embeds.panels.fbPosts')}</code>

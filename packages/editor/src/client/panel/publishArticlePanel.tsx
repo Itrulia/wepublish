@@ -81,9 +81,7 @@ export function PublishArticlePanel({
         />
 
         {updatedAt && publishedAt && updatedAt < publishedAt ? (
-          <Message
-            type="warning"
-            description={t('articleEditor.panels.updateDateWarning')}></Message>
+          <Message type="warning">{t('articleEditor.panels.updateDateWarning')}</Message>
         ) : (
           ''
         )}

@@ -360,10 +360,12 @@ export function ArticleEditor({id}: ArticleEditorProps) {
       await updateArticle({variables: {id: articleID, input}})
 
       setChanged(false)
-      Notification.success({
-        title: t('articleEditor.overview.draftSaved'),
-        duration: 2000
-      })
+      toaster.push(
+        <Notification type="success" header="success" duration={2000}>
+          {t('articleEditor.overview.draftSaved')}
+        </Notification>,
+        {placement: 'topStart'}
+      )
       await refetch({id: articleID})
     } else {
       const {data} = await createArticle({variables: {input}})
@@ -375,10 +377,12 @@ export function ArticleEditor({id}: ArticleEditorProps) {
         })
       }
       setChanged(false)
-      Notification.success({
-        title: t('articleEditor.overview.draftCreated'),
-        duration: 2000
-      })
+      toaster.push(
+        <Notification type="success" header="success" duration={2000}>
+          {t('articleEditor.overview.draftCreated')}
+        </Notification>,
+        {placement: 'topStart'}
+      )
     }
   }
 
@@ -423,14 +427,16 @@ export function ArticleEditor({id}: ArticleEditorProps) {
         }
       }
       setChanged(false)
-      Notification.success({
-        title: t(
-          publishAt <= new Date() || (!publishAt && publishedAt <= new Date())
-            ? 'articleEditor.overview.articlePublished'
-            : 'articleEditor.overview.articlePending'
-        ),
-        duration: 2000
-      })
+      toaster.push(
+        <Notification type="success" header="success" duration={2000}>
+          {t(
+            publishAt <= new Date() || (!publishAt && publishedAt <= new Date())
+              ? 'articleEditor.overview.articlePublished'
+              : 'articleEditor.overview.articlePending'
+          )}
+        </Notification>,
+        {placement: 'topStart'}
+      )
     }
     await refetch({id: articleID})
   }

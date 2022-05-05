@@ -35,12 +35,9 @@ export function FormControlUrl({placeholder, name, value, onChange}: UrlValidati
         }}
       />
       {invalidInput && (
-        <Message
-          showIcon
-          type="error"
-          description={t('peerList.overview.invalidURLTooltip')}
-          style={{marginTop: '5px'}}
-        />
+        <Message showIcon type="error" style={{marginTop: '5px'}}>
+          {t('peerList.overview.invalidURLTooltip')}
+        </Message>
       )}
     </div>
   )

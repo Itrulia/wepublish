@@ -47,11 +47,9 @@ export function ArticlePreviewLinkPanel({props, onClose}: ArticlePreviewLinkPane
       </Modal.Header>
 
       <Modal.Body>
-        <Message
-          style={{marginBottom: '20px'}}
-          type="warning"
-          description={t('articleEditor.panels.articlePreviewLinkDesc')}
-        />
+        <Message style={{marginBottom: '20px'}} type="warning">
+          {t('articleEditor.panels.articlePreviewLinkDesc')}
+        </Message>
 
         <Form fluid={true}>
           <Form.Group style={{paddingLeft: '20px', paddingRight: '20px'}}>

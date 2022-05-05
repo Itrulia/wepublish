@@ -315,11 +315,9 @@ export function SubscriptionList() {
 
         <Modal.Body>
           {currentSubscription && isTempUser(currentSubscription.user?.id) && (
-            <Message
-              showIcon
-              type="warning"
-              description={t('subscriptionList.panels.tempUserWarning')}
-            />
+            <Message showIcon type="warning">
+              {t('subscriptionList.panels.tempUserWarning')}
+            </Message>
           )}
           <DescriptionList>
             <DescriptionListItem label={t('subscriptionList.panels.name')}>

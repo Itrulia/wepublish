@@ -11,7 +11,7 @@ import {
 import {TeaserType, TeaserLink} from '../blocks/types'
 
 import {useTranslation} from 'react-i18next'
-import {Button, Drawer, Nav, List, Input, InputGroup, Notification} from 'rsuite'
+import {Button, Drawer, Nav, List, Input, InputGroup, Notification, toaster} from 'rsuite'
 import FileTextIcon from '@rsuite/icons/legacy/FileText'
 import SearchIcon from '@rsuite/icons/legacy/Search'
 import ExternalLinkIcon from '@rsuite/icons/legacy/ExternalLink'
@@ -68,10 +68,12 @@ export function TeaserSelectPanel({onClose, onSelect}: TeaserSelectPanelProps) {
 
   useEffect(() => {
     if (articleListError ?? pageListError ?? peerArticleListError) {
-      Notification.error({
-        title: articleListError?.message ?? pageListError?.message ?? peerArticleListError!.message,
-        duration: 5000
-      })
+      toaster.push(
+        <Notification type="error" header="error" duration={5000}>
+          {articleListError?.message ?? pageListError?.message ?? peerArticleListError!.message}
+        </Notification>,
+        {placement: 'topStart'}
+      )
     }
   }, [articleListError ?? pageListError ?? peerArticleListError])
 

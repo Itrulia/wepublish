@@ -151,7 +151,9 @@ export function ArticleMetadataPanel({
           <Panel>
             <Form fluid={true}>
               <Form.Group>
-                <Message showIcon type="info" description={t('pageEditor.panels.metadataInfo')} />
+                <Message showIcon type="info">
+                  {t('pageEditor.panels.metadataInfo')}
+                </Message>
               </Form.Group>
               <Form.Group>
                 <Form.ControlLabel>
@@ -379,6 +381,7 @@ export function ArticleMetadataPanel({
                 <Form.ControlLabel>{t('articleEditor.panels.tags')}</Form.ControlLabel>
                 <TagPicker
                   block
+                  virtualized
                   value={tags}
                   creatable={true}
                   data={tags.map(tag => ({label: tag, value: tag}))}
@@ -440,11 +443,9 @@ export function ArticleMetadataPanel({
           <Panel>
             <Form fluid={true}>
               <Form.Group>
-                <Message
-                  showIcon
-                  type="info"
-                  description={t('articleEditor.panels.propertiesInfo')}
-                />
+                <Message showIcon type="info">
+                  {t('articleEditor.panels.propertiesInfo')}
+                </Message>
               </Form.Group>
               <Form.Group>
                 <Form.ControlLabel>{t('articleEditor.panels.properties')}</Form.ControlLabel>

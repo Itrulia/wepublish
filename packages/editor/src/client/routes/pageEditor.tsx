@@ -218,10 +218,12 @@ export function PageEditor({id}: PageEditorProps) {
       await updatePage({variables: {id: pageID, input}})
 
       setChanged(false)
-      Notification.success({
-        title: t('pageEditor.overview.pageDraftSaved'),
-        duration: 2000
-      })
+      toaster.push(
+        <Notification type="success" header="success" duration={2000}>
+          {t('pageEditor.overview.pageDraftSaved')}
+        </Notification>,
+        {placement: 'topStart'}
+      )
       await refetch({id: pageID})
     } else {
       const {data} = await createPage({variables: {input}})
@@ -233,10 +235,12 @@ export function PageEditor({id}: PageEditorProps) {
         })
       }
       setChanged(false)
-      Notification.success({
-        title: t('pageEditor.overview.pageDraftCreated'),
-        duration: 2000
-      })
+      toaster.push(
+        <Notification type="success" header="success" duration={2000}>
+          {t('pageEditor.overview.pageDraftCreated')}
+        </Notification>,
+        {placement: 'topStart'}
+      )
     }
   }
 
@@ -275,14 +279,16 @@ export function PageEditor({id}: PageEditorProps) {
     }
 
     setChanged(false)
-    Notification.success({
-      title: t(
-        publishAt <= new Date() || (!publishAt && publishedAt <= new Date())
-          ? 'pageEditor.overview.pagePublished'
-          : 'pageEditor.overview.pagePending'
-      ),
-      duration: 2000
-    })
+    toaster.push(
+      <Notification type="success" header="success" duration={2000}>
+        {t(
+          publishAt <= new Date() || (!publishAt && publishedAt <= new Date())
+            ? 'pageEditor.overview.pagePublished'
+            : 'pageEditor.overview.pagePending'
+        )}
+      </Notification>,
+      {placement: 'topStart'}
+    )
   }
 
   useEffect(() => {

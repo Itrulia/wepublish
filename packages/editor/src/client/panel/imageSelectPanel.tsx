@@ -21,6 +21,7 @@ import {Typography} from '../atoms/typography'
 import {getImgMinSizeToCompress} from '../utility'
 import UploadIcon from '@rsuite/icons/legacy/Upload'
 import SearchIcon from '@rsuite/icons/legacy/Search'
+import {toaster} from 'rsuite'
 
 export interface ImageSelectPanelProps {
   onClose(): void
@@ -51,10 +52,13 @@ export function ImageSelectPanel({onClose, onSelect}: ImageSelectPanelProps) {
     const file = files[0]
 
     if (!file.type.startsWith('image')) {
-      Notification.error({
-        title: t('articleEditor.panels.invalidImage'),
-        duration: 5000
-      })
+      toaster.push(
+        <Notification type="error" header="error" duration={5000}>
+          {t('articleEditor.panels.invalidImage')}
+        </Notification>,
+        {placement: 'topStart'}
+      )
+
       return
     }
 
@@ -151,7 +155,7 @@ export function ImageSelectPanel({onClose, onSelect}: ImageSelectPanelProps) {
             )}
           </>
         ) : !isLoading ? (
-          <Message type="info" description={t('articleEditor.panels.noImagesFound')} />
+          <Message type="info">{t('articleEditor.panels.noImagesFound')}</Message>
         ) : (
           <Loader center content={t('articleEditor.panels.loading')} />
         )}

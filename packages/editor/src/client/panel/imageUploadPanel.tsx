@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {Button, Drawer, Notification} from 'rsuite'
+import {Button, Drawer, Notification, toaster} from 'rsuite'
 
 import {FileDropInput} from '../atoms/fileDropInput'
 
@@ -21,10 +21,12 @@ export function ImageUploadPanel({onClose, onUpload}: ImageUploadPanelProps) {
     const file = files[0]
 
     if (!file.type.startsWith('image')) {
-      Notification.error({
-        title: t('articleEditor.panels.învalidImage'),
-        duration: 5000
-      })
+      toaster.push(
+        <Notification type="error" header="error" duration={5000}>
+          {t('articleEditor.panels.învalidImage')}
+        </Notification>,
+        {placement: 'topStart'}
+      )
     }
 
     onUpload(file)

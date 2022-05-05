@@ -100,7 +100,9 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
           <Panel>
             <Form fluid={true}>
               <Form.Group>
-                <Message showIcon type="info" description={t('pageEditor.panels.metadataInfo')} />
+                <Message showIcon type="info">
+                  {t('pageEditor.panels.metadataInfo')}
+                </Message>
               </Form.Group>
               <Form.Group>
                 <Form.ControlLabel>{t('pageEditor.panels.socialMediaTitle')}</Form.ControlLabel>
@@ -167,6 +169,7 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
               <Form.Group>
                 <Form.ControlLabel>{t('pageEditor.panels.tags')}</Form.ControlLabel>
                 <TagPicker
+                  virtualized
                   style={{width: '100%'}}
                   creatable={true}
                   value={tags}
@@ -197,7 +200,9 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
           <Panel>
             <Form fluid={true}>
               <Form.Group>
-                <Message showIcon type="info" description={t('pageEditor.panels.propertiesInfo')} />
+                <Message showIcon type="info">
+                  {t('pageEditor.panels.propertiesInfo')}
+                </Message>
               </Form.Group>
               <Form.Group>
                 <Form.ControlLabel>{t('pageEditor.panels.properties')}</Form.ControlLabel>

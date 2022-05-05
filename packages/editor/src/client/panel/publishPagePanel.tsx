@@ -77,7 +77,7 @@ export function PublishPagePanel({
           changeDate={date => setUpdatedAt(date)}
         />
         {updatedAt && publishedAt && updatedAt < publishedAt ? (
-          <Message type="warning" description={t('pageEditor.panels.updateDateWarning')}></Message>
+          <Message type="warning">{t('pageEditor.panels.updateDateWarning')}</Message>
         ) : (
           ''
         )}

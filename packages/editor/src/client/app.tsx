@@ -25,8 +25,8 @@ import {PeerArticleList} from './routes/peerArticleList'
 import {NavigationList} from './routes/navigationList'
 
 import './global.less'
-import {IntlProvider} from 'rsuite'
-import enGB from 'rsuite/lib/IntlProvider/locales/en_GB'
+import {CustomProvider} from 'rsuite'
+import enGB from 'rsuite/locales/en_GB'
 import fr from './locales/rsuiteFr'
 import de from './locales/rsuiteDe'
 import {useTranslation} from 'react-i18next'
@@ -163,6 +163,6 @@ export function App() {
     }
   }, [session])
 
-  return <IntlProvider locale={lng}>{GetComponents(current)}</IntlProvider>
+  return <CustomProvider locale={lng}>{GetComponents(current)}</CustomProvider>
 }
 export const HotApp = hot(App)

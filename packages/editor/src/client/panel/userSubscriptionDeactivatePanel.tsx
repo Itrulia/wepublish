@@ -32,7 +32,10 @@ export function UserSubscriptionDeactivatePanel({
   const [deactivationDate, setDeactivationDate] = useState(
     paidUntil ? new Date(paidUntil) : new Date()
   )
-  const [deactivationReason, setDeactivationReason] = useState(null)
+  const [
+    deactivationReason,
+    setDeactivationReason
+  ] = useState<SubscriptionDeactivationReason | null>(null)
 
   return (
     <>
@@ -92,11 +95,9 @@ export function UserSubscriptionDeactivatePanel({
                 onChange={value => setDeactivationReason(value)}
               />
             </Form.Group>
-            <Message
-              showIcon
-              type="info"
-              description={t('userSubscriptionEdit.deactivation.help')}
-            />
+            <Message showIcon type="info">
+              {t('userSubscriptionEdit.deactivation.help')}
+            </Message>
           </Form>
         )}
       </Modal.Body>

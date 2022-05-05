@@ -217,6 +217,7 @@ export function MemberPlanEditPanel({id, onClose, onSave}: MemberPlanEditPanelPr
               <Form.ControlLabel>{t('articleEditor.panels.tags')}</Form.ControlLabel>
               <TagPicker
                 block
+                virtualized
                 value={tags ?? []}
                 creatable={true}
                 data={tags ? tags.map(tag => ({label: tag, value: tag})) : []}
@@ -281,6 +282,7 @@ export function MemberPlanEditPanel({id, onClose, onSave}: MemberPlanEditPanelPr
                 <Form.Group>
                   <Form.ControlLabel>{t('memberPlanList.paymentPeriodicities')}</Form.ControlLabel>
                   <CheckPicker
+                    virtualized
                     value={value.paymentPeriodicities}
                     data={ALL_PAYMENT_PERIODICITIES.map(pp => ({
                       value: pp,
@@ -293,6 +295,7 @@ export function MemberPlanEditPanel({id, onClose, onSave}: MemberPlanEditPanelPr
                 <Form.Group>
                   <Form.ControlLabel>{t('memberPlanList.paymentMethods')}</Form.ControlLabel>
                   <CheckPicker
+                    virtualized
                     value={value.paymentMethods.map(pm => pm.id)}
                     data={paymentMethods.map(pm => ({value: pm.id, label: pm.name}))}
                     onChange={paymentMethodIDs => {

@@ -309,40 +309,34 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
 
       <Drawer.Body>
         {deactivation && (
-          <Message
-            showIcon
-            type="info"
-            description={t(
+          <Message showIcon type="info">
+            {t(
               new Date(deactivation.date) < new Date()
                 ? 'userSubscriptionEdit.deactivation.isDeactivated'
                 : 'userSubscriptionEdit.deactivation.willBeDeactivated',
               {date: new Date(deactivation.date)}
             )}
-          />
+          </Message>
         )}
         {isTempUser && (
-          <Message
-            showIcon
-            type="info"
-            description={
-              <div>
-                <p>{t('userSubscriptionEdit.tempUser.disabledInfo')}</p>
-                <br />
-                <p>
-                  <b>{t('userSubscriptionEdit.tempUserTitle')}</b>
-                </p>
-                <p>
-                  {user?.firstName} {user?.name}
-                </p>
-                <p>{user?.address?.streetAddress}</p>
-                <p>
-                  {user?.address?.zipCode} {user?.address?.city}
-                </p>
-                <p>{user?.address?.country}</p>
-                <p>{user?.email}</p>
-              </div>
-            }
-          />
+          <Message showIcon type="info">
+            <div>
+              <p>{t('userSubscriptionEdit.tempUser.disabledInfo')}</p>
+              <br />
+              <p>
+                <b>{t('userSubscriptionEdit.tempUserTitle')}</b>
+              </p>
+              <p>
+                {user?.firstName} {user?.name}
+              </p>
+              <p>{user?.address?.streetAddress}</p>
+              <p>
+                {user?.address?.zipCode} {user?.address?.city}
+              </p>
+              <p>{user?.address?.country}</p>
+              <p>{user?.email}</p>
+            </div>
+          </Message>
         )}
 
         <Panel>

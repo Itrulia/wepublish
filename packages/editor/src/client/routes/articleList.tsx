@@ -355,12 +355,9 @@ export function ArticleList() {
             )}
           </DescriptionList>
 
-          <Message
-            showIcon
-            type="warning"
-            title={t('articleEditor.overview.warningLabel')}
-            description={t('articleEditor.overview.unpublishWarningMessage')}
-          />
+          <Message showIcon type="warning" title={t('articleEditor.overview.warningLabel')}>
+            {t('articleEditor.overview.unpublishWarningMessage')}
+          </Message>
         </Modal.Body>
 
         <Modal.Footer>

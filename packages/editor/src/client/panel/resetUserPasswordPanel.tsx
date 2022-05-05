@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 
-import {Button, Form, Notification, Panel} from 'rsuite'
+import {Button, Form, Notification, Panel, toaster} from 'rsuite'
 
 import {useResetUserPasswordMutation} from '../api'
 
@@ -54,10 +54,12 @@ export function ResetUserPasswordPanel({userID, userName, onClose}: ResetUserPas
             }
           })
           if (data?.resetUserPassword) {
-            Notification.success({
-              title: t('userList.panels.passwordChangeSuccess'),
-              duration: 2000
-            })
+            toaster.push(
+              <Notification type="success" header="success" duration={5000}>
+                {t('userList.panels.passwordChangeSuccess')}
+              </Notification>,
+              {placement: 'topStart'}
+            )
             onClose()
           }
         }}>

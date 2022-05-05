@@ -144,7 +144,8 @@ export function UserRoleEditPanel({id, onClose, onSave}: UserRoleEditPanelProps)
           <Form.Group>
             <Form.ControlLabel>{t('userRoles.panels.permissions')}</Form.ControlLabel>
             <CheckPicker
-              block={true}
+              virtualized
+              block
               disabledItemValues={systemRole ? allPermissions.map(per => per.id) : []}
               value={permissions.map(per => per.id)}
               data={allPermissions.map(permission => ({
