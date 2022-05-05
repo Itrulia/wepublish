@@ -114,7 +114,7 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
                 </Form.ControlLabel>
                 <Form.Control
                   rows={5}
-                  componentClass="textarea"
+                  as="textarea"
                   value={socialMediaDescription}
                   onChange={socialMediaDescription => {
                     onChange?.({...value, socialMediaDescription})
@@ -155,7 +155,7 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
               <Form.Group>
                 <Form.ControlLabel>{t('pageEditor.panels.description')}</Form.ControlLabel>
                 <Form.Control
-                  componentClass="textarea"
+                  as="textarea"
                   value={description}
                   onChange={description => onChange?.({...value, description})}
                 />

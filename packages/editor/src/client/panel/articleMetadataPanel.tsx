@@ -186,7 +186,7 @@ export function ArticleMetadataPanel({
                 </Form.ControlLabel>
                 <Form.Control
                   rows={5}
-                  componentClass="textarea"
+                  as="textarea"
                   value={socialMediaDescription || ''}
                   onChange={socialMediaDescription => {
                     onChange?.({...value, socialMediaDescription})
@@ -285,7 +285,7 @@ export function ArticleMetadataPanel({
                 <Form.Control
                   className="lead"
                   rows={5}
-                  componentClass="textarea"
+                  as="textarea"
                   value={lead}
                   onChange={lead => {
                     onChange?.({...value, lead})

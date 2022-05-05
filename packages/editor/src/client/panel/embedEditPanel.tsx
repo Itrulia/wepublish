@@ -110,7 +110,7 @@ export function EmbedEditPanel({value, onClose, onConfirm}: EmbedEditPanel) {
 
       <Drawer.Body>
         <Input
-          componentClass="textarea"
+          as="textarea"
           rows={3}
           style={{width: '100%'}}
           placeholder={t('blocks.embeds.panels.embed')}

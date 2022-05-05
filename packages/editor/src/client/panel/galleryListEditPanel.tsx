@@ -89,7 +89,7 @@ export function GalleryListItem({value, onChange}: FieldProps<GalleryImageEdge>)
             <Form.ControlLabel>{t('blocks.imageGallery.panels.caption')}</Form.ControlLabel>
             <Form.Control
               rows={1}
-              componentClass="textarea"
+              as="textarea"
               value={caption}
               onChange={caption => onChange({...value, caption})}
             />
