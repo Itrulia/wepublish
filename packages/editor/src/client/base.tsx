@@ -95,7 +95,6 @@ export function Base({children}: BaseProps) {
       <Container>
         <Sidebar
           style={{display: 'flex', flexDirection: 'column'}}
-          appearance="default"
           width={isExpanded ? 260 : 56}
           collapsible>
           <Sidenav
@@ -117,7 +116,13 @@ export function Base({children}: BaseProps) {
                 circle
                 size="xs"
                 onClick={() => setIsExpanded(!isExpanded)}
-                icon={isExpanded ? <AngleLeftIcon size="lg" /> : <AngleRightIcon size="lg" />}
+                icon={
+                  isExpanded ? (
+                    <AngleLeftIcon style={{fontSize: '1.3333em'}} />
+                  ) : (
+                    <AngleRightIcon style={{fontSize: '1.3333em'}} />
+                  )
+                }
               />
 
               <Nav>
@@ -232,9 +237,7 @@ export function Base({children}: BaseProps) {
                 <Dropdown
                   placement="topStart"
                   trigger="click"
-                  renderTitle={children => {
-                    return <CogIcon style={iconStyles} className="icon-selector" />
-                  }}>
+                  renderTitle={() => <CogIcon style={iconStyles} className="icon-selector" />}>
                   <DropdownItemLink route={LogoutRoute.create({})}>
                     {t('navbar.logout')}
                   </DropdownItemLink>

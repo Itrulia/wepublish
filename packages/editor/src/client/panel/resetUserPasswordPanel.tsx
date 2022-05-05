@@ -30,12 +30,13 @@ export function ResetUserPasswordPanel({userID, userName, onClose}: ResetUserPas
         <Form.Group>
           <Form.ControlLabel>{t('userList.panels.resetPasswordFor', {userName})}</Form.ControlLabel>
           <Form.Control
+            name={''}
             disabled={isDisabled}
             type="password"
             placeholder={t('userList.panels.password')}
             errorMessage={updateError?.message}
             value={password}
-            onChange={value => setPassword(value)}
+            onChange={(value: string) => setPassword(value)}
           />
         </Form.Group>
       </Form>

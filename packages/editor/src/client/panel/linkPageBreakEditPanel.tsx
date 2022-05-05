@@ -98,14 +98,19 @@ export function LinkPageBreakEditPanel({value, onClose, onChange}: LinkPageBreak
 
           <Form.Group>
             <Form.ControlLabel>{t('linkPageBreakEditPanel.link.urlLabel')}</Form.ControlLabel>
-            <Form.Control value={linkURL} onChange={linkURL => onChange?.({...value, linkURL})} />
+            <Form.Control
+              name={''}
+              value={linkURL}
+              onChange={(linkURL: string) => onChange?.({...value, linkURL})}
+            />
           </Form.Group>
 
           <Form.Group>
             <Form.ControlLabel>{t('linkPageBreakEditPanel.link.buttonLabel')}</Form.ControlLabel>
             <Form.Control
+              name={''}
               value={linkText}
-              onChange={linkText => onChange?.({...value, linkText})}
+              onChange={(linkText: string) => onChange?.({...value, linkText})}
             />
           </Form.Group>
 
@@ -114,7 +119,7 @@ export function LinkPageBreakEditPanel({value, onClose, onChange}: LinkPageBreak
             <RadioGroup
               name="target_radio"
               inline={true}
-              onChange={linkTarget => onChange?.({...value, linkTarget})}
+              onChange={linkTarget => onChange?.({...value, linkTarget: linkTarget as string})}
               value={linkTarget}>
               <Radio value={'_self'}>{t('linkPageBreakEditPanel.link.targetLabelSelf')}</Radio>
               <Radio value={'_blank'}>{t('linkPageBreakEditPanel.link.targetLabelBlank')}</Radio>

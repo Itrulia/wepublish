@@ -366,10 +366,10 @@ export function CommentList() {
       </div>
       {confirmAction && (
         <Modal
-          show={isConfirmationDialogOpen}
+          open={isConfirmationDialogOpen}
           width="sm"
           overflow
-          onHide={() => {
+          onClose={() => {
             setConfirmationDialogOpen(false)
             resetCurrentCommentState()
           }}>

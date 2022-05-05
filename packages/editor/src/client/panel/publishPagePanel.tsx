@@ -61,10 +61,9 @@ export function PublishPagePanel({
 
       <Modal.Body>
         {pendingPublishDate && (
-          <Message
-            type="warning"
-            description={t('pageEditor.panels.pagePending', {pendingPublishDate})}
-          />
+          <Message type="warning">
+            {t('pageEditor.panels.pagePending', {pendingPublishDate})}
+          </Message>
         )}
         <DateTimePicker
           dateTime={publishedAt}
@@ -83,7 +82,6 @@ export function PublishPagePanel({
         )}
 
         <Checkbox
-          value={isPublishDateActive}
           checked={isPublishDateActive}
           onChange={isPublishDateActive => setIsPublishDateActive(!isPublishDateActive)}>
           {' '}

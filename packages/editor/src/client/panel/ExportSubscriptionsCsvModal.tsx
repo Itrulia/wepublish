@@ -44,7 +44,7 @@ export function SubscriptionAsCsvModal() {
         )}
         <IconButton
           appearance="primary"
-          icon={<CopyIcon size="lg" />}
+          icon={<CopyIcon style={{fontSize: '1.3333em'}} />}
           disabled={!subscriptionsCsvData?.csv}
           onClick={() => navigator.clipboard.writeText(subscriptionsCsvData!.csv!)}
         />

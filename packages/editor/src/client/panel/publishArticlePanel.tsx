@@ -61,12 +61,11 @@ export function PublishArticlePanel({
 
       <Modal.Body>
         {pendingPublishDate && (
-          <Message
-            type="warning"
-            description={t('articleEditor.panels.articlePending', {
+          <Message type="warning">
+            {t('articleEditor.panels.articlePending', {
               pendingPublishDate
             })}
-          />
+          </Message>
         )}
 
         <DateTimePicker
@@ -87,7 +86,6 @@ export function PublishArticlePanel({
         )}
 
         <Checkbox
-          value={isPublishDateActive}
           checked={isPublishDateActive}
           onChange={isPublishDateActive => setIsPublishDateActive(!isPublishDateActive)}>
           {t('articleEditor.panels.publishAtDateCheckbox')}

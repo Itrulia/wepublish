@@ -199,7 +199,7 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                 name={t('userList.panels.firstName')}
                 value={firstName}
                 disabled={isDisabled}
-                onChange={value => setFirstName(value)}
+                onChange={(value: string) => setFirstName(value)}
               />
             </Form.Group>
             <Form.Group>
@@ -208,7 +208,7 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                 name={t('userList.panels.name')}
                 value={name}
                 disabled={isDisabled}
-                onChange={value => setName(value)}
+                onChange={(value: string) => setName(value)}
               />
             </Form.Group>
             <Form.Group>
@@ -217,7 +217,7 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                 name={t('userList.panels.preferredName')}
                 value={preferredName}
                 disabled={isDisabled}
-                onChange={value => setPreferredName(value)}
+                onChange={(value: string) => setPreferredName(value)}
               />
             </Form.Group>
             <Form.Group>
@@ -226,7 +226,7 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                 name={t('userList.panels.email')}
                 value={email}
                 disabled={isDisabled}
-                onChange={value => setEmail(value)}
+                onChange={(value: string) => setEmail(value)}
               />
             </Form.Group>
             <Form.Group>
@@ -235,7 +235,9 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                 name={t('userList.panels.company')}
                 value={address?.company}
                 disabled={isDisabled}
-                onChange={value => updateAddressObject(address, setAddress, 'company', value)}
+                onChange={(value: string) =>
+                  updateAddressObject(address, setAddress, 'company', value)
+                }
               />
             </Form.Group>
             <Form.Group>
@@ -244,7 +246,9 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                 name={t('userList.panels.streetAddress')}
                 value={address?.streetAddress}
                 disabled={isDisabled}
-                onChange={value => updateAddressObject(address, setAddress, 'streetAddress', value)}
+                onChange={(value: string) =>
+                  updateAddressObject(address, setAddress, 'streetAddress', value)
+                }
               />
             </Form.Group>
             <Form.Group>
@@ -253,7 +257,7 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                 name={t('userList.panels.streetAddress2')}
                 value={address?.streetAddress2}
                 disabled={isDisabled}
-                onChange={value =>
+                onChange={(value: string) =>
                   updateAddressObject(address, setAddress, 'streetAddress2', value)
                 }
               />
@@ -264,7 +268,9 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                 name={t('userList.panels.zipCode')}
                 value={address?.zipCode}
                 disabled={isDisabled}
-                onChange={value => updateAddressObject(address, setAddress, 'zipCode', value)}
+                onChange={(value: string) =>
+                  updateAddressObject(address, setAddress, 'zipCode', value)
+                }
               />
             </Form.Group>
             <Form.Group>
@@ -273,7 +279,9 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                 name={t('userList.panels.city')}
                 value={address?.city}
                 disabled={isDisabled}
-                onChange={value => updateAddressObject(address, setAddress, 'city', value)}
+                onChange={(value: string) =>
+                  updateAddressObject(address, setAddress, 'city', value)
+                }
               />
             </Form.Group>
             <Form.Group>
@@ -282,7 +290,9 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                 name={t('userList.panels.country')}
                 value={address?.country}
                 disabled={isDisabled}
-                onChange={value => updateAddressObject(address, setAddress, 'country', value)}
+                onChange={(value: string) =>
+                  updateAddressObject(address, setAddress, 'country', value)
+                }
               />
             </Form.Group>
             <Form.Group>
@@ -297,7 +307,7 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                   name={t('userList.panels.password')}
                   value={password}
                   disabled={isDisabled}
-                  onChange={value => setPassword(value)}
+                  onChange={(value: string) => setPassword(value)}
                 />
               </Form.Group>
             ) : (
@@ -354,7 +364,7 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
         </Button>
       </Drawer.Footer>
 
-      <Modal show={isResetUserPasswordOpen} onHide={() => setIsResetUserPasswordOpen(false)}>
+      <Modal open={isResetUserPasswordOpen} onClose={() => setIsResetUserPasswordOpen(false)}>
         <Modal.Header>
           <Modal.Title>{t('userList.panels.resetPassword')}</Modal.Title>
         </Modal.Header>

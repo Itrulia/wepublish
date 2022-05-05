@@ -295,9 +295,9 @@ export function ArticleList() {
       </div>
 
       <Modal
-        show={isArticlePreviewLinkOpen}
-        width={'sm'}
-        onHide={() => setArticlePreviewLinkOpen(false)}>
+        open={isArticlePreviewLinkOpen}
+        size={'sm'}
+        onClose={() => setArticlePreviewLinkOpen(false)}>
         {currentArticle && (
           <ArticlePreviewLinkPanel
             props={{id: currentArticle.id}}
@@ -307,9 +307,9 @@ export function ArticleList() {
       </Modal>
 
       <Modal
-        show={isConfirmationDialogOpen}
-        width={'sm'}
-        onHide={() => setConfirmationDialogOpen(false)}>
+        open={isConfirmationDialogOpen}
+        size={'sm'}
+        onClose={() => setConfirmationDialogOpen(false)}>
         <Modal.Header>
           <Modal.Title>
             {confirmAction === ConfirmAction.Unpublish

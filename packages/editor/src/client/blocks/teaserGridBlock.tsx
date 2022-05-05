@@ -108,7 +108,7 @@ export function TeaserGridBlock({value, onChange}: BlockProps<TeaserGridBlockVal
           />
         ))}
       </Grid>
-      <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>
+      <Drawer open={isEditModalOpen} size={'sm'} onClose={() => setEditModalOpen(false)}>
         <TeaserEditPanel
           initialTeaser={teasers[editIndex][1]!}
           onClose={() => setEditModalOpen(false)}
@@ -118,7 +118,7 @@ export function TeaserGridBlock({value, onChange}: BlockProps<TeaserGridBlockVal
           }}
         />
       </Drawer>
-      <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
+      <Drawer open={isChooseModalOpen} size={'sm'} onClose={() => setChooseModalOpen(false)}>
         <TeaserSelectAndEditPanel
           onClose={() => setChooseModalOpen(false)}
           onSelect={teaser => {

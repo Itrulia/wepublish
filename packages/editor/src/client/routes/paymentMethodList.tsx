@@ -128,9 +128,9 @@ export function PaymentMethodList() {
       </Table>
 
       <Drawer
-        show={isEditModalOpen}
+        open={isEditModalOpen}
         size={'sm'}
-        onHide={() => {
+        onClose={() => {
           setEditModalOpen(false)
           dispatch({
             type: RouteActionType.PushRoute,
@@ -158,7 +158,7 @@ export function PaymentMethodList() {
         />
       </Drawer>
 
-      <Modal show={isConfirmationDialogOpen} size={'sm'}>
+      <Modal open={isConfirmationDialogOpen} size={'sm'}>
         <Modal.Header>
           <Modal.Title>{t('paymentMethodList.deleteModalTitle')}</Modal.Title>
         </Modal.Header>

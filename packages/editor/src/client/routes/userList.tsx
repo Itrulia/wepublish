@@ -243,9 +243,9 @@ export function UserList() {
       </div>
 
       <Drawer
-        show={isEditModalOpen}
+        open={isEditModalOpen}
         size={'sm'}
-        onHide={() => {
+        onClose={() => {
           setEditModalOpen(false)
           dispatch({
             type: RouteActionType.PushRoute,
@@ -272,7 +272,7 @@ export function UserList() {
         />
       </Drawer>
 
-      <Modal show={isResetUserPasswordOpen} onHide={() => setIsResetUserPasswordOpen(false)}>
+      <Modal open={isResetUserPasswordOpen} onClose={() => setIsResetUserPasswordOpen(false)}>
         <Modal.Header>
           <Modal.Title>{t('userList.panels.resetPassword')}</Modal.Title>
         </Modal.Header>
@@ -292,7 +292,7 @@ export function UserList() {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={isConfirmationDialogOpen} onHide={() => setConfirmationDialogOpen(false)}>
+      <Modal open={isConfirmationDialogOpen} onClose={() => setConfirmationDialogOpen(false)}>
         <Modal.Header>
           <Modal.Title>{t('userList.panels.deleteUser')}</Modal.Title>
         </Modal.Header>

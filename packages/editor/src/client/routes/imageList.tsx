@@ -227,9 +227,9 @@ export function ImageList() {
       </div>
 
       <Drawer
-        show={isUploadModalOpen}
+        open={isUploadModalOpen}
         size={'sm'}
-        onHide={() => {
+        onClose={() => {
           setUploadModalOpen(false)
           dispatch({
             type: RouteActionType.PushRoute,
@@ -254,9 +254,9 @@ export function ImageList() {
         />
       </Drawer>
       <Drawer
-        show={isEditModalOpen}
+        open={isEditModalOpen}
         size={'sm'}
-        onHide={() => {
+        onClose={() => {
           setEditModalOpen(false)
           dispatch({
             type: RouteActionType.PushRoute,
@@ -274,7 +274,7 @@ export function ImageList() {
           }}
         />
       </Drawer>
-      <Modal show={isConfirmationDialogOpen} onHide={() => setConfirmationDialogOpen(false)}>
+      <Modal open={isConfirmationDialogOpen} onClose={() => setConfirmationDialogOpen(false)}>
         <Modal.Title>{t('images.panels.deleteImage')}</Modal.Title>
 
         <Modal.Body>

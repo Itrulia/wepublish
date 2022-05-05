@@ -263,9 +263,9 @@ export function SubscriptionList() {
       </div>
 
       <Drawer
-        show={isEditModalOpen}
+        open={isEditModalOpen}
         size={'sm'}
-        onHide={() => {
+        onClose={() => {
           setEditModalOpen(false)
           dispatch({
             type: RouteActionType.PushRoute,
@@ -292,7 +292,7 @@ export function SubscriptionList() {
         />
       </Drawer>
 
-      <Modal show={isExportModalOpen} onHide={() => setExportModalOpen(false)}>
+      <Modal open={isExportModalOpen} onClose={() => setExportModalOpen(false)}>
         <Modal.Header>
           <Modal.Title>{t('userList.panels.exportSubscriptions')}</Modal.Title>
         </Modal.Header>
@@ -308,7 +308,7 @@ export function SubscriptionList() {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={isConfirmationDialogOpen} onHide={() => setConfirmationDialogOpen(false)}>
+      <Modal open={isConfirmationDialogOpen} onClose={() => setConfirmationDialogOpen(false)}>
         <Modal.Header>
           <Modal.Title>{t('subscriptionList.panels.deleteSubscription')}</Modal.Title>
         </Modal.Header>

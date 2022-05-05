@@ -402,7 +402,7 @@ export function PageEditor({id}: PageEditorProps) {
           </BlockList>
         </EditorTemplate>
       </fieldset>
-      <Drawer show={isMetaDrawerOpen} size={'sm'} onHide={() => setMetaDrawerOpen(false)}>
+      <Drawer open={isMetaDrawerOpen} size={'sm'} onClose={() => setMetaDrawerOpen(false)}>
         <PageMetadataPanel
           value={metadata}
           onClose={() => {
@@ -416,7 +416,7 @@ export function PageEditor({id}: PageEditorProps) {
         />
       </Drawer>
 
-      <Modal show={isPublishDialogOpen} size={'sm'} onHide={() => setPublishDialogOpen(false)}>
+      <Modal open={isPublishDialogOpen} size={'sm'} onClose={() => setPublishDialogOpen(false)}>
         <PublishPagePanel
           publishedAtDate={publishedAt}
           updatedAtDate={updatedAt}

@@ -150,7 +150,7 @@ export function AuthorEditPanel({id, onClose, onSave}: AuthorEditPanelProps) {
                   name={t('authors.panels.name')}
                   value={name}
                   disabled={isDisabled}
-                  onChange={value => {
+                  onChange={(value: string) => {
                     setName(value)
                     setSlug(slugify(value))
                   }}
@@ -231,7 +231,7 @@ export function AuthorEditPanel({id, onClose, onSave}: AuthorEditPanelProps) {
         </Button>
       </Drawer.Footer>
 
-      <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
+      <Drawer open={isChooseModalOpen} size={'sm'} onClose={() => setChooseModalOpen(false)}>
         <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
           onSelect={value => {
@@ -240,7 +240,7 @@ export function AuthorEditPanel({id, onClose, onSave}: AuthorEditPanelProps) {
           }}
         />
       </Drawer>
-      <Drawer show={isEditModalOpen} size={'sm'}>
+      <Drawer open={isEditModalOpen} size={'sm'}>
         <ImagedEditPanel
           id={image?.id}
           onClose={() => setEditModalOpen(false)}

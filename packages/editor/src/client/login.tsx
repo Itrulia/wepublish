@@ -25,8 +25,10 @@ import {
 
 import {useTranslation} from 'react-i18next'
 import {Button, Form, Divider, toaster, Message} from 'rsuite'
-import {SVGIcon} from 'rsuite/lib/@types/common'
-import {IconNames} from 'rsuite/lib/Icon/Icon'
+import GoogleIcon from '@rsuite/icons/legacy/Google'
+import FacebookIcon from '@rsuite/icons/legacy/Facebook'
+import TwitterIcon from '@rsuite/icons/legacy/Twitter'
+import SpaceShuttleIcon from '@rsuite/icons/legacy/SpaceShuttle'
 
 export function Login() {
   const [email, setEmail] = useState('')
@@ -162,16 +164,16 @@ export function Login() {
     routeDispatch({type: RouteActionType.ReplaceRoute, route: IndexRoute.create({})})
   }
 
-  function getAuthLogo(name: string): IconNames | SVGIcon {
+  function getAuthLogo(name: string): React.ReactElement {
     switch (name) {
       case 'google':
-        return 'google'
+        return <GoogleIcon />
       case 'facebook':
-        return 'facebook'
+        return <FacebookIcon />
       case 'twitter':
-        return 'twitter'
+        return <TwitterIcon />
       default:
-        return 'space-shuttle'
+        return <SpaceShuttleIcon />
     }
   }
 
@@ -189,20 +191,22 @@ export function Login() {
             <Form.Group>
               <Form.ControlLabel>{t('login.email')}</Form.ControlLabel>
               <Form.Control
+                name={''}
                 className={'username'}
                 value={email}
                 autoComplete={'username'}
-                onChange={email => setEmail(email)}
+                onChange={(email: string) => setEmail(email)}
               />
             </Form.Group>
             <Form.Group>
               <Form.ControlLabel>{t('login.password')}</Form.ControlLabel>
               <Form.Control
+                name={''}
                 className={'password'}
                 type="password"
                 value={password}
                 autoComplete={'currentPassword'}
-                onChange={password => setPassword(password)}
+                onChange={(password: string) => setPassword(password)}
               />
             </Form.Group>
             <Button appearance="primary" type="submit" disabled={loading} onClick={login}>
@@ -219,7 +223,7 @@ export function Login() {
                     key={index}
                     appearance="subtle"
                     href={provider.url}
-                    icon={<Icon icon={getAuthLogo(provider.name)} />}>
+                    icon={getAuthLogo(provider.name)}>
                     {provider.name}
                   </IconButtonLink>
                 )

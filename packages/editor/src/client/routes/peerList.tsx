@@ -44,6 +44,7 @@ import {NavigationBar} from '../atoms/navigationBar'
 import {PeerInfoEditPanel} from '../panel/peerProfileEditPanel'
 import TrashIcon from '@rsuite/icons/legacy/Trash'
 import CogIcon from '@rsuite/icons/legacy/Cog'
+import {Form} from 'rsuite'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -227,9 +228,9 @@ export function PeerList() {
       </div>
 
       <Drawer
-        show={isPeerProfileEditModalOpen}
+        open={isPeerProfileEditModalOpen}
         size={'sm'}
-        onHide={() => {
+        onClose={() => {
           setPeerProfileEditModalOpen(false)
           dispatch({
             type: RouteActionType.PushRoute,
@@ -248,9 +249,9 @@ export function PeerList() {
       </Drawer>
 
       <Drawer
-        show={isEditModalOpen}
+        open={isEditModalOpen}
         size={'sm'}
-        onHide={() => {
+        onClose={() => {
           setEditModalOpen(false)
           dispatch({
             type: RouteActionType.PushRoute,
@@ -287,7 +288,7 @@ export function PeerList() {
         )}
       </Drawer>
 
-      <Modal show={isConfirmationDialogOpen} onHide={() => setConfirmationDialogOpen(false)}>
+      <Modal open={isConfirmationDialogOpen} onClose={() => setConfirmationDialogOpen(false)}>
         <Modal.Header>
           <Modal.Title>{t('peerList.panels.deletePeer')}</Modal.Title>
         </Modal.Header>

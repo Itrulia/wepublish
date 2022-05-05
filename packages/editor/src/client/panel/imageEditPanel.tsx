@@ -298,25 +298,28 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.filename')}</Form.ControlLabel>
                   <Form.Control
+                    name={''}
                     value={filename}
                     disabled={isDisabled}
-                    onChange={value => setFilename(value)}
+                    onChange={(value: string) => setFilename(value)}
                   />
                 </Form.Group>
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.title')}</Form.ControlLabel>
                   <Form.Control
+                    name={''}
                     value={title}
                     disabled={isDisabled}
-                    onChange={value => setTitle(value)}
+                    onChange={(value: string) => setTitle(value)}
                   />
                 </Form.Group>
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.description')}</Form.ControlLabel>
                   <Form.Control
+                    name={''}
                     value={description}
                     disabled={isDisabled}
-                    onChange={value => setDescription(value)}
+                    onChange={(value: string) => setDescription(value)}
                   />
                 </Form.Group>
                 <Form.Group>
@@ -338,26 +341,29 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.source')}</Form.ControlLabel>
                   <Form.Control
+                    name={''}
                     value={source}
                     disabled={isDisabled}
-                    onChange={value => setSource(value)}
+                    onChange={(value: string) => setSource(value)}
                   />
                 </Form.Group>
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.link')}</Form.ControlLabel>
                   <Form.Control
+                    name={''}
                     value={link}
                     disabled={isDisabled}
-                    onChange={value => setLink(value)}
+                    onChange={(value: string) => setLink(value)}
                   />
                   <p>{t('images.panels.sourceLink')}</p>
                 </Form.Group>
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.license')}</Form.ControlLabel>
                   <Form.Control
+                    name={''}
                     value={license}
                     disabled={isDisabled}
-                    onChange={value => setLicense(value)}
+                    onChange={(value: string) => setLicense(value)}
                   />
                 </Form.Group>
               </Form>

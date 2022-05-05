@@ -70,7 +70,7 @@ export function EmbedBlock({value, onChange, autofocus}: BlockProps<EmbedBlockVa
           )}
         </PlaceholderInput>
       </Panel>
-      <Drawer size={'sm'} show={isEmbedDialogOpen} onHide={() => setEmbedDialogOpen(false)}>
+      <Drawer size={'sm'} open={isEmbedDialogOpen} onClose={() => setEmbedDialogOpen(false)}>
         <EmbedEditPanel
           value={value}
           onClose={() => setEmbedDialogOpen(false)}

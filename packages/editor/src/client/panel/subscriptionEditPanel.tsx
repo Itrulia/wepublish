@@ -470,11 +470,11 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
 
       {id && user && (
         <Modal
-          show={isDeactivationPanelOpen}
+          open={isDeactivationPanelOpen}
           size={'sm'}
           backdrop={'static'}
           keyboard={false}
-          onHide={() => setDeactivationPanelOpen(false)}>
+          onClose={() => setDeactivationPanelOpen(false)}>
           <UserSubscriptionDeactivatePanel
             displayName={user.preferredName || user.name || user.email}
             paidUntil={paidUntil ?? undefined}

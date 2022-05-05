@@ -9,8 +9,6 @@ import React, {
 } from 'react'
 
 import {Popover, PopoverProps, Whisper, Divider} from 'rsuite'
-import {SVGIcon} from 'rsuite/lib/@types/common'
-import {IconNames} from 'rsuite/lib/Icon/Icon'
 
 import './toolbar.less'
 import {WepublishEditor} from '../blocks/richTextBlock/editor/wepublishEditor'
@@ -87,13 +85,13 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
 )
 
 export interface ToolbarIconButtonProps extends BaseToolbarButtonProps {
-  readonly icon: IconNames | SVGIcon
+  readonly icon: React.ReactElement
 }
 
 export function ToolbarIconButton({icon, active, ...props}: ToolbarIconButtonProps) {
   return (
     <ToolbarButton active={active} {...props}>
-      <Icon icon={icon} element={icon} />
+      {icon}
     </ToolbarButton>
   )
 }
@@ -161,12 +159,12 @@ export const SubMenuButton = forwardRef<PopoverProps, SubMenuButtonProps>(
                 }}
               />
             ) : (
-              <Icon
+              <div
                 style={{
                   minWidth: '15px' // width of close icon (14px) so that element does not change size as long as the provided icon is < 15px.
-                }}
-                icon={icon}
-              />
+                }}>
+                {icon}
+              </div>
             )}
           </ToolbarButton>
         </Whisper>

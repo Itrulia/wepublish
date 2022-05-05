@@ -165,8 +165,9 @@ export function ArticleMetadataPanel({
                   </label>
                 </Form.ControlLabel>
                 <Form.Control
+                  name={''}
                   value={socialMediaTitle || ''}
-                  onChange={socialMediaTitle => {
+                  onChange={(socialMediaTitle: string) => {
                     onChange?.({...value, socialMediaTitle})
                   }}
                 />
@@ -188,10 +189,11 @@ export function ArticleMetadataPanel({
                   </label>
                 </Form.ControlLabel>
                 <Form.Control
+                  name={''}
                   rows={5}
                   as="textarea"
                   value={socialMediaDescription || ''}
-                  onChange={socialMediaDescription => {
+                  onChange={(socialMediaDescription: string) => {
                     onChange?.({...value, socialMediaDescription})
                   }}
                 />
@@ -247,9 +249,10 @@ export function ArticleMetadataPanel({
                   </label>
                 </Form.ControlLabel>
                 <Form.Control
+                  name={''}
                   className="preTitle"
                   value={preTitle}
-                  onChange={preTitle => onChange?.({...value, preTitle})}
+                  onChange={(preTitle: string) => onChange?.({...value, preTitle})}
                 />
                 {value.preTitle.length > preTitleMax && (
                   <label style={{color: 'gold'}}>
@@ -266,9 +269,10 @@ export function ArticleMetadataPanel({
                   </label>
                 </Form.ControlLabel>
                 <Form.Control
+                  name={''}
                   className="title"
                   value={title}
-                  onChange={title => onChange?.({...value, title})}
+                  onChange={(title: string) => onChange?.({...value, title})}
                 />
                 <Form.HelpText>{t('articleEditor.panels.titleHelpBlock')}</Form.HelpText>
                 {value.title.length > titleMax && (
@@ -286,11 +290,12 @@ export function ArticleMetadataPanel({
                   </label>
                 </Form.ControlLabel>
                 <Form.Control
+                  name={''}
                   className="lead"
                   rows={5}
                   as="textarea"
                   value={lead}
-                  onChange={lead => {
+                  onChange={(lead: string) => {
                     onChange?.({...value, lead})
                   }}
                 />
@@ -310,9 +315,10 @@ export function ArticleMetadataPanel({
                   </label>
                 </Form.ControlLabel>
                 <Form.Control
+                  name={''}
                   className="seoTitle"
                   value={seoTitle}
-                  onChange={seoTitle => onChange?.({...value, seoTitle})}
+                  onChange={(seoTitle: string) => onChange?.({...value, seoTitle})}
                 />
                 <Form.HelpText>
                   <Trans i18nKey={'articleEditor.panels.seoTitleHelpBlock'}>
@@ -335,9 +341,10 @@ export function ArticleMetadataPanel({
                 <Form.ControlLabel>{t('articleEditor.panels.slug')}</Form.ControlLabel>
                 <InputGroup style={{width: '100%'}}>
                   <Form.Control
+                    name={''}
                     className="slug"
                     value={slug}
-                    onChange={slug => onChange?.({...value, slug})}
+                    onChange={(slug: string) => onChange?.({...value, slug})}
                     onBlur={() => onChange?.({...value, slug: slugify(slug)})}
                   />
                   <Whisper
@@ -399,9 +406,10 @@ export function ArticleMetadataPanel({
               <Form.Group>
                 <Form.ControlLabel>{t('articleEditor.panels.canonicalUrl')}</Form.ControlLabel>
                 <Form.Control
+                  name={''}
                   className="canonicalUrl"
                   value={canonicalUrl}
-                  onChange={canonicalUrl => onChange?.({...value, canonicalUrl})}
+                  onChange={(canonicalUrl: string) => onChange?.({...value, canonicalUrl})}
                 />
                 <Form.HelpText>
                   <Trans i18nKey={'articleEditor.panels.canonicalUrLHelpBlock'}>
@@ -478,7 +486,6 @@ export function ArticleMetadataPanel({
                           checkedChildren={t('articleEditor.panels.public')}
                           unCheckedChildren={t('articleEditor.panels.private')}
                           checked={value.public}
-                          value={value.public}
                           onChange={isPublic => onChange({...value, public: isPublic})}
                         />
                       </Form.Group>
@@ -526,9 +533,9 @@ export function ArticleMetadataPanel({
       </Drawer.Footer>
 
       <Drawer
-        show={isChooseModalOpen}
+        open={isChooseModalOpen}
         size={'sm'}
-        onHide={() => {
+        onClose={() => {
           setChooseModalOpen(false)
         }}>
         <ImageSelectPanel
@@ -541,9 +548,9 @@ export function ArticleMetadataPanel({
       </Drawer>
       {(value.image || value.socialMediaImage) && (
         <Drawer
-          show={isEditModalOpen}
+          open={isEditModalOpen}
           size={'sm'}
-          onHide={() => {
+          onClose={() => {
             setEditModalOpen(false)
           }}>
           <ImagedEditPanel

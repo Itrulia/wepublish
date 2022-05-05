@@ -74,7 +74,7 @@ export function LinkPageBreakBlock({
           <RichTextBlock value={richText || createDefaultValue()} onChange={handleRichTextChange} />
         </div>
       </div>
-      <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
+      <Drawer open={isChooseModalOpen} size={'sm'} onClose={() => setChooseModalOpen(false)}>
         <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
           onSelect={image => {
@@ -84,7 +84,7 @@ export function LinkPageBreakBlock({
         />
       </Drawer>
       {image && (
-        <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>
+        <Drawer open={isEditModalOpen} size={'sm'} onClose={() => setEditModalOpen(false)}>
           <ImagedEditPanel
             id={image!.id}
             onClose={() => setEditModalOpen(false)}
@@ -92,7 +92,7 @@ export function LinkPageBreakBlock({
           />
         </Drawer>
       )}
-      <Drawer show={isEditPanelOpen} size={'sm'} onHide={() => setEditPanelOpen(false)}>
+      <Drawer open={isEditPanelOpen} size={'sm'} onClose={() => setEditPanelOpen(false)}>
         <LinkPageBreakEditPanel
           value={value}
           onClose={() => setEditPanelOpen(false)}

@@ -282,7 +282,7 @@ export function PageList() {
         />
       </div>
 
-      <Modal show={isPagePreviewLinkOpen} width={'sm'} onHide={() => setPagePreviewLinkOpen(false)}>
+      <Modal open={isPagePreviewLinkOpen} size={'sm'} onClose={() => setPagePreviewLinkOpen(false)}>
         {currentPage && (
           <PagePreviewLinkPanel
             props={{id: currentPage.id}}
@@ -292,9 +292,9 @@ export function PageList() {
       </Modal>
 
       <Modal
-        show={isConfirmationDialogOpen}
-        width={'sm'}
-        onHide={() => setConfirmationDialogOpen(false)}>
+        open={isConfirmationDialogOpen}
+        size={'sm'}
+        onClose={() => setConfirmationDialogOpen(false)}>
         <Modal.Header>
           <Modal.Title>
             {confirmAction === ConfirmAction.Unpublish

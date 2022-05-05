@@ -107,8 +107,9 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
               <Form.Group>
                 <Form.ControlLabel>{t('pageEditor.panels.socialMediaTitle')}</Form.ControlLabel>
                 <Form.Control
+                  name={''}
                   value={socialMediaTitle}
-                  onChange={socialMediaTitle => {
+                  onChange={(socialMediaTitle: string) => {
                     onChange?.({...value, socialMediaTitle})
                   }}
                 />
@@ -118,10 +119,11 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
                   {t('pageEditor.panels.socialMediaDescription')}
                 </Form.ControlLabel>
                 <Form.Control
+                  name={''}
                   rows={5}
                   as="textarea"
                   value={socialMediaDescription}
-                  onChange={socialMediaDescription => {
+                  onChange={(socialMediaDescription: string) => {
                     onChange?.({...value, socialMediaDescription})
                   }}
                 />
@@ -150,19 +152,28 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
             <Form fluid={true}>
               <Form.Group>
                 <Form.ControlLabel>{t('pageEditor.panels.slug')}</Form.ControlLabel>
-                <Form.Control value={slug} onChange={slug => onChange?.({...value, slug})} />
+                <Form.Control
+                  name={''}
+                  value={slug}
+                  onChange={(slug: string) => onChange?.({...value, slug})}
+                />
               </Form.Group>
               <Form.Group>
                 <Form.ControlLabel>{t('pageEditor.panels.title')}</Form.ControlLabel>
-                <Form.Control value={title} onChange={title => onChange?.({...value, title})} />
+                <Form.Control
+                  name={''}
+                  value={title}
+                  onChange={(title: string) => onChange?.({...value, title})}
+                />
                 <Form.HelpText>{t('pageEditor.panels.titleHelpBlock')}</Form.HelpText>
               </Form.Group>
               <Form.Group>
                 <Form.ControlLabel>{t('pageEditor.panels.description')}</Form.ControlLabel>
                 <Form.Control
+                  name={''}
                   as="textarea"
                   value={description}
-                  onChange={description => onChange?.({...value, description})}
+                  onChange={(description: string) => onChange?.({...value, description})}
                 />
                 <Form.HelpText>{t('pageEditor.panels.descriptionHelpBlock')}</Form.HelpText>
               </Form.Group>
@@ -236,7 +247,6 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
                       <Form.Group style={{paddingTop: '6px', paddingLeft: '8px'}}>
                         <Toggle
                           style={{maxWidth: '70px', minWidth: '70px'}}
-                          value={value.public}
                           checkedChildren={t('pageEditor.panels.public')}
                           unCheckedChildren={t('pageEditor.panels.private')}
                           checked={value.public}
@@ -287,7 +297,7 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
         </Button>
       </Drawer.Footer>
 
-      <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
+      <Drawer open={isChooseModalOpen} size={'sm'} onClose={() => setChooseModalOpen(false)}>
         <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
           onSelect={value => {
@@ -298,9 +308,9 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
       </Drawer>
       {(value.image || value.socialMediaImage) && (
         <Drawer
-          show={isEditModalOpen}
+          open={isEditModalOpen}
           size={'sm'}
-          onHide={() => {
+          onClose={() => {
             setEditModalOpen(false)
           }}>
           <ImagedEditPanel

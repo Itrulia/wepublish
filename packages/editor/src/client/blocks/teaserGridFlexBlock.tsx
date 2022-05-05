@@ -254,7 +254,7 @@ export function TeaserGridFlexBlock({value, onChange}: BlockProps<TeaserGridFlex
         ))}
       </GridLayout>
 
-      <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>
+      <Drawer open={isEditModalOpen} size={'sm'} onClose={() => setEditModalOpen(false)}>
         {editItem?.teaser && (
           <TeaserEditPanel
             key={editItem.alignment.i}
@@ -267,7 +267,7 @@ export function TeaserGridFlexBlock({value, onChange}: BlockProps<TeaserGridFlex
           />
         )}
       </Drawer>
-      <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
+      <Drawer open={isChooseModalOpen} size={'sm'} onClose={() => setChooseModalOpen(false)}>
         <TeaserSelectAndEditPanel
           onClose={() => setChooseModalOpen(false)}
           onSelect={teaser => {

@@ -13,6 +13,7 @@ import {WepublishEditor} from '../editor/wepublishEditor'
 import {Format} from '../editor/formats'
 
 interface FormatBlockIconButtonProps extends ToolbarIconButtonProps {
+  readonly icon: React.ReactElement
   readonly format: Format
 }
 

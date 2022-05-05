@@ -186,7 +186,7 @@ export function ImageGalleryBlock({
           handleCaptionChange(e.target.value)
         }}
       />
-      <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
+      <Drawer open={isChooseModalOpen} size={'sm'} onClose={() => setChooseModalOpen(false)}>
         <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
           onSelect={value => {
@@ -196,14 +196,14 @@ export function ImageGalleryBlock({
         />
       </Drawer>
       {image && (
-        <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>
+        <Drawer open={isEditModalOpen} size={'sm'} onClose={() => setEditModalOpen(false)}>
           <ImagedEditPanel id={image!.id} onClose={() => setEditModalOpen(false)} />
         </Drawer>
       )}
       <Drawer
-        show={isGalleryListEditModalOpen}
+        open={isGalleryListEditModalOpen}
         size={'sm'}
-        onHide={() => setGalleryListEditModalOpen(false)}>
+        onClose={() => setGalleryListEditModalOpen(false)}>
         <GalleryListEditPanel
           initialImages={value.images}
           onSave={images => {

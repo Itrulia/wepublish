@@ -130,8 +130,8 @@ export function TokenList() {
       )}
 
       <Drawer
-        show={isTokenGeneratePanelOpen}
-        onHide={() => {
+        open={isTokenGeneratePanelOpen}
+        onClose={() => {
           dispatch({
             type: RouteActionType.PushRoute,
             route: TokenListRoute.create({})
@@ -148,7 +148,7 @@ export function TokenList() {
         />
       </Drawer>
 
-      <Modal show={isConfirmationDialogOpen} onHide={() => setConfirmationDialogOpen(false)}>
+      <Modal open={isConfirmationDialogOpen} onClose={() => setConfirmationDialogOpen(false)}>
         <Modal.Header>
           <Modal.Title>{t('tokenList.panels.deleteToken')}</Modal.Title>
         </Modal.Header>

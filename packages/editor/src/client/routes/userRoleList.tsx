@@ -132,8 +132,8 @@ export function UserRoleList() {
       </Table>
 
       <Drawer
-        show={isEditModalOpen}
-        onHide={() => {
+        open={isEditModalOpen}
+        onClose={() => {
           setEditModalOpen(false)
           dispatch({
             type: RouteActionType.PushRoute,
@@ -160,7 +160,7 @@ export function UserRoleList() {
           }}
         />
       </Drawer>
-      <Modal show={isConfirmationDialogOpen} onHide={() => setConfirmationDialogOpen(false)}>
+      <Modal open={isConfirmationDialogOpen} onClose={() => setConfirmationDialogOpen(false)}>
         <Modal.Header>
           <Modal.Title>{t('userRoles.panels.deleteUserRole')}</Modal.Title>
         </Modal.Header>

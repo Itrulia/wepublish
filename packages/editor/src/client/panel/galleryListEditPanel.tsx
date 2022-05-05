@@ -88,16 +88,17 @@ export function GalleryListItem({value, onChange}: FieldProps<GalleryImageEdge>)
           <Form.Group>
             <Form.ControlLabel>{t('blocks.imageGallery.panels.caption')}</Form.ControlLabel>
             <Form.Control
+              name={''}
               rows={1}
               as="textarea"
               value={caption}
-              onChange={caption => onChange({...value, caption})}
+              onChange={(caption: string) => onChange({...value, caption})}
             />
           </Form.Group>
         </Form>
       </div>
 
-      <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
+      <Drawer open={isChooseModalOpen} size={'sm'} onClose={() => setChooseModalOpen(false)}>
         <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
           onSelect={image => {
@@ -107,7 +108,7 @@ export function GalleryListItem({value, onChange}: FieldProps<GalleryImageEdge>)
         />
       </Drawer>
       {image && (
-        <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>
+        <Drawer open={isEditModalOpen} size={'sm'} onClose={() => setEditModalOpen(false)}>
           <ImagedEditPanel
             id={image!.id}
             onClose={() => setEditModalOpen(false)}

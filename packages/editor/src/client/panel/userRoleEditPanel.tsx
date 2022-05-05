@@ -128,7 +128,7 @@ export function UserRoleEditPanel({id, onClose, onSave}: UserRoleEditPanelProps)
               name={t('userRoles.panels.name')}
               value={name}
               disabled={isDisabled}
-              onChange={value => setName(value)}
+              onChange={(value: string) => setName(value)}
             />
           </Form.Group>
           <Form.Group>
@@ -137,7 +137,7 @@ export function UserRoleEditPanel({id, onClose, onSave}: UserRoleEditPanelProps)
               name={t('userRoles.panels.description')}
               value={description}
               disabled={isDisabled}
-              onChange={value => setDescription(value)}
+              onChange={(value: string) => setDescription(value)}
             />
           </Form.Group>
           {systemRole && <p>{t('userRoles.panels.systemRole')}</p>}

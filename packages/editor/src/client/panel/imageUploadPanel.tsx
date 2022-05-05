@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {Button, Drawer, Notification, toaster} from 'rsuite'
+import {Button, Drawer, Notification, toaster, Form} from 'rsuite'
 
 import {FileDropInput} from '../atoms/fileDropInput'
 

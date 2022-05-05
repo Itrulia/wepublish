@@ -5,6 +5,7 @@ import {IconNames} from 'rsuite/lib/Icon/Icon'
 import {SVGIcon} from 'rsuite/lib/@types/common'
 import {useTranslation} from 'react-i18next'
 import PlusIcon from '@rsuite/icons/legacy/Plus'
+import {Icon} from '@rsuite/icons'
 
 export interface MenuProps {
   readonly items: Array<MenuItem>

@@ -157,9 +157,9 @@ export function MemberPlanList() {
       </Table>
 
       <Drawer
-        show={isEditModalOpen}
+        open={isEditModalOpen}
         size={'sm'}
-        onHide={() => {
+        onClose={() => {
           setEditModalOpen(false)
           dispatch({
             type: RouteActionType.PushRoute,
@@ -184,7 +184,7 @@ export function MemberPlanList() {
           }}
         />
       </Drawer>
-      <Modal show={isConfirmationDialogOpen} size={'sm'}>
+      <Modal open={isConfirmationDialogOpen} size={'sm'}>
         <Modal.Header>
           <Modal.Title>{t('memberPlanList.deleteModalTitle')}</Modal.Title>
         </Modal.Header>

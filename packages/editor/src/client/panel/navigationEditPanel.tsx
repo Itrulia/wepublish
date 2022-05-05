@@ -212,10 +212,11 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
             <Form.Group>
               <Form.ControlLabel>{t('navigation.panels.name')}</Form.ControlLabel>
               <Form.Control
+                name={''}
                 placeholder={t('navigation.panels.name')}
                 value={name}
                 disabled={isDisabled}
-                onChange={value => {
+                onChange={(value: string) => {
                   setName(value)
                 }}
               />
@@ -223,10 +224,11 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
             <Form.Group>
               <Form.ControlLabel>{t('navigation.panels.key')}</Form.ControlLabel>
               <Form.Control
+                name={''}
                 placeholder={t('navigation.panels.key')}
                 value={key}
                 disabled={isDisabled}
-                onChange={value => {
+                onChange={(value: string) => {
                   setKey(value)
                 }}
               />

@@ -21,7 +21,7 @@ import {Typography} from '../atoms/typography'
 import {getImgMinSizeToCompress} from '../utility'
 import UploadIcon from '@rsuite/icons/legacy/Upload'
 import SearchIcon from '@rsuite/icons/legacy/Search'
-import {toaster} from 'rsuite'
+import {toaster, Form} from 'rsuite'
 
 export interface ImageSelectPanelProps {
   onClose(): void

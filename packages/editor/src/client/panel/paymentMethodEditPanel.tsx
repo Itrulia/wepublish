@@ -147,7 +147,7 @@ export function PaymentMethodEditPanel({id, onClose, onSave}: PaymentMethodEditP
                 name={t('paymentMethodList.name')}
                 value={name}
                 disabled={isDisabled}
-                onChange={value => {
+                onChange={(value: string) => {
                   setName(value)
                   setSlug(slugify(value))
                 }}
@@ -179,7 +179,7 @@ export function PaymentMethodEditPanel({id, onClose, onSave}: PaymentMethodEditP
                 name={t('paymentMethodList.description')}
                 value={description}
                 disabled={isDisabled}
-                onChange={value => {
+                onChange={(value: string) => {
                   setDescription(value)
                 }}
               />

@@ -140,7 +140,7 @@ export function PeerEditPanel({id, hostURL, onClose, onSave}: PeerEditPanelProps
               <Form.Control
                 value={name}
                 name={t('peerList.panels.name')}
-                onChange={value => {
+                onChange={(value: string) => {
                   setName(value)
                   setSlug(slugify(value))
                 }}
@@ -151,7 +151,7 @@ export function PeerEditPanel({id, hostURL, onClose, onSave}: PeerEditPanelProps
               <Form.Control
                 value={urlString}
                 name={t('peerList.panels.URL')}
-                onChange={value => {
+                onChange={(value: string) => {
                   setURLString(value)
                 }}
               />
@@ -162,7 +162,7 @@ export function PeerEditPanel({id, hostURL, onClose, onSave}: PeerEditPanelProps
                 value={token}
                 name={t('peerList.panels.token')}
                 placeholder={id ? t('peerList.panels.leaveEmpty') : undefined}
-                onChange={value => {
+                onChange={(value: string) => {
                   setToken(value)
                 }}
               />

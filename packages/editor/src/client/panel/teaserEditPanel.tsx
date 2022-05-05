@@ -50,7 +50,10 @@ export function TeaserEditPanel({
           <Form fluid>
             <Form.Group>
               <Form.ControlLabel>{t('articleEditor.panels.style')}</Form.ControlLabel>
-              <RadioGroup inline value={style} onChange={teaserStyle => setStyle(teaserStyle)}>
+              <RadioGroup
+                inline
+                value={style}
+                onChange={teaserStyle => setStyle(teaserStyle as TeaserStyle)}>
                 <Radio value={TeaserStyle.Default}>{t('articleEditor.panels.default')}</Radio>
                 <Radio value={TeaserStyle.Light}>{t('articleEditor.panels.light')}</Radio>
                 <Radio value={TeaserStyle.Text}>{t('articleEditor.panels.text')}</Radio>
@@ -58,15 +61,19 @@ export function TeaserEditPanel({
             </Form.Group>
             <Form.Group>
               <Form.ControlLabel>{t('articleEditor.panels.preTitle')}</Form.ControlLabel>
-              <Form.Control value={preTitle} onChange={preTitle => setPreTitle(preTitle)} />
+              <Form.Control
+                name={''}
+                value={preTitle}
+                onChange={(preTitle: string) => setPreTitle(preTitle)}
+              />
             </Form.Group>
             <Form.Group>
               <Form.ControlLabel>{t('articleEditor.panels.title')}</Form.ControlLabel>
-              <Form.Control value={title} onChange={title => setTitle(title)} />
+              <Form.Control name={''} value={title} onChange={(title: string) => setTitle(title)} />
             </Form.Group>
             <Form.Group>
               <Form.ControlLabel>{t('articleEditor.panels.lead')}</Form.ControlLabel>
-              <Form.Control value={lead} onChange={lead => setLead(lead)} />
+              <Form.Control name={''} value={lead} onChange={(lead: string) => setLead(lead)} />
             </Form.Group>
           </Form>
         </Panel>
@@ -100,7 +107,7 @@ export function TeaserEditPanel({
         </Button>
       </Drawer.Footer>
 
-      <Drawer show={isChooseModalOpen} size={'sm'} onHide={() => setChooseModalOpen(false)}>
+      <Drawer open={isChooseModalOpen} size={'sm'} onClose={() => setChooseModalOpen(false)}>
         <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
           onSelect={value => {
@@ -110,7 +117,7 @@ export function TeaserEditPanel({
         />
       </Drawer>
       {image && (
-        <Drawer show={isEditModalOpen} size={'sm'} onHide={() => setEditModalOpen(false)}>
+        <Drawer open={isEditModalOpen} size={'sm'} onClose={() => setEditModalOpen(false)}>
           <ImagedEditPanel id={image!.id} onClose={() => setEditModalOpen(false)} />
         </Drawer>
       )}
