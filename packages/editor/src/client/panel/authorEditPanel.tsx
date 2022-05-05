@@ -1,19 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {
-  Button,
-  Drawer,
-  Form,
-  FormControl,
-  Panel,
-  Input,
-  Alert,
-  PanelGroup,
-  InputGroup,
-  Icon,
-  ControlLabel,
-  FormGroup
-} from 'rsuite'
+import {Button, Drawer, Form, Panel, Input, Alert, PanelGroup, InputGroup} from 'rsuite'
 
 import {ListInput, ListValue} from '../atoms/listInput'
 
@@ -151,9 +138,9 @@ export function AuthorEditPanel({id, onClose, onSave}: AuthorEditPanelProps) {
         <PanelGroup>
           <Panel>
             <Form fluid={true}>
-              <FormGroup>
-                <ControlLabel>{t('authors.panels.name')}</ControlLabel>
-                <FormControl
+              <Form.Group>
+                <Form.ControlLabel>{t('authors.panels.name')}</Form.ControlLabel>
+                <Form.Control
                   name={t('authors.panels.name')}
                   value={name}
                   disabled={isDisabled}
@@ -162,10 +149,10 @@ export function AuthorEditPanel({id, onClose, onSave}: AuthorEditPanelProps) {
                     setSlug(slugify(value))
                   }}
                 />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel>{t('authors.panels.jobTitle')}</ControlLabel>
-                <FormControl
+              </Form.Group>
+              <Form.Group>
+                <Form.ControlLabel>{t('authors.panels.jobTitle')}</Form.ControlLabel>
+                <Form.Control
                   name={t('authors.panels.jobTitle')}
                   value={jobTitle}
                   disabled={isDisabled}
@@ -173,7 +160,7 @@ export function AuthorEditPanel({id, onClose, onSave}: AuthorEditPanelProps) {
                     setJobTitle(value)
                   }}
                 />
-              </FormGroup>
+              </Form.Group>
             </Form>
           </Panel>
           <Panel header={t('authors.panels.image')}>

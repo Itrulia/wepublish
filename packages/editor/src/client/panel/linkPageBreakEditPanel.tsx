@@ -1,18 +1,6 @@
 import React from 'react'
 
-import {
-  Button,
-  ControlLabel,
-  Drawer,
-  Form,
-  FormControl,
-  FormGroup,
-  Toggle,
-  HelpBlock,
-  SelectPicker,
-  RadioGroup,
-  Radio
-} from 'rsuite'
+import {Button, Drawer, Form, Toggle, SelectPicker, RadioGroup, Radio} from 'rsuite'
 
 import {useTranslation} from 'react-i18next'
 import {LinkPageBreakBlockValue} from '../blocks/types'
@@ -57,8 +45,8 @@ export function LinkPageBreakEditPanel({value, onClose, onChange}: LinkPageBreak
 
       <Drawer.Body>
         <Form fluid={true}>
-          <FormGroup>
-            <ControlLabel>{t('linkPageBreakEditPanel.style.label')}</ControlLabel>
+          <Form.Group>
+            <Form.ControlLabel>{t('linkPageBreakEditPanel.style.label')}</Form.ControlLabel>
             <SelectPicker
               block
               data={STYLE_OPTIONS.map(style => ({
@@ -75,10 +63,10 @@ export function LinkPageBreakEditPanel({value, onClose, onChange}: LinkPageBreak
                 })
               }
             />
-          </FormGroup>
+          </Form.Group>
 
-          <FormGroup>
-            <ControlLabel>{t('linkPageBreakEditPanel.layout.label')}</ControlLabel>
+          <Form.Group>
+            <Form.ControlLabel>{t('linkPageBreakEditPanel.layout.label')}</Form.ControlLabel>
             <SelectPicker
               block
               data={LAYOUT_OPTIONS.filter(
@@ -90,10 +78,10 @@ export function LinkPageBreakEditPanel({value, onClose, onChange}: LinkPageBreak
               value={layoutOption}
               onChange={layoutOption => onChange?.({...value, layoutOption})}
             />
-          </FormGroup>
+          </Form.Group>
 
-          <FormGroup>
-            <ControlLabel>{t('linkPageBreakEditPanel.template.label')}</ControlLabel>
+          <Form.Group>
+            <Form.ControlLabel>{t('linkPageBreakEditPanel.template.label')}</Form.ControlLabel>
             <SelectPicker
               block
               data={TEMPLATE_OPTIONS.map(template => ({
@@ -103,20 +91,23 @@ export function LinkPageBreakEditPanel({value, onClose, onChange}: LinkPageBreak
               value={templateOption}
               onChange={templateOption => onChange?.({...value, templateOption})}
             />
-          </FormGroup>
+          </Form.Group>
 
-          <FormGroup>
-            <ControlLabel>{t('linkPageBreakEditPanel.link.urlLabel')}</ControlLabel>
-            <FormControl value={linkURL} onChange={linkURL => onChange?.({...value, linkURL})} />
-          </FormGroup>
+          <Form.Group>
+            <Form.ControlLabel>{t('linkPageBreakEditPanel.link.urlLabel')}</Form.ControlLabel>
+            <Form.Control value={linkURL} onChange={linkURL => onChange?.({...value, linkURL})} />
+          </Form.Group>
 
-          <FormGroup>
-            <ControlLabel>{t('linkPageBreakEditPanel.link.buttonLabel')}</ControlLabel>
-            <FormControl value={linkText} onChange={linkText => onChange?.({...value, linkText})} />
-          </FormGroup>
+          <Form.Group>
+            <Form.ControlLabel>{t('linkPageBreakEditPanel.link.buttonLabel')}</Form.ControlLabel>
+            <Form.Control
+              value={linkText}
+              onChange={linkText => onChange?.({...value, linkText})}
+            />
+          </Form.Group>
 
-          <FormGroup controlId="target_radio">
-            <ControlLabel>{t('linkPageBreakEditPanel.link.targetLabel')}</ControlLabel>
+          <Form.Group controlId="target_radio">
+            <Form.ControlLabel>{t('linkPageBreakEditPanel.link.targetLabel')}</Form.ControlLabel>
             <RadioGroup
               name="target_radio"
               inline={true}
@@ -125,16 +116,18 @@ export function LinkPageBreakEditPanel({value, onClose, onChange}: LinkPageBreak
               <Radio value={'_self'}>{t('linkPageBreakEditPanel.link.targetLabelSelf')}</Radio>
               <Radio value={'_blank'}>{t('linkPageBreakEditPanel.link.targetLabelBlank')}</Radio>
             </RadioGroup>
-          </FormGroup>
+          </Form.Group>
 
-          <FormGroup>
-            <ControlLabel>{t('linkPageBreakEditPanel.link.hideToggleLabel')}</ControlLabel>
+          <Form.Group>
+            <Form.ControlLabel>
+              {t('linkPageBreakEditPanel.link.hideToggleLabel')}
+            </Form.ControlLabel>
             <Toggle
               onChange={hideButton => onChange?.({...value, hideButton})}
               checked={hideButton}
             />
-            <HelpBlock>{t('linkPageBreakEditPanel.link.hideToogleDescription')}</HelpBlock>
-          </FormGroup>
+            <Form.HelpText>{t('linkPageBreakEditPanel.link.hideToogleDescription')}</Form.HelpText>
+          </Form.Group>
         </Form>
       </Drawer.Body>
 

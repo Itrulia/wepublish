@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 import {useTranslation} from 'react-i18next'
-import {Alert, Button, Divider, Icon, IconButton, Placeholder} from 'rsuite'
+import {Alert, Button, Divider, IconButton, Placeholder} from 'rsuite'
 
 import {useSubscriptionsAsCsvLazyQuery} from '../api'
 

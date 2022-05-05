@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 
-import {Button, ControlLabel, Form, FormControl, FormGroup, Notification, Panel} from 'rsuite'
+import {Button, Form, Notification, Panel} from 'rsuite'
 
 import {useResetUserPasswordMutation} from '../api'
 
@@ -27,9 +27,9 @@ export function ResetUserPasswordPanel({userID, userName, onClose}: ResetUserPas
   return (
     <Panel>
       <Form fluid={true}>
-        <FormGroup>
-          <ControlLabel>{t('userList.panels.resetPasswordFor', {userName})}</ControlLabel>
-          <FormControl
+        <Form.Group>
+          <Form.ControlLabel>{t('userList.panels.resetPasswordFor', {userName})}</Form.ControlLabel>
+          <Form.Control
             disabled={isDisabled}
             type="password"
             placeholder={t('userList.panels.password')}
@@ -37,7 +37,7 @@ export function ResetUserPasswordPanel({userID, userName, onClose}: ResetUserPas
             value={password}
             onChange={value => setPassword(value)}
           />
-        </FormGroup>
+        </Form.Group>
       </Form>
 
       <Button

@@ -1,16 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {
-  Button,
-  Drawer,
-  Panel,
-  Form,
-  FormGroup,
-  ControlLabel,
-  FormControl,
-  Alert,
-  Message
-} from 'rsuite'
+import {Button, Drawer, Panel, Form, Alert, Message} from 'rsuite'
 
 import {
   usePeerProfileQuery,
@@ -29,7 +19,6 @@ import {ChooseEditImage} from '../atoms/chooseEditImage'
 import {createDefaultValue, RichTextBlock} from '../blocks/richTextBlock/richTextBlock'
 import {RichTextBlockValue} from '../blocks/types'
 import {ColorPicker} from '../atoms/colorPicker'
-import {FormControlUrl} from '../atoms/formControlUrl'
 import {useTranslation} from 'react-i18next'
 
 type PeerProfileImage = NonNullable<PeerProfileQuery['peerProfile']>['logo']
@@ -142,30 +131,30 @@ export function PeerInfoEditPanel({onClose, onSave}: ImageEditPanelProps) {
         </Panel>
         <Panel header={t('peerList.panels.information')}>
           <Form fluid={true}>
-            <FormGroup>
-              <ControlLabel>{t('peerList.panels.name')}</ControlLabel>
-              <FormControl name="name" value={name} onChange={value => setName(value)} />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('peerList.panels.themeColor')}</ControlLabel>
+            <Form.Group>
+              <Form.ControlLabel>{t('peerList.panels.name')}</Form.ControlLabel>
+              <Form.Control name="name" value={name} onChange={value => setName(value)} />
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('peerList.panels.themeColor')}</Form.ControlLabel>
               <ColorPicker
                 setColor={color => {
                   setThemeColor(color)
                 }}
                 currentColor={themeColor}
               />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('peerList.panels.themeFontColor')}</ControlLabel>
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('peerList.panels.themeFontColor')}</Form.ControlLabel>
               <ColorPicker
                 setColor={color => {
                   setThemeFontColor(color)
                 }}
                 currentColor={themeFontColor}
               />
-            </FormGroup>
+            </Form.Group>
 
-            <ControlLabel>{t('peerList.panels.callToActionText')}</ControlLabel>
+            <Form.ControlLabel>{t('peerList.panels.callToActionText')}</Form.ControlLabel>
             <div
               style={{
                 border: 'solid 1px #cad5e4',
@@ -173,21 +162,21 @@ export function PeerInfoEditPanel({onClose, onSave}: ImageEditPanelProps) {
                 padding: '12px',
                 marginTop: '4px'
               }}>
-              <FormGroup>
-                <ControlLabel>{t('peerList.panels.text')}</ControlLabel>
+              <Form.Group>
+                <Form.ControlLabel>{t('peerList.panels.text')}</Form.ControlLabel>
                 <RichTextBlock value={callToActionText} onChange={setCallToActionText} />
-              </FormGroup>
-              <FormGroup>
-                <FormControlUrl
+              </Form.Group>
+              <Form.Group>
+                <Form.ControlUrl
                   placeholder={t('peerList.panels.URL')}
                   name="callToActionTextURL"
                   value={callToActionTextURL}
                   onChange={setCallToActionTextURL}
                 />
-              </FormGroup>
+              </Form.Group>
             </div>
             <br />
-            <ControlLabel>{t('peerList.panels.callToActionImage')}</ControlLabel>
+            <Form.ControlLabel>{t('peerList.panels.callToActionImage')}</Form.ControlLabel>
             <div
               style={{
                 border: 'solid 1px #cad5e4',
@@ -195,8 +184,8 @@ export function PeerInfoEditPanel({onClose, onSave}: ImageEditPanelProps) {
                 padding: '12px',
                 marginTop: '4px'
               }}>
-              <FormGroup>
-                <ControlLabel>{t('peerList.panels.image')}</ControlLabel>
+              <Form.Group>
+                <Form.ControlLabel>{t('peerList.panels.image')}</Form.ControlLabel>
                 <ChooseEditImage
                   image={callToActionImage}
                   header={''}
@@ -213,9 +202,9 @@ export function PeerInfoEditPanel({onClose, onSave}: ImageEditPanelProps) {
                   }}
                   removeImage={() => setCallToActionImage(undefined)}
                 />
-              </FormGroup>
-              <FormGroup>
-                <FormControlUrl
+              </Form.Group>
+              <Form.Group>
+                <Form.ControlUrl
                   placeholder={t('peerList.panels.URL')}
                   name="callToActionImageURL"
                   value={callToActionImageURL}
@@ -227,7 +216,7 @@ export function PeerInfoEditPanel({onClose, onSave}: ImageEditPanelProps) {
                   type="info"
                   description={t('peerList.panels.ctaImageInfo')}
                 />
-              </FormGroup>
+              </Form.Group>
             </div>
           </Form>
         </Panel>

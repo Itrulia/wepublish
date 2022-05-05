@@ -19,7 +19,6 @@ import {RouteActionType} from '@wepublish/karma.run-react'
 import {useTranslation} from 'react-i18next'
 import {
   FlexboxGrid,
-  Icon,
   IconButton,
   Input,
   InputGroup,

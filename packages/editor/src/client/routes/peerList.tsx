@@ -27,22 +27,12 @@ import {IconButtonTooltip} from '../atoms/iconButtonTooltip'
 import {PeerEditPanel} from '../panel/peerEditPanel'
 
 import {Trans, useTranslation} from 'react-i18next'
-import {
-  Drawer,
-  FlexboxGrid,
-  List,
-  Avatar,
-  Icon,
-  IconButton,
-  Button,
-  Divider,
-  Modal,
-  Alert,
-  HelpBlock
-} from 'rsuite'
+import {Drawer, FlexboxGrid, List, Avatar, IconButton, Button, Divider, Modal, Alert} from 'rsuite'
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 import {NavigationBar} from '../atoms/navigationBar'
 import {PeerInfoEditPanel} from '../panel/peerProfileEditPanel'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
+import CogIcon from '@rsuite/icons/legacy/Cog'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -138,7 +128,7 @@ export function PeerList() {
             <IconButtonTooltip caption={t('peerList.overview.delete')}>
               <IconButton
                 disabled={isPeerInfoLoading}
-                icon={<Icon icon="trash" />}
+                icon={<TrashIcon />}
                 circle
                 size="sm"
                 onClick={e => {
@@ -170,7 +160,7 @@ export function PeerList() {
               />
               <h5>{peerInfoData?.peerProfile.name || t('peerList.panels.unnamed')}</h5>
               <p>{peerInfoData?.peerProfile.hostURL}</p>
-              <HelpBlock>
+              <Form.HelpText>
                 <Trans i18nKey={'peerList.panels.checkOwnPeerProfileHelpBlock'}>
                   text{' '}
                   <a
@@ -179,7 +169,7 @@ export function PeerList() {
                     rel="noreferrer"
                   />
                 </Trans>
-              </HelpBlock>
+              </Form.HelpText>
             </div>
           }
           rightChildren={
@@ -187,7 +177,7 @@ export function PeerList() {
               <IconButtonLink
                 size="lg"
                 appearance="link"
-                icon={<Icon icon="cog" />}
+                icon={<CogIcon />}
                 circle={true}
                 route={PeerInfoEditRoute.create({})}
               />

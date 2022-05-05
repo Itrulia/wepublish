@@ -1,16 +1,6 @@
 import React, {useState} from 'react'
 
-import {
-  Button,
-  ControlLabel,
-  Drawer,
-  Form,
-  FormControl,
-  FormGroup,
-  Panel,
-  Radio,
-  RadioGroup
-} from 'rsuite'
+import {Button, Drawer, Form, Panel, Radio, RadioGroup} from 'rsuite'
 
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 
@@ -58,26 +48,26 @@ export function TeaserEditPanel({
         {previewForTeaser(initialTeaser)}
         <Panel header={t('articleEditor.panels.displayOptions')}>
           <Form fluid>
-            <FormGroup>
-              <ControlLabel>{t('articleEditor.panels.style')}</ControlLabel>
+            <Form.Group>
+              <Form.ControlLabel>{t('articleEditor.panels.style')}</Form.ControlLabel>
               <RadioGroup inline value={style} onChange={teaserStyle => setStyle(teaserStyle)}>
                 <Radio value={TeaserStyle.Default}>{t('articleEditor.panels.default')}</Radio>
                 <Radio value={TeaserStyle.Light}>{t('articleEditor.panels.light')}</Radio>
                 <Radio value={TeaserStyle.Text}>{t('articleEditor.panels.text')}</Radio>
               </RadioGroup>
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('articleEditor.panels.preTitle')}</ControlLabel>
-              <FormControl value={preTitle} onChange={preTitle => setPreTitle(preTitle)} />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('articleEditor.panels.title')}</ControlLabel>
-              <FormControl value={title} onChange={title => setTitle(title)} />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('articleEditor.panels.lead')}</ControlLabel>
-              <FormControl value={lead} onChange={lead => setLead(lead)} />
-            </FormGroup>
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('articleEditor.panels.preTitle')}</Form.ControlLabel>
+              <Form.Control value={preTitle} onChange={preTitle => setPreTitle(preTitle)} />
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('articleEditor.panels.title')}</Form.ControlLabel>
+              <Form.Control value={title} onChange={title => setTitle(title)} />
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('articleEditor.panels.lead')}</Form.ControlLabel>
+              <Form.Control value={lead} onChange={lead => setLead(lead)} />
+            </Form.Group>
           </Form>
         </Panel>
 

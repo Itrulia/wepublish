@@ -11,7 +11,7 @@ import {
 import {TeaserType, TeaserLink} from '../blocks/types'
 
 import {useTranslation} from 'react-i18next'
-import {Button, Icon, Drawer, Nav, List, Input, InputGroup, Notification} from 'rsuite'
+import {Button, Drawer, Nav, List, Input, InputGroup, Notification} from 'rsuite'
 
 export interface TeaserSelectPanelProps {
   onClose(): void
@@ -52,11 +52,7 @@ export function TeaserSelectPanel({onClose, onSelect}: TeaserSelectPanelProps) {
     fetchPolicy: 'network-only'
   })
 
-  const {
-    data: pageListData,
-    fetchMore: fetchMorePages,
-    error: pageListError
-  } = usePageListQuery({
+  const {data: pageListData, fetchMore: fetchMorePages, error: pageListError} = usePageListQuery({
     variables: listVariables,
     fetchPolicy: 'no-cache'
   })

@@ -27,7 +27,6 @@ import {
   Button,
   Drawer,
   FlexboxGrid,
-  Icon,
   IconButton,
   Input,
   InputGroup,
@@ -39,6 +38,7 @@ import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 import {DEFAULT_TABLE_PAGE_SIZES, mapTableSortTypeToGraphQLSortOrder, isTempUser} from '../utility'
 import {SubscriptionEditPanel} from '../panel/subscriptionEditPanel'
 import {SubscriptionAsCsvModal} from '../panel/ExportSubscriptionsCsvModal'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
 
 const {Column, HeaderCell, Cell, Pagination} = Table
 
@@ -77,11 +77,7 @@ export function SubscriptionList() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [subscriptions, setSubscriptions] = useState<FullSubscriptionFragment[]>([])
 
-  const {
-    data,
-    refetch,
-    loading: isLoading
-  } = useSubscriptionListQuery({
+  const {data, refetch, loading: isLoading} = useSubscriptionListQuery({
     variables: {
       filter: {},
       first: limit,
@@ -238,7 +234,7 @@ export function SubscriptionList() {
                 <>
                   <IconButtonTooltip caption={t('subscriptionList.overview.delete')}>
                     <IconButton
-                      icon={<Icon icon="trash" />}
+                      icon={<TrashIcon />}
                       circle
                       size="sm"
                       style={{marginLeft: '5px'}}

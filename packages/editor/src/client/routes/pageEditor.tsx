@@ -26,7 +26,7 @@ import {useUnsavedChangesDialog} from '../unsavedChangesDialog'
 import {BlockMap} from '../blocks/blockMap'
 
 import {useTranslation} from 'react-i18next'
-import {Alert, Badge, Drawer, Icon, IconButton, Modal, Tag, Notification} from 'rsuite'
+import {Alert, Badge, Drawer, IconButton, Modal, Tag, Notification} from 'rsuite'
 import {StateColor} from '../utility'
 
 export interface PageEditorProps {

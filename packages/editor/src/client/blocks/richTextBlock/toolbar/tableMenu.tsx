@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from 'react'
 import {useTranslation} from 'react-i18next'
-import {Button, Icon, InputGroup, InputNumber} from 'rsuite'
+import {Button, InputGroup, InputNumber} from 'rsuite'
 import {Transforms} from 'slate'
 import {useSlate} from 'slate-react'
 import {ColorPicker} from '../../../atoms/colorPicker'

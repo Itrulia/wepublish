@@ -1,18 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {
-  Button,
-  ControlLabel,
-  Drawer,
-  Form,
-  FormControl,
-  FormGroup,
-  Panel,
-  Alert,
-  Toggle,
-  HelpBlock,
-  SelectPicker
-} from 'rsuite'
+import {Button, Drawer, Form, Panel, Alert, Toggle, SelectPicker} from 'rsuite'
 
 import {
   FullPaymentMethodFragment,
@@ -148,9 +136,9 @@ export function PaymentMethodEditPanel({id, onClose, onSave}: PaymentMethodEditP
       <Drawer.Body>
         <Panel>
           <Form fluid={true}>
-            <FormGroup>
-              <ControlLabel>{t('paymentMethodList.name')}</ControlLabel>
-              <FormControl
+            <Form.Group>
+              <Form.ControlLabel>{t('paymentMethodList.name')}</Form.ControlLabel>
+              <Form.Control
                 name={t('paymentMethodList.name')}
                 value={name}
                 disabled={isDisabled}
@@ -159,18 +147,18 @@ export function PaymentMethodEditPanel({id, onClose, onSave}: PaymentMethodEditP
                   setSlug(slugify(value))
                 }}
               />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('paymentMethodList.slug')}</ControlLabel>
-              <FormControl name={t('paymentMethodList.slug')} value={slug} plaintext={true} />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('paymentMethodList.active')}</ControlLabel>
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('paymentMethodList.slug')}</Form.ControlLabel>
+              <Form.Control name={t('paymentMethodList.slug')} value={slug} plaintext={true} />
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('paymentMethodList.active')}</Form.ControlLabel>
               <Toggle checked={active} disabled={isDisabled} onChange={value => setActive(value)} />
-              <HelpBlock>{t('paymentMethodList.activeDescription')}</HelpBlock>
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('paymentMethodList.adapter')}</ControlLabel>
+              <Form.HelpText>{t('paymentMethodList.activeDescription')}</Form.HelpText>
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('paymentMethodList.adapter')}</Form.ControlLabel>
               <SelectPicker
                 value={paymentProvider?.id}
                 data={paymentProviders.map(pp => ({value: pp.id, label: pp.name}))}
@@ -178,10 +166,10 @@ export function PaymentMethodEditPanel({id, onClose, onSave}: PaymentMethodEditP
                 block={true}
                 onChange={value => setPaymentProvider(paymentProviders.find(pp => pp.id === value))}
               />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('paymentMethodList.description')}</ControlLabel>
-              <FormControl
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('paymentMethodList.description')}</Form.ControlLabel>
+              <Form.Control
                 name={t('paymentMethodList.description')}
                 value={description}
                 disabled={isDisabled}
@@ -189,7 +177,7 @@ export function PaymentMethodEditPanel({id, onClose, onSave}: PaymentMethodEditP
                   setDescription(value)
                 }}
               />
-            </FormGroup>
+            </Form.Group>
           </Form>
         </Panel>
       </Drawer.Body>

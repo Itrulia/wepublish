@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 
 import {PlaceholderInput} from '../atoms/placeholderInput'
-import {Drawer, Icon, IconButton, Panel} from 'rsuite'
+import {Drawer, IconButton, Panel} from 'rsuite'
 
 import {BlockProps} from '../atoms/blockList'
 
@@ -19,6 +19,7 @@ import {IframeEmbed} from './embeds/iframe'
 import {useTranslation} from 'react-i18next'
 import {BildwurfAdEmbed} from './embeds/bildwurfAd'
 import {TikTokVideoEmbed} from './embeds/tikTok'
+import PencilIcon from '@rsuite/icons/legacy/Pencil'
 
 // TODO: Handle disabled prop
 export function EmbedBlock({value, onChange, autofocus}: BlockProps<EmbedBlockValue>) {
@@ -59,7 +60,7 @@ export function EmbedBlock({value, onChange, autofocus}: BlockProps<EmbedBlockVa
                 }}>
                 <IconButton
                   size={'lg'}
-                  icon={<Icon icon="pencil" />}
+                  icon={<PencilIcon />}
                   onClick={() => setEmbedDialogOpen(true)}>
                   {t('blocks.embeds.overview.editEmbed')}
                 </IconButton>

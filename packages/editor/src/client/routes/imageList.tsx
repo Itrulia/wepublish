@@ -27,19 +27,10 @@ import {
 import {IconButtonTooltip} from '../atoms/iconButtonTooltip'
 
 import {useTranslation} from 'react-i18next'
-import {
-  FlexboxGrid,
-  Icon,
-  Input,
-  InputGroup,
-  IconButton,
-  Drawer,
-  Modal,
-  Button,
-  Table
-} from 'rsuite'
+import {FlexboxGrid, Input, InputGroup, IconButton, Drawer, Modal, Button, Table} from 'rsuite'
 
 import {DEFAULT_TABLE_IMAGE_PAGE_SIZES} from '../utility'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
 
 const {Column, HeaderCell, Cell, Pagination} = Table
 
@@ -206,7 +197,7 @@ export function ImageList() {
                   </IconButtonTooltip>
                   <IconButtonTooltip caption={t('images.overview.delete')}>
                     <IconButton
-                      icon={<Icon icon="trash" />}
+                      icon={<TrashIcon />}
                       circle
                       size="sm"
                       style={{marginLeft: '5px'}}

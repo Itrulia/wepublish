@@ -1,15 +1,6 @@
 import React, {useState} from 'react'
 import {useTranslation} from 'react-i18next'
-import {
-  Button,
-  ControlLabel,
-  DatePicker,
-  Form,
-  FormGroup,
-  Message,
-  Modal,
-  SelectPicker
-} from 'rsuite'
+import {Button, DatePicker, Form, Message, Modal, SelectPicker} from 'rsuite'
 
 import {SubscriptionDeactivationReason} from '../api'
 
@@ -66,18 +57,18 @@ export function UserSubscriptionDeactivatePanel({
         </p>
         {!isDeactivated && (
           <Form style={{marginTop: '20px'}} fluid={true}>
-            <FormGroup>
-              <ControlLabel>{t('userSubscriptionEdit.deactivation.date')}</ControlLabel>
+            <Form.Group>
+              <Form.ControlLabel>{t('userSubscriptionEdit.deactivation.date')}</Form.ControlLabel>
               <DatePicker
                 block
                 placement="auto"
                 value={deactivationDate}
                 onChange={value => setDeactivationDate(value)}
               />
-            </FormGroup>
+            </Form.Group>
 
-            <FormGroup>
-              <ControlLabel>{t('userSubscriptionEdit.deactivation.reason')}</ControlLabel>
+            <Form.Group>
+              <Form.ControlLabel>{t('userSubscriptionEdit.deactivation.reason')}</Form.ControlLabel>
               <SelectPicker
                 searchable={false}
                 data={[
@@ -99,7 +90,7 @@ export function UserSubscriptionDeactivatePanel({
                 placement="auto"
                 onChange={value => setDeactivationReason(value)}
               />
-            </FormGroup>
+            </Form.Group>
             <Message
               showIcon
               type="info"

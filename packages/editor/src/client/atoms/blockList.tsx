@@ -5,9 +5,12 @@ import {isFunctionalUpdate} from '@wepublish/karma.run-react'
 import {isValueConstructor, ValueConstructor, UnionToIntersection} from '@karma.run/utility'
 
 import {AddBlockInput} from './addBlockInput'
-import {IconButton, Icon, Panel} from 'rsuite'
+import {IconButton, Panel} from 'rsuite'
 import {IconNames} from 'rsuite/lib/Icon/Icon'
 import {SVGIcon} from 'rsuite/lib/@types/common'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
+import ArrowUpIcon from '@rsuite/icons/legacy/ArrowUp'
+import ArrowDownIcon from '@rsuite/icons/legacy/ArrowDown'
 
 export interface BlockProps<V = any> {
   value: V
@@ -261,14 +264,14 @@ function ListItemWrapper({
           marginRight: 10
         }}>
         <IconButton
-          icon={<Icon icon="trash" />}
+          icon={<TrashIcon />}
           onClick={onDelete}
           disabled={onDelete == null || disabled}
         />
         <div style={{flexGrow: 1}} />
         <div style={{marginTop: 10, marginBottom: 5}}>
           <IconButton
-            icon={<Icon icon="arrow-up" />}
+            icon={<ArrowUpIcon />}
             onClick={onMoveUp}
             disabled={onMoveUp == null || disabled}
           />
@@ -276,7 +279,7 @@ function ListItemWrapper({
         <div style={{marginBottom: 10}}>
           <IconButton
             title=""
-            icon={<Icon icon="arrow-down" />}
+            icon={<ArrowDownIcon />}
             onClick={onMoveDown}
             disabled={onMoveDown == null || disabled}
           />

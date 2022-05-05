@@ -1,16 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {useTranslation} from 'react-i18next'
-import {
-  Alert,
-  Button,
-  ControlLabel,
-  Form,
-  FormControl,
-  FormGroup,
-  Message,
-  Modal,
-  Slider
-} from 'rsuite'
+import {Alert, Button, Form, Message, Modal, Slider} from 'rsuite'
 
 import {usePagePreviewLinkQuery} from '../api'
 
@@ -60,8 +50,10 @@ export function PagePreviewLinkPanel({props, onClose}: PagePreviewLinkPanelProps
         />
 
         <Form fluid={true}>
-          <FormGroup style={{paddingLeft: '20px', paddingRight: '20px'}}>
-            <ControlLabel>{t('articleEditor.panels.articlePreviewLinkHours')}</ControlLabel>
+          <Form.Group style={{paddingLeft: '20px', paddingRight: '20px'}}>
+            <Form.ControlLabel>
+              {t('articleEditor.panels.articlePreviewLinkHours')}
+            </Form.ControlLabel>
             <Slider
               value={hours}
               min={6}
@@ -74,11 +66,13 @@ export function PagePreviewLinkPanel({props, onClose}: PagePreviewLinkPanelProps
               }}
               onChange={value => setHours(value)}
             />
-          </FormGroup>
-          <FormGroup style={{paddingTop: '20px'}}>
-            <ControlLabel>{t('articleEditor.panels.articlePreviewLinkField')}</ControlLabel>
-            <FormControl disabled={isLoading} value={data?.pagePreviewLink} />
-          </FormGroup>
+          </Form.Group>
+          <Form.Group style={{paddingTop: '20px'}}>
+            <Form.ControlLabel>
+              {t('articleEditor.panels.articlePreviewLinkField')}
+            </Form.ControlLabel>
+            <Form.Control disabled={isLoading} value={data?.pagePreviewLink} />
+          </Form.Group>
         </Form>
       </Modal.Body>
 

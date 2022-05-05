@@ -24,7 +24,8 @@ import {getOperationNameFromDocument} from '../utility'
 import {TokenGeneratePanel} from '../panel/tokenGeneratePanel'
 
 import {useTranslation} from 'react-i18next'
-import {Button, FlexboxGrid, Icon, List, Loader, IconButton, Drawer, Modal, Alert} from 'rsuite'
+import {Button, FlexboxGrid, List, Loader, IconButton, Drawer, Modal, Alert} from 'rsuite'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
 
 export function TokenList() {
   const {current} = useRoute()
@@ -97,7 +98,7 @@ export function TokenList() {
                 <FlexboxGrid.Item colspan={1} style={{paddingRight: '10px'}}>
                   <IconButtonTooltip caption={t('tokenList.overview.delete')}>
                     <IconButton
-                      icon={<Icon icon="trash" />}
+                      icon={<TrashIcon />}
                       circle
                       size="sm"
                       onClick={() => {

@@ -11,17 +11,7 @@ import {
   ButtonLink
 } from '../route'
 
-import {
-  FlexboxGrid,
-  Icon,
-  IconButton,
-  Input,
-  InputGroup,
-  Table,
-  Drawer,
-  Modal,
-  Button
-} from 'rsuite'
+import {FlexboxGrid, IconButton, Input, InputGroup, Table, Drawer, Modal, Button} from 'rsuite'
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 
 import {useNavigationListQuery, useDeleteNavigationMutation, FullNavigationFragment} from '../api'
@@ -31,6 +21,7 @@ import {NavigationEditPanel} from '../panel/navigationEditPanel'
 import {RouteActionType} from '@wepublish/karma.run-react'
 
 import {useTranslation} from 'react-i18next'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
 const {Column, HeaderCell, Cell /*, Pagination */} = Table
 
 export function NavigationList() {
@@ -121,7 +112,7 @@ export function NavigationList() {
               <>
                 <IconButtonTooltip caption={t('navigation.overview.delete')}>
                   <IconButton
-                    icon={<Icon icon="trash" />}
+                    icon={<TrashIcon />}
                     circle
                     size="sm"
                     style={{marginLeft: '5px'}}

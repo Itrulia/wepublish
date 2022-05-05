@@ -1,6 +1,6 @@
 import React, {useRef, useEffect, useState, useCallback} from 'react'
 
-import {Drawer, IconButton, Icon, Input} from 'rsuite'
+import {Drawer, IconButton, Input} from 'rsuite'
 import {BlockProps} from '../atoms/blockList'
 import {LinkPageBreakBlockValue, RichTextBlockValue} from './types'
 import {createDefaultValue, RichTextBlock} from './richTextBlock/richTextBlock'
@@ -11,6 +11,7 @@ import {isFunctionalUpdate} from '@wepublish/karma.run-react'
 import {useTranslation} from 'react-i18next'
 import {LinkPageBreakEditPanel} from '../panel/linkPageBreakEditPanel'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
+import PencilIcon from '@rsuite/icons/legacy/Pencil'
 export type LinkPageBreakBlockProps = BlockProps<LinkPageBreakBlockValue>
 
 export function LinkPageBreakBlock({
@@ -46,11 +47,7 @@ export function LinkPageBreakBlock({
     <>
       <div style={{position: 'relative', width: '100%'}}>
         <div style={{position: 'absolute', zIndex: 1, height: '100%', right: 0}}>
-          <IconButton
-            size={'lg'}
-            icon={<Icon icon="pencil" />}
-            onClick={() => setEditPanelOpen(true)}
-          />
+          <IconButton size={'lg'} icon={<PencilIcon />} onClick={() => setEditPanelOpen(true)} />
         </div>
       </div>
       <div style={{display: 'flex', flexFlow: 'row wrap', marginTop: 50}}>

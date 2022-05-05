@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react'
 
-import {Alert, Badge, Drawer, Icon, IconButton, Modal, Notification, Tag} from 'rsuite'
+import {Alert, Badge, Drawer, IconButton, Modal, Notification, Tag} from 'rsuite'
 
 import {BlockList, useBlockMap} from '../atoms/blockList'
 import {EditorTemplate} from '../atoms/editorTemplate'

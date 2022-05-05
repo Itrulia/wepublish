@@ -1,7 +1,11 @@
 import React from 'react'
-import {Dropdown, Icon, IconButton, Panel, Placeholder} from 'rsuite'
+import {Dropdown, IconButton, Panel, Placeholder} from 'rsuite'
 import {PlaceholderInput} from './placeholderInput'
 import {useTranslation} from 'react-i18next'
+import WrenchIcon from '@rsuite/icons/legacy/Wrench'
+import ImageIcon from '@rsuite/icons/legacy/Image'
+import PencilIcon from '@rsuite/icons/legacy/Pencil'
+import CloseIcon from '@rsuite/icons/legacy/Close'
 
 export interface ChooseEditImageProps {
   image: any
@@ -46,21 +50,21 @@ export function ChooseEditImage({
               <div style={{position: 'absolute', left: left, top: top}}>
                 <Dropdown
                   renderTitle={() => {
-                    return <IconButton appearance="primary" icon={<Icon icon="wrench" />} circle />
+                    return <IconButton appearance="primary" icon={<WrenchIcon />} circle />
                   }}>
                   {openChooseModalOpen && (
                     <Dropdown.Item disabled={disabled} onClick={() => openChooseModalOpen()}>
-                      <Icon icon="image" /> {t('chooseEditImage.chooseImage')}
+                      <ImageIcon /> {t('chooseEditImage.chooseImage')}
                     </Dropdown.Item>
                   )}
                   {openEditModalOpen && (
                     <Dropdown.Item disabled={disabled} onClick={() => openEditModalOpen()}>
-                      <Icon icon="pencil" /> {t('chooseEditImage.editImage')}
+                      <PencilIcon /> {t('chooseEditImage.editImage')}
                     </Dropdown.Item>
                   )}
                   {removeImage && (
                     <Dropdown.Item disabled={disabled} onClick={() => removeImage()}>
-                      <Icon icon="close" /> {t('chooseEditImage.removeImage')}
+                      <CloseIcon /> {t('chooseEditImage.removeImage')}
                     </Dropdown.Item>
                   )}
                 </Dropdown>

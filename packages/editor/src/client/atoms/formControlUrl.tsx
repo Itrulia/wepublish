@@ -1,5 +1,5 @@
 import React, {useState, useCallback} from 'react'
-import {FormControl, Message} from 'rsuite'
+import {Form, Message} from 'rsuite'
 import {useTranslation} from 'react-i18next'
 import {validateURL} from '../utility'
 
@@ -24,7 +24,7 @@ export function FormControlUrl({placeholder, name, value, onChange}: UrlValidati
 
   return (
     <div>
-      <FormControl
+      <Form.Control
         style={invalidInput ? {border: 'thin solid red'} : {}}
         placeholder={placeholder}
         name={name}

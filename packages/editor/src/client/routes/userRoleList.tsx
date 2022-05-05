@@ -16,18 +16,9 @@ import {UserRoleEditPanel} from '../panel/userRoleEditPanel'
 import {IconButtonTooltip} from '../atoms/iconButtonTooltip'
 
 import {useTranslation} from 'react-i18next'
-import {
-  FlexboxGrid,
-  Icon,
-  IconButton,
-  Input,
-  InputGroup,
-  Table,
-  Drawer,
-  Modal,
-  Button
-} from 'rsuite'
+import {FlexboxGrid, IconButton, Input, InputGroup, Table, Drawer, Modal, Button} from 'rsuite'
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
 const {Column, HeaderCell, Cell /*, Pagination */} = Table
 
 export function UserRoleList() {
@@ -123,7 +114,7 @@ export function UserRoleList() {
             {(rowData: FullUserRoleFragment) => (
               <IconButtonTooltip caption={t('userRoles.overview.delete')}>
                 <IconButton
-                  icon={<Icon icon="trash" />}
+                  icon={<TrashIcon />}
                   disabled={rowData.systemRole}
                   circle
                   size="sm"

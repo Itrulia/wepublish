@@ -1,15 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react'
 import {useTranslation} from 'react-i18next'
-import {
-  Button,
-  Form,
-  FormGroup,
-  ControlLabel,
-  FormControl,
-  ButtonToolbar,
-  HelpBlock,
-  InputGroup
-} from 'rsuite'
+import {Button, Form, ButtonToolbar, InputGroup} from 'rsuite'
 import {Transforms, Range, Editor} from 'slate'
 import {useSlate} from 'slate-react'
 import {WepublishEditor} from '../editor/wepublishEditor'
@@ -92,8 +83,8 @@ export function LinkMenu() {
   return (
     <>
       <Form fluid>
-        <FormGroup>
-          <ControlLabel>{t('blocks.richText.link')}</ControlLabel>
+        <Form.Group>
+          <Form.ControlLabel>{t('blocks.richText.link')}</Form.ControlLabel>
           <InputGroup>
             <select
               style={{backgroundColor: 'white', border: 'none', boxShadow: 'none'}}
@@ -107,24 +98,24 @@ export function LinkMenu() {
               <option value={prefixType.other}>{prefixType.other}</option>
             </select>
 
-            <FormControl value={url} onChange={url => setURL(url)} />
+            <Form.Control value={url} onChange={url => setURL(url)} />
           </InputGroup>
           {prefix !== prefixType.mailto && url && !isValidURL ? (
-            <HelpBlock> {t('blocks.richText.invalidLink')}</HelpBlock>
+            <Form.HelpText> {t('blocks.richText.invalidLink')}</Form.HelpText>
           ) : undefined}
           {prefix === prefixType.mailto && url && !isValidMail ? (
-            <HelpBlock> {t('blocks.richText.invalidMail')} </HelpBlock>
+            <Form.HelpText> {t('blocks.richText.invalidMail')} </Form.HelpText>
           ) : undefined}
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>{t('blocks.richText.text')}</ControlLabel>
-          <FormControl
+        </Form.Group>
+        <Form.Group>
+          <Form.ControlLabel>{t('blocks.richText.text')}</Form.ControlLabel>
+          <Form.Control
             value={title}
             onChange={title => {
               setTitle(title)
             }}
           />
-        </FormGroup>
+        </Form.Group>
         <ButtonToolbar>
           <Button
             disabled={isDisabled}

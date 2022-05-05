@@ -8,7 +8,7 @@ import React, {
   ReactEventHandler
 } from 'react'
 
-import {Icon, Popover, PopoverProps, Whisper, Divider} from 'rsuite'
+import {Popover, PopoverProps, Whisper, Divider} from 'rsuite'
 import {SVGIcon} from 'rsuite/lib/@types/common'
 import {IconNames} from 'rsuite/lib/Icon/Icon'
 

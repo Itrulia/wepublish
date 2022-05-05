@@ -3,12 +3,9 @@ import React, {useEffect, useState} from 'react'
 import {
   Alert,
   Button,
-  ControlLabel,
   DatePicker,
   Drawer,
   Form,
-  FormGroup,
-  HelpBlock,
   Message,
   Modal,
   Panel,
@@ -69,11 +66,7 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
   const [memberPlans, setMemberPlans] = useState<FullMemberPlanFragment[]>([])
   const [paymentMethods, setPaymentMethods] = useState<FullPaymentMethodFragment[]>([])
 
-  const {
-    data,
-    loading: isLoading,
-    error: loadError
-  } = useSubscriptionQuery({
+  const {data, loading: isLoading, error: loadError} = useSubscriptionQuery({
     variables: {id: id!},
     fetchPolicy: 'network-only',
     skip: id === undefined
@@ -151,11 +144,15 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
     fetchPolicy: 'network-only'
   })
 
-  const [updateSubscription, {loading: isUpdating, error: updateError}] =
-    useUpdateSubscriptionMutation()
+  const [
+    updateSubscription,
+    {loading: isUpdating, error: updateError}
+  ] = useUpdateSubscriptionMutation()
 
-  const [createSubscription, {loading: isCreating, error: createError}] =
-    useCreateSubscriptionMutation()
+  const [
+    createSubscription,
+    {loading: isCreating, error: createError}
+  ] = useCreateSubscriptionMutation()
 
   const isDeactivated = deactivation?.date ? new Date(deactivation.date) < new Date() : false
 
@@ -345,8 +342,8 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
 
         <Panel>
           <Form fluid={true}>
-            <FormGroup>
-              <ControlLabel>{t('userSubscriptionEdit.selectMemberPlan')}</ControlLabel>
+            <Form.Group>
+              <Form.ControlLabel>{t('userSubscriptionEdit.selectMemberPlan')}</Form.ControlLabel>
               <SelectPicker
                 block
                 disabled={isDisabled || isDeactivated}
@@ -355,17 +352,17 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
                 onChange={value => setMemberPlan(memberPlans.find(mp => mp.id === value))}
               />
               {memberPlan && (
-                <HelpBlock>
+                <Form.HelpText>
                   <DescriptionList>
                     <DescriptionListItem label={t('userSubscriptionEdit.memberPlanMonthlyAmount')}>
                       {(memberPlan.amountPerMonthMin / 100).toFixed(2)}
                     </DescriptionListItem>
                   </DescriptionList>
-                </HelpBlock>
+                </Form.HelpText>
               )}
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('userSubscriptionEdit.selectUser')}</ControlLabel>
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('userSubscriptionEdit.selectUser')}</Form.ControlLabel>
               <SelectPicker
                 block
                 disabled={isDisabled || isDeactivated}
@@ -377,9 +374,9 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
                   refetchUsers()
                 }}
               />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('userSubscriptionEdit.monthlyAmount')}</ControlLabel>
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('userSubscriptionEdit.monthlyAmount')}</Form.ControlLabel>
               <CurrencyInput
                 currency="CHF"
                 centAmount={monthlyAmount}
@@ -388,9 +385,9 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
                 }}
                 disabled={isDisabled || hasNoMemberPlanSelected || isDeactivated}
               />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('memberPlanList.paymentPeriodicities')}</ControlLabel>
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('memberPlanList.paymentPeriodicities')}</Form.ControlLabel>
               <SelectPicker
                 value={paymentPeriodicity}
                 data={ALL_PAYMENT_PERIODICITIES.map(pp => ({
@@ -401,35 +398,35 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
                 onChange={value => setPaymentPeriodicity(value)}
                 block
               />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('userSubscriptionEdit.autoRenew')}</ControlLabel>
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('userSubscriptionEdit.autoRenew')}</Form.ControlLabel>
               <Toggle
                 checked={autoRenew}
                 disabled={isDisabled || hasNoMemberPlanSelected || isDeactivated}
                 onChange={value => setAutoRenew(value)}
               />
-              <HelpBlock>{t('userSubscriptionEdit.autoRenewDescription')}</HelpBlock>
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('userSubscriptionEdit.startsAt')}</ControlLabel>
+              <Form.HelpText>{t('userSubscriptionEdit.autoRenewDescription')}</Form.HelpText>
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('userSubscriptionEdit.startsAt')}</Form.ControlLabel>
               <DatePicker
                 block
                 value={startsAt}
                 disabled={isDisabled || hasNoMemberPlanSelected || isDeactivated}
                 onChange={value => setStartsAt(value)}
               />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('userSubscriptionEdit.payedUntil')}</ControlLabel>
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('userSubscriptionEdit.payedUntil')}</Form.ControlLabel>
               <DatePicker
                 block
                 value={paidUntil ?? undefined}
                 disabled={true /* TODO fix this */}
               />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('userSubscriptionEdit.paymentMethod')}</ControlLabel>
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('userSubscriptionEdit.paymentMethod')}</Form.ControlLabel>
               <SelectPicker
                 block
                 disabled={isDisabled || hasNoMemberPlanSelected || isDeactivated}
@@ -437,7 +434,7 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
                 value={paymentMethod?.id}
                 onChange={value => setPaymentMethod(paymentMethods.find(pm => pm.id === value))}
               />
-            </FormGroup>
+            </Form.Group>
           </Form>
         </Panel>
         {paymentMethod && memberPlan && (

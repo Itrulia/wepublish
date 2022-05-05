@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {Button, ControlLabel, Drawer, Icon, Notification} from 'rsuite'
+import {Button, Drawer, Notification} from 'rsuite'
 
 import {FileDropInput} from '../atoms/fileDropInput'
 
@@ -43,10 +43,10 @@ export function ImageUploadPanel({onClose, onUpload}: ImageUploadPanelProps) {
             onDrop={handleDrop}
           />
         </div>
-        <ControlLabel>
+        <Form.ControlLabel>
           <br />
           {t('images.panels.resizedImage', {sizeMB: getImgMinSizeToCompress()})}
-        </ControlLabel>
+        </Form.ControlLabel>
       </Drawer.Body>
 
       <Drawer.Footer>

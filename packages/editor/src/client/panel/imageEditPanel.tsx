@@ -15,17 +15,7 @@ import {Link} from '../route'
 import {useTranslation} from 'react-i18next'
 import {FocalPointInput} from '../atoms/focalPointInput'
 import {Point} from '../atoms/draggable'
-import {
-  Button,
-  ControlLabel,
-  Drawer,
-  Form,
-  FormControl,
-  FormGroup,
-  Panel,
-  TagPicker,
-  Alert
-} from 'rsuite'
+import {Button, Drawer, Form, Panel, TagPicker, Alert} from 'rsuite'
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 import imageCompression from 'browser-image-compression'
 import {ImageMetaData} from './imageUploadAndEditPanel'
@@ -292,32 +282,32 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
             </Panel>
             <Panel header={t('images.panels.information')}>
               <Form fluid={true}>
-                <FormGroup>
-                  <ControlLabel>{t('images.panels.filename')}</ControlLabel>
-                  <FormControl
+                <Form.Group>
+                  <Form.ControlLabel>{t('images.panels.filename')}</Form.ControlLabel>
+                  <Form.Control
                     value={filename}
                     disabled={isDisabled}
                     onChange={value => setFilename(value)}
                   />
-                </FormGroup>
-                <FormGroup>
-                  <ControlLabel>{t('images.panels.title')}</ControlLabel>
-                  <FormControl
+                </Form.Group>
+                <Form.Group>
+                  <Form.ControlLabel>{t('images.panels.title')}</Form.ControlLabel>
+                  <Form.Control
                     value={title}
                     disabled={isDisabled}
                     onChange={value => setTitle(value)}
                   />
-                </FormGroup>
-                <FormGroup>
-                  <ControlLabel>{t('images.panels.description')}</ControlLabel>
-                  <FormControl
+                </Form.Group>
+                <Form.Group>
+                  <Form.ControlLabel>{t('images.panels.description')}</Form.ControlLabel>
+                  <Form.Control
                     value={description}
                     disabled={isDisabled}
                     onChange={value => setDescription(value)}
                   />
-                </FormGroup>
-                <FormGroup>
-                  <ControlLabel>{t('images.panels.tags')}</ControlLabel>
+                </Form.Group>
+                <Form.Group>
+                  <Form.ControlLabel>{t('images.panels.tags')}</Form.ControlLabel>
                   <TagPicker
                     block={true}
                     creatable={true}
@@ -326,36 +316,36 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
                     data={tags.map(tag => ({value: tag, label: tag}))}
                     onChange={value => setTags(value ?? [])}
                   />
-                </FormGroup>
+                </Form.Group>
               </Form>
             </Panel>
             <Panel header={t('images.panels.attribution')}>
               <Form fluid={true}>
-                <FormGroup>
-                  <ControlLabel>{t('images.panels.source')}</ControlLabel>
-                  <FormControl
+                <Form.Group>
+                  <Form.ControlLabel>{t('images.panels.source')}</Form.ControlLabel>
+                  <Form.Control
                     value={source}
                     disabled={isDisabled}
                     onChange={value => setSource(value)}
                   />
-                </FormGroup>
-                <FormGroup>
-                  <ControlLabel>{t('images.panels.link')}</ControlLabel>
-                  <FormControl
+                </Form.Group>
+                <Form.Group>
+                  <Form.ControlLabel>{t('images.panels.link')}</Form.ControlLabel>
+                  <Form.Control
                     value={link}
                     disabled={isDisabled}
                     onChange={value => setLink(value)}
                   />
                   <p>{t('images.panels.sourceLink')}</p>
-                </FormGroup>
-                <FormGroup>
-                  <ControlLabel>{t('images.panels.license')}</ControlLabel>
-                  <FormControl
+                </Form.Group>
+                <Form.Group>
+                  <Form.ControlLabel>{t('images.panels.license')}</Form.ControlLabel>
+                  <Form.Control
                     value={license}
                     disabled={isDisabled}
                     onChange={value => setLicense(value)}
                   />
-                </FormGroup>
+                </Form.Group>
               </Form>
             </Panel>
           </>

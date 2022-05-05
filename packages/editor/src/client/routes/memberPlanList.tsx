@@ -1,16 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {
-  FlexboxGrid,
-  Icon,
-  IconButton,
-  Drawer,
-  Table,
-  Modal,
-  Button,
-  InputGroup,
-  Input
-} from 'rsuite'
+import {FlexboxGrid, IconButton, Drawer, Table, Modal, Button, InputGroup, Input} from 'rsuite'
 import {useTranslation} from 'react-i18next'
 
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
@@ -37,6 +27,7 @@ import {
 } from '../api'
 import {IconButtonTooltip} from '../atoms/iconButtonTooltip'
 import {MemberPlanEditPanel} from '../panel/memberPlanEditPanel'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
 const {Column, HeaderCell, Cell /*, Pagination */} = Table
 
 export function MemberPlanList() {
@@ -148,7 +139,7 @@ export function MemberPlanList() {
               <>
                 <IconButtonTooltip caption={t('memberPlanList.delete')}>
                   <IconButton
-                    icon={<Icon icon="trash" />}
+                    icon={<TrashIcon />}
                     circle
                     size="sm"
                     style={{marginLeft: '5px'}}

@@ -23,7 +23,6 @@ import {
   FlexboxGrid,
   Input,
   InputGroup,
-  Icon,
   IconButton,
   Table,
   Modal,
@@ -40,6 +39,7 @@ import {useTranslation} from 'react-i18next'
 
 import {DEFAULT_TABLE_PAGE_SIZES, mapTableSortTypeToGraphQLSortOrder} from '../utility'
 import {ApolloCache} from '@apollo/client'
+import CloseIcon from '@rsuite/icons/legacy/Close'
 
 const {Column, HeaderCell, Cell, Pagination} = Table
 
@@ -326,7 +326,7 @@ export function CommentList() {
                   </IconButtonTooltip>
                   <IconButtonTooltip caption={t('comments.overview.reject')}>
                     <IconButton
-                      icon={<Icon icon="close" />}
+                      icon={<CloseIcon />}
                       color="red"
                       circle
                       size="sm"

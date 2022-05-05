@@ -16,21 +16,12 @@ import {
 import {IconButtonTooltip} from '../atoms/iconButtonTooltip'
 
 import {useTranslation} from 'react-i18next'
-import {
-  FlexboxGrid,
-  Input,
-  InputGroup,
-  Icon,
-  Table,
-  IconButton,
-  Modal,
-  Button,
-  Message
-} from 'rsuite'
+import {FlexboxGrid, Input, InputGroup, Table, IconButton, Modal, Button, Message} from 'rsuite'
 
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 import {DEFAULT_TABLE_PAGE_SIZES, StateColor, mapTableSortTypeToGraphQLSortOrder} from '../utility'
 import {PagePreviewLinkPanel} from '../panel/pagePreviewLinkPanel'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
 
 const {Column, HeaderCell, Cell, Pagination} = Table
 
@@ -232,7 +223,7 @@ export function PageList() {
                   </IconButtonTooltip>
                   <IconButtonTooltip caption={t('pageEditor.overview.delete')}>
                     <IconButton
-                      icon={<Icon icon="trash" />}
+                      icon={<TrashIcon />}
                       circle
                       size="sm"
                       style={{marginLeft: '5px'}}

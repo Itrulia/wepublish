@@ -1,15 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {
-  Alert,
-  Button,
-  CheckPicker,
-  ControlLabel,
-  Drawer,
-  Form,
-  FormControl,
-  FormGroup
-} from 'rsuite'
+import {Alert, Button, CheckPicker, Drawer, Form} from 'rsuite'
 
 import {
   Permission,
@@ -126,27 +117,27 @@ export function UserRoleEditPanel({id, onClose, onSave}: UserRoleEditPanelProps)
 
       <Drawer.Body>
         <Form fluid={true}>
-          <FormGroup>
-            <ControlLabel>{t('userRoles.panels.name')}</ControlLabel>
-            <FormControl
+          <Form.Group>
+            <Form.ControlLabel>{t('userRoles.panels.name')}</Form.ControlLabel>
+            <Form.Control
               name={t('userRoles.panels.name')}
               value={name}
               disabled={isDisabled}
               onChange={value => setName(value)}
             />
-          </FormGroup>
-          <FormGroup>
-            <ControlLabel>{t('userRoles.panels.description')}</ControlLabel>
-            <FormControl
+          </Form.Group>
+          <Form.Group>
+            <Form.ControlLabel>{t('userRoles.panels.description')}</Form.ControlLabel>
+            <Form.Control
               name={t('userRoles.panels.description')}
               value={description}
               disabled={isDisabled}
               onChange={value => setDescription(value)}
             />
-          </FormGroup>
+          </Form.Group>
           {systemRole && <p>{t('userRoles.panels.systemRole')}</p>}
-          <FormGroup>
-            <ControlLabel>{t('userRoles.panels.permissions')}</ControlLabel>
+          <Form.Group>
+            <Form.ControlLabel>{t('userRoles.panels.permissions')}</Form.ControlLabel>
             <CheckPicker
               block={true}
               disabledItemValues={systemRole ? allPermissions.map(per => per.id) : []}
@@ -160,7 +151,7 @@ export function UserRoleEditPanel({id, onClose, onSave}: UserRoleEditPanelProps)
                 setPermissions(allPermissions.filter(permissions => value.includes(permissions.id)))
               }}
             />
-          </FormGroup>
+          </Form.Group>
         </Form>
       </Drawer.Body>
 

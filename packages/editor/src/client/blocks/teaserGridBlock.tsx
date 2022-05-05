@@ -7,7 +7,7 @@ import {BlockProps} from '../atoms/blockList'
 import {Overlay} from '../atoms/overlay'
 import {Typography} from '../atoms/typography'
 
-import {IconButton, Drawer, Panel, Icon, Avatar} from 'rsuite'
+import {IconButton, Drawer, Panel, Avatar} from 'rsuite'
 
 import {SortableElement, SortableContainer, SortEnd} from 'react-sortable-hoc'
 import arrayMove from 'array-move'
@@ -19,6 +19,9 @@ import {TeaserEditPanel} from '../panel/teaserEditPanel'
 import {ImageRefFragment, TeaserStyle, PeerWithProfileFragment} from '../api'
 
 import {useTranslation} from 'react-i18next'
+import PencilIcon from '@rsuite/icons/legacy/Pencil'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
+import FileIcon from '@rsuite/icons/legacy/File'
 
 const GridItem = SortableElement((props: TeaserBlockProps) => {
   return <TeaserBlock {...props} />
@@ -172,21 +175,21 @@ export function TeaserBlock({
                 top: 0
               }}>
               <IconButton
-                icon={<Icon icon="file" />}
+                icon={<FileIcon />}
                 onClick={onChoose}
                 style={{
                   margin: 10
                 }}
               />
               <IconButton
-                icon={<Icon icon="pencil" />}
+                icon={<PencilIcon />}
                 onClick={onEdit}
                 style={{
                   margin: 10
                 }}
               />
               <IconButton
-                icon={<Icon icon="trash" />}
+                icon={<TrashIcon />}
                 onClick={onRemove}
                 style={{
                   margin: 10

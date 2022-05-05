@@ -1,17 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {
-  Button,
-  ControlLabel,
-  Drawer,
-  Form,
-  FormControl,
-  FormGroup,
-  Panel,
-  Input,
-  SelectPicker,
-  Alert
-} from 'rsuite'
+import {Button, Drawer, Form, Panel, Input, SelectPicker, Alert} from 'rsuite'
 
 import {
   useCreateNavigationMutation,
@@ -215,9 +204,9 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
       <Drawer.Body>
         <Panel>
           <Form fluid={true}>
-            <FormGroup>
-              <ControlLabel>{t('navigation.panels.name')}</ControlLabel>
-              <FormControl
+            <Form.Group>
+              <Form.ControlLabel>{t('navigation.panels.name')}</Form.ControlLabel>
+              <Form.Control
                 placeholder={t('navigation.panels.name')}
                 value={name}
                 disabled={isDisabled}
@@ -225,10 +214,10 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
                   setName(value)
                 }}
               />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('navigation.panels.key')}</ControlLabel>
-              <FormControl
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('navigation.panels.key')}</Form.ControlLabel>
+              <Form.Control
                 placeholder={t('navigation.panels.key')}
                 value={key}
                 disabled={isDisabled}
@@ -236,7 +225,7 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
                   setKey(value)
                 }}
               />
-            </FormGroup>
+            </Form.Group>
           </Form>
         </Panel>
         <Panel header={t('authors.panels.links')}>

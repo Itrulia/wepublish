@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import nanoid from 'nanoid'
 
-import {Button, Drawer, Form, FormGroup, ControlLabel, FormControl} from 'rsuite'
+import {Button, Drawer, Form} from 'rsuite'
 
 import {ListInput, ListValue, FieldProps} from '../atoms/listInput'
 
@@ -85,15 +85,15 @@ export function GalleryListItem({value, onChange}: FieldProps<GalleryImageEdge>)
           removeImage={() => onChange?.({...value, image: null})}
         />
         <Form fluid={true}>
-          <FormGroup>
-            <ControlLabel>{t('blocks.imageGallery.panels.caption')}</ControlLabel>
-            <FormControl
+          <Form.Group>
+            <Form.ControlLabel>{t('blocks.imageGallery.panels.caption')}</Form.ControlLabel>
+            <Form.Control
               rows={1}
               componentClass="textarea"
               value={caption}
               onChange={caption => onChange({...value, caption})}
             />
-          </FormGroup>
+          </Form.Group>
         </Form>
       </div>
 

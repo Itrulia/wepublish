@@ -8,14 +8,12 @@ import {
   Button,
   Drawer,
   Panel,
-  Icon,
   Input,
   InputGroup,
   Message,
   Loader,
   FlexboxGrid,
-  Notification,
-  ControlLabel
+  Notification
 } from 'rsuite'
 
 import {FileDropInput} from '../atoms/fileDropInput'
@@ -95,10 +93,10 @@ export function ImageSelectPanel({onClose, onSelect}: ImageSelectPanelProps) {
             onDrop={handleDrop}
           />
         </Panel>
-        <ControlLabel>
+        <Form.ControlLabel>
           <br />
           {t('images.panels.resizedImage', {sizeMB: getImgMinSizeToCompress()})}
-        </ControlLabel>
+        </Form.ControlLabel>
 
         <Panel header={t('articleEditor.panels.images')}>
           <InputGroup>

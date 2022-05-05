@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {Drawer, Dropdown, Icon, IconButton, Panel} from 'rsuite'
+import {Drawer, Dropdown, IconButton, Panel} from 'rsuite'
 import {BlockProps} from '../atoms/blockList'
 import {PlaceholderInput} from '../atoms/placeholderInput'
 import {TypographicTextArea} from '../atoms/typographicTextArea'
@@ -11,6 +11,9 @@ import {ImageRefFragment} from '../api'
 import {ImageBlockValue} from './types'
 
 import {useTranslation} from 'react-i18next'
+import WrenchIcon from '@rsuite/icons/legacy/Wrench'
+import PencilIcon from '@rsuite/icons/legacy/Pencil'
+import ImageIcon from '@rsuite/icons/legacy/Image'
 
 // TODO: Handle disabled prop
 export function ImageBlock({value, onChange, autofocus}: BlockProps<ImageBlockValue>) {
@@ -55,13 +58,13 @@ export function ImageBlock({value, onChange, autofocus}: BlockProps<ImageBlockVa
               }}>
               <Dropdown
                 renderTitle={() => {
-                  return <IconButton appearance="subtle" icon={<Icon icon="wrench" />} circle />
+                  return <IconButton appearance="subtle" icon={<WrenchIcon />} circle />
                 }}>
                 <Dropdown.Item onClick={() => setChooseModalOpen(true)}>
-                  <Icon icon="image" /> {t('blocks.image.overview.chooseImage')}
+                  <ImageIcon /> {t('blocks.image.overview.chooseImage')}
                 </Dropdown.Item>
                 <Dropdown.Item onClick={() => setEditModalOpen(true)}>
-                  <Icon icon="pencil" /> {t('blocks.image.overview.editImage')}
+                  <PencilIcon /> {t('blocks.image.overview.editImage')}
                 </Dropdown.Item>
                 {/* TODO: Meta sync for metadata image */}
               </Dropdown>

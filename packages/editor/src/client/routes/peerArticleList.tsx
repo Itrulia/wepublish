@@ -12,7 +12,6 @@ import {
   Alert,
   Avatar,
   FlexboxGrid,
-  Icon,
   Input,
   InputGroup,
   Popover,

@@ -7,7 +7,7 @@ import 'react-resizable/css/styles.css'
 import {FlexAlignment, FlexTeaser, Teaser, TeaserGridFlexBlockValue} from './types'
 import {BlockProps} from '../atoms/blockList'
 import nanoid from 'nanoid'
-import {ButtonToolbar, Drawer, Icon, IconButton, Panel} from 'rsuite'
+import {ButtonToolbar, Drawer, IconButton, Panel} from 'rsuite'
 import {IconButtonTooltip} from '../atoms/iconButtonTooltip'
 import {contentForTeaser} from './teaserGridBlock'
 import {PlaceholderInput} from '../atoms/placeholderInput'
@@ -16,6 +16,9 @@ import {TeaserSelectAndEditPanel} from '../panel/teaserSelectAndEditPanel'
 
 import {useTranslation} from 'react-i18next'
 import i18next from 'i18next'
+import PencilIcon from '@rsuite/icons/legacy/Pencil'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
+import FileIcon from '@rsuite/icons/legacy/File'
 
 export function FlexTeaserBlock({
   teaser,
@@ -52,7 +55,7 @@ export function FlexTeaserBlock({
               }}>
               <IconButtonTooltip caption={i18next.t('blocks.flexTeaser.chooseTeaser')}>
                 <IconButton
-                  icon={<Icon icon="file" />}
+                  icon={<FileIcon />}
                   onClick={onChoose}
                   style={{
                     margin: 10
@@ -61,7 +64,7 @@ export function FlexTeaserBlock({
               </IconButtonTooltip>
               <IconButtonTooltip caption={i18next.t('blocks.flexTeaser.editTeaser')}>
                 <IconButton
-                  icon={<Icon icon="pencil" />}
+                  icon={<PencilIcon />}
                   onClick={onEdit}
                   style={{
                     margin: 10
@@ -70,7 +73,7 @@ export function FlexTeaserBlock({
               </IconButtonTooltip>
               <IconButtonTooltip caption={i18next.t('blocks.flexTeaser.deleteTeaser')}>
                 <IconButton
-                  icon={<Icon icon="trash" />}
+                  icon={<TrashIcon />}
                   onClick={onRemove}
                   style={{
                     margin: 10
@@ -225,7 +228,7 @@ export function TeaserGridFlexBlock({value, onChange}: BlockProps<TeaserGridFlex
                     disabled={flexTeaser.alignment.static}
                     block
                     appearance="subtle"
-                    icon={<Icon icon="trash" />}
+                    icon={<TrashIcon />}
                     onClick={() => handleRemoveTeaserBlock(flexTeaser.alignment.i)}
                   />
                 </IconButtonTooltip>

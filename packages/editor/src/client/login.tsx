@@ -24,7 +24,7 @@ import {
 } from './api'
 
 import {useTranslation} from 'react-i18next'
-import {ControlLabel, Button, Form, FormControl, FormGroup, Divider, Icon, Alert} from 'rsuite'
+import {Button, Form, Divider, Alert} from 'rsuite'
 import {SVGIcon} from 'rsuite/lib/@types/common'
 import {IconNames} from 'rsuite/lib/Icon/Icon'
 
@@ -177,25 +177,25 @@ export function Login() {
               flexDirection: 'column',
               margin: 0
             }}>
-            <FormGroup>
-              <ControlLabel>{t('login.email')}</ControlLabel>
-              <FormControl
+            <Form.Group>
+              <Form.ControlLabel>{t('login.email')}</Form.ControlLabel>
+              <Form.Control
                 className={'username'}
                 value={email}
                 autoComplete={'username'}
                 onChange={email => setEmail(email)}
               />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('login.password')}</ControlLabel>
-              <FormControl
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('login.password')}</Form.ControlLabel>
+              <Form.Control
                 className={'password'}
                 type="password"
                 value={password}
                 autoComplete={'currentPassword'}
                 onChange={password => setPassword(password)}
               />
-            </FormGroup>
+            </Form.Group>
             <Button appearance="primary" type="submit" disabled={loading} onClick={login}>
               {t('login.login')}
             </Button>

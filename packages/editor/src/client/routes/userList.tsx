@@ -19,19 +19,10 @@ import {UserEditPanel} from '../panel/userEditPanel'
 import {ResetUserPasswordPanel} from '../panel/resetUserPasswordPanel'
 
 import {useTranslation} from 'react-i18next'
-import {
-  Button,
-  Drawer,
-  FlexboxGrid,
-  Icon,
-  IconButton,
-  Input,
-  InputGroup,
-  Modal,
-  Table
-} from 'rsuite'
+import {Button, Drawer, FlexboxGrid, IconButton, Input, InputGroup, Modal, Table} from 'rsuite'
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 import {DEFAULT_TABLE_PAGE_SIZES, mapTableSortTypeToGraphQLSortOrder} from '../utility'
+import TrashIcon from '@rsuite/icons/legacy/Trash'
 
 const {Column, HeaderCell, Cell, Pagination} = Table
 
@@ -74,11 +65,7 @@ export function UserList() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [users, setUsers] = useState<FullUserFragment[]>([])
 
-  const {
-    data,
-    refetch,
-    loading: isLoading
-  } = useUserListQuery({
+  const {data, refetch, loading: isLoading} = useUserListQuery({
     variables: {
       filter: filter || undefined,
       first: limit,
@@ -226,7 +213,7 @@ export function UserList() {
                   </IconButtonTooltip>
                   <IconButtonTooltip caption={t('userList.overview.delete')}>
                     <IconButton
-                      icon={<Icon icon="trash" />}
+                      icon={<TrashIcon />}
                       circle
                       size="sm"
                       style={{marginLeft: '5px'}}

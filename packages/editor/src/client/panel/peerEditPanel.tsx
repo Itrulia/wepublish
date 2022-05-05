@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import {Alert, Button, ControlLabel, Drawer, Form, FormControl, FormGroup, Panel} from 'rsuite'
+import {Alert, Button, Drawer, Form, Panel} from 'rsuite'
 import {ChooseEditImage} from '../atoms/chooseEditImage'
 
 import {
@@ -126,9 +126,9 @@ export function PeerEditPanel({id, hostURL, onClose, onSave}: PeerEditPanelProps
       <Drawer.Body>
         <Panel>
           <Form fluid={true}>
-            <FormGroup>
-              <ControlLabel>{t('peerList.panels.name')}</ControlLabel>
-              <FormControl
+            <Form.Group>
+              <Form.ControlLabel>{t('peerList.panels.name')}</Form.ControlLabel>
+              <Form.Control
                 value={name}
                 name={t('peerList.panels.name')}
                 onChange={value => {
@@ -136,20 +136,20 @@ export function PeerEditPanel({id, hostURL, onClose, onSave}: PeerEditPanelProps
                   setSlug(slugify(value))
                 }}
               />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('peerList.panels.URL')}</ControlLabel>
-              <FormControl
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('peerList.panels.URL')}</Form.ControlLabel>
+              <Form.Control
                 value={urlString}
                 name={t('peerList.panels.URL')}
                 onChange={value => {
                   setURLString(value)
                 }}
               />
-            </FormGroup>
-            <FormGroup>
-              <ControlLabel>{t('peerList.panels.token')}</ControlLabel>
-              <FormControl
+            </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>{t('peerList.panels.token')}</Form.ControlLabel>
+              <Form.Control
                 value={token}
                 name={t('peerList.panels.token')}
                 placeholder={id ? t('peerList.panels.leaveEmpty') : undefined}
@@ -157,7 +157,7 @@ export function PeerEditPanel({id, hostURL, onClose, onSave}: PeerEditPanelProps
                   setToken(value)
                 }}
               />
-            </FormGroup>
+            </Form.Group>
             <Button
               className="fetchButton"
               appearance={'primary'}

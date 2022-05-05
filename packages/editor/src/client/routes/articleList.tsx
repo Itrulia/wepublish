@@ -19,17 +19,7 @@ import {IconButtonTooltip} from '../atoms/iconButtonTooltip'
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 
 import {useTranslation} from 'react-i18next'
-import {
-  FlexboxGrid,
-  Input,
-  InputGroup,
-  Icon,
-  IconButton,
-  Table,
-  Modal,
-  Button,
-  Message
-} from 'rsuite'
+import {FlexboxGrid, Input, InputGroup, IconButton, Table, Modal, Button, Message} from 'rsuite'
 import {DEFAULT_TABLE_PAGE_SIZES, StateColor, mapTableSortTypeToGraphQLSortOrder} from '../utility'
 import {ArticlePreviewLinkPanel} from '../panel/articlePreviewLinkPanel'
 const {Column, HeaderCell, Cell, Pagination} = Table
