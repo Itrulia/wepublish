@@ -36,6 +36,12 @@ export function ImageUploadPanel({onClose, onUpload}: ImageUploadPanelProps) {
     <>
       <Drawer.Header>
         <Drawer.Title>{t('articleEditor.panels.uploadImage')}</Drawer.Title>
+
+        <Drawer.Actions>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {t('articleEditor.panels.close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -51,12 +57,6 @@ export function ImageUploadPanel({onClose, onUpload}: ImageUploadPanelProps) {
           {t('images.panels.resizedImage', {sizeMB: getImgMinSizeToCompress()})}
         </Form.ControlLabel>
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {t('articleEditor.panels.close')}
-        </Button>
-      </Drawer.Footer>
     </>
   )
 }

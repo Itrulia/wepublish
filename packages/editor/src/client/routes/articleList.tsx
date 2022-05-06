@@ -19,7 +19,17 @@ import {IconButtonTooltip} from '../atoms/iconButtonTooltip'
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 
 import {useTranslation} from 'react-i18next'
-import {FlexboxGrid, Input, InputGroup, IconButton, Table, Modal, Button, Message} from 'rsuite'
+import {
+  FlexboxGrid,
+  Input,
+  InputGroup,
+  IconButton,
+  Table,
+  Modal,
+  Button,
+  Message,
+  Pagination
+} from 'rsuite'
 import {DEFAULT_TABLE_PAGE_SIZES, StateColor, mapTableSortTypeToGraphQLSortOrder} from '../utility'
 import {ArticlePreviewLinkPanel} from '../panel/articlePreviewLinkPanel'
 import SearchIcon from '@rsuite/icons/legacy/Search'
@@ -28,7 +38,7 @@ import CopyIcon from '@rsuite/icons/legacy/Copy'
 import EyeIcon from '@rsuite/icons/legacy/Eye'
 import BtnOffIcon from '@rsuite/icons/legacy/BtnOff'
 
-const {Column, HeaderCell, Cell, Pagination} = Table
+const {Column, HeaderCell, Cell} = Table
 
 enum ConfirmAction {
   Delete = 'delete',
@@ -142,7 +152,7 @@ export function ArticleList() {
           sortType={sortOrder}
           rowClassName={rowData => (rowData?.id === highlightedRowId ? 'highlighted-row' : '')}
           onSortColumn={(sortColumn, sortType) => {
-            setSortOrder(sortType)
+            setSortOrder(sortType ?? 'asc')
             setSortField(sortColumn)
           }}>
           <Column width={210} align="left" resizable sortable>
@@ -283,14 +293,15 @@ export function ArticleList() {
             </Cell>
           </Column>
         </Table>
+
         <Pagination
-          style={{height: '50px'}}
-          lengthMenu={DEFAULT_TABLE_PAGE_SIZES}
+          limit={limit}
+          limitOptions={DEFAULT_TABLE_PAGE_SIZES}
+          layout={['total', '-', 'limit', '|', 'pager', 'skip']}
+          total={data?.articles.totalCount ?? 0}
           activePage={page}
-          displayLength={limit}
-          total={data?.articles.totalCount}
           onChangePage={page => setPage(page)}
-          onChangeLength={limit => setLimit(limit)}
+          onChangeLimit={limit => setLimit(limit)}
         />
       </div>
 

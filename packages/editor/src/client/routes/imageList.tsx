@@ -27,14 +27,24 @@ import {
 import {IconButtonTooltip} from '../atoms/iconButtonTooltip'
 
 import {useTranslation} from 'react-i18next'
-import {FlexboxGrid, Input, InputGroup, IconButton, Drawer, Modal, Button, Table} from 'rsuite'
+import {
+  FlexboxGrid,
+  Input,
+  InputGroup,
+  IconButton,
+  Drawer,
+  Modal,
+  Button,
+  Table,
+  Pagination
+} from 'rsuite'
 
 import {DEFAULT_TABLE_IMAGE_PAGE_SIZES} from '../utility'
 import TrashIcon from '@rsuite/icons/legacy/Trash'
 import SearchIcon from '@rsuite/icons/legacy/Search'
 import EditIcon from '@rsuite/icons/legacy/Edit'
 
-const {Column, HeaderCell, Cell, Pagination} = Table
+const {Column, HeaderCell, Cell} = Table
 
 export function ImageList() {
   const {current} = useRoute()
@@ -215,14 +225,15 @@ export function ImageList() {
             </Cell>
           </Column>
         </Table>
+
         <Pagination
-          style={{height: '50px'}}
-          lengthMenu={DEFAULT_TABLE_IMAGE_PAGE_SIZES}
-          total={data?.images.totalCount}
-          displayLength={limit}
-          onChangeLength={limit => setLimit(limit)}
+          limit={limit}
+          limitOptions={DEFAULT_TABLE_IMAGE_PAGE_SIZES}
+          layout={['total', '-', 'limit', '|', 'pager', 'skip']}
+          total={data?.images.totalCount ?? 0}
           activePage={activePage}
-          onChangePage={setActivePage}
+          onChangePage={page => setActivePage(page)}
+          onChangeLimit={limit => setLimit(limit)}
         />
       </div>
 

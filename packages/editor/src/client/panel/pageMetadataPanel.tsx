@@ -107,7 +107,7 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
               <Form.Group>
                 <Form.ControlLabel>{t('pageEditor.panels.socialMediaTitle')}</Form.ControlLabel>
                 <Form.Control
-                  name={''}
+                  name={'social-media-title'}
                   value={socialMediaTitle}
                   onChange={(socialMediaTitle: string) => {
                     onChange?.({...value, socialMediaTitle})
@@ -119,7 +119,7 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
                   {t('pageEditor.panels.socialMediaDescription')}
                 </Form.ControlLabel>
                 <Form.Control
-                  name={''}
+                  name={'social-media-description'}
                   rows={5}
                   as="textarea"
                   value={socialMediaDescription}
@@ -153,7 +153,7 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
               <Form.Group>
                 <Form.ControlLabel>{t('pageEditor.panels.slug')}</Form.ControlLabel>
                 <Form.Control
-                  name={''}
+                  name={'slug'}
                   value={slug}
                   onChange={(slug: string) => onChange?.({...value, slug})}
                 />
@@ -161,7 +161,7 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
               <Form.Group>
                 <Form.ControlLabel>{t('pageEditor.panels.title')}</Form.ControlLabel>
                 <Form.Control
-                  name={''}
+                  name={'title'}
                   value={title}
                   onChange={(title: string) => onChange?.({...value, title})}
                 />
@@ -170,7 +170,7 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
               <Form.Group>
                 <Form.ControlLabel>{t('pageEditor.panels.description')}</Form.ControlLabel>
                 <Form.Control
-                  name={''}
+                  name={'description'}
                   as="textarea"
                   value={description}
                   onChange={(description: string) => onChange?.({...value, description})}
@@ -269,6 +269,12 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
     <>
       <Drawer.Header>
         <Drawer.Title>{t('pageEditor.panels.metadata')}</Drawer.Title>
+
+        <Drawer.Actions>
+          <Button appearance={'primary'} onClick={() => onClose?.()}>
+            {t('pageEditor.panels.saveAndClose')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -290,12 +296,6 @@ export function PageMetadataPanel({value, onClose, onChange}: PageMetadataPanelP
 
         {currentContent()}
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button appearance={'primary'} onClick={() => onClose?.()}>
-          {t('pageEditor.panels.saveAndClose')}
-        </Button>
-      </Drawer.Footer>
 
       <Drawer open={isChooseModalOpen} size={'sm'} onClose={() => setChooseModalOpen(false)}>
         <ImageSelectPanel

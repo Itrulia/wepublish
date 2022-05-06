@@ -89,6 +89,12 @@ export function ImageSelectPanel({onClose, onSelect}: ImageSelectPanelProps) {
     <>
       <Drawer.Header>
         <Drawer.Title>{t('articleEditor.panels.chooseImage')}</Drawer.Title>
+
+        <Drawer.Actions>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {t('articleEditor.panels.close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -160,12 +166,6 @@ export function ImageSelectPanel({onClose, onSelect}: ImageSelectPanelProps) {
           <Loader center content={t('articleEditor.panels.loading')} />
         )}
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {t('articleEditor.panels.close')}
-        </Button>
-      </Drawer.Footer>
     </>
   )
 }

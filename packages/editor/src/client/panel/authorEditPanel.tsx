@@ -138,6 +138,15 @@ export function AuthorEditPanel({id, onClose, onSave}: AuthorEditPanelProps) {
         <Drawer.Title>
           {id ? t('authors.panels.editAuthor') : t('authors.panels.createAuthor')}
         </Drawer.Title>
+
+        <Drawer.Actions>
+          <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
+            {id ? t('authors.panels.save') : t('authors.panels.create')}
+          </Button>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {t('authors.panels.close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -222,15 +231,6 @@ export function AuthorEditPanel({id, onClose, onSave}: AuthorEditPanelProps) {
         </PanelGroup>
       </Drawer.Body>
 
-      <Drawer.Footer>
-        <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
-          {id ? t('authors.panels.save') : t('authors.panels.create')}
-        </Button>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {t('authors.panels.close')}
-        </Button>
-      </Drawer.Footer>
-
       <Drawer open={isChooseModalOpen} size={'sm'} onClose={() => setChooseModalOpen(false)}>
         <ImageSelectPanel
           onClose={() => setChooseModalOpen(false)}
@@ -240,6 +240,7 @@ export function AuthorEditPanel({id, onClose, onSave}: AuthorEditPanelProps) {
           }}
         />
       </Drawer>
+
       <Drawer open={isEditModalOpen} size={'sm'}>
         <ImagedEditPanel
           id={image?.id}

@@ -244,6 +244,15 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
         <Drawer.Title>
           {isUpload ? t('images.panels.uploadImage') : t('images.panels.editImage')}
         </Drawer.Title>
+
+        <Drawer.Actions>
+          <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
+            {isUpload ? t('images.panels.upload') : t('images.panels.save')}
+          </Button>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {isUpload ? t('images.panels.cancel') : t('images.panels.close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -298,7 +307,7 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.filename')}</Form.ControlLabel>
                   <Form.Control
-                    name={''}
+                    name={'filename'}
                     value={filename}
                     disabled={isDisabled}
                     onChange={(value: string) => setFilename(value)}
@@ -307,7 +316,7 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.title')}</Form.ControlLabel>
                   <Form.Control
-                    name={''}
+                    name={'title'}
                     value={title}
                     disabled={isDisabled}
                     onChange={(value: string) => setTitle(value)}
@@ -316,7 +325,7 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.description')}</Form.ControlLabel>
                   <Form.Control
-                    name={''}
+                    name={'description'}
                     value={description}
                     disabled={isDisabled}
                     onChange={(value: string) => setDescription(value)}
@@ -341,7 +350,7 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.source')}</Form.ControlLabel>
                   <Form.Control
-                    name={''}
+                    name={'source'}
                     value={source}
                     disabled={isDisabled}
                     onChange={(value: string) => setSource(value)}
@@ -350,7 +359,7 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.link')}</Form.ControlLabel>
                   <Form.Control
-                    name={''}
+                    name={'link'}
                     value={link}
                     disabled={isDisabled}
                     onChange={(value: string) => setLink(value)}
@@ -360,7 +369,7 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
                 <Form.Group>
                   <Form.ControlLabel>{t('images.panels.license')}</Form.ControlLabel>
                   <Form.Control
-                    name={''}
+                    name={'license'}
                     value={license}
                     disabled={isDisabled}
                     onChange={(value: string) => setLicense(value)}
@@ -371,15 +380,6 @@ export function ImagedEditPanel({id, file, onClose, onSave, imageMetaData}: Imag
           </>
         )}
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
-          {isUpload ? t('images.panels.upload') : t('images.panels.save')}
-        </Button>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {isUpload ? t('images.panels.cancel') : t('images.panels.close')}
-        </Button>
-      </Drawer.Footer>
     </>
   )
 }

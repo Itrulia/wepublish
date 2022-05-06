@@ -191,7 +191,7 @@ export function Login() {
             <Form.Group>
               <Form.ControlLabel>{t('login.email')}</Form.ControlLabel>
               <Form.Control
-                name={''}
+                name={'email'}
                 className={'username'}
                 value={email}
                 autoComplete={'username'}
@@ -201,7 +201,7 @@ export function Login() {
             <Form.Group>
               <Form.ControlLabel>{t('login.password')}</Form.ControlLabel>
               <Form.Control
-                name={''}
+                name={'password'}
                 className={'password'}
                 type="password"
                 value={password}

@@ -232,43 +232,47 @@ export function Base({children}: BaseProps) {
             </Sidenav.Body>
           </Sidenav>
           <Navbar appearance="default" className="nav-toggle">
-            <Navbar.Body>
-              <Nav>
-                <Dropdown
-                  placement="topStart"
-                  trigger="click"
-                  renderToggle={() => <CogIcon style={iconStyles} className="icon-selector" />}>
-                  <DropdownItemLink route={LogoutRoute.create({})}>
-                    {t('navbar.logout')}
-                  </DropdownItemLink>
-                </Dropdown>
-              </Nav>
-              <Nav>
-                <Dropdown
-                  placement="topStart"
-                  trigger="click"
-                  renderToggle={() => (
-                    <GlobeIcon
-                      className="icon-selector"
-                      style={{
-                        width: 56,
-                        height: 56,
-                        lineHeight: '56px',
-                        textAlign: 'center'
-                      }}
-                    />
-                  )}>
-                  {AVAILABLE_LANG.map(lang => (
-                    <Dropdown.Item
-                      key={lang.id}
-                      onSelect={() => setUILanguage(lang.id)}
-                      active={lang.id === uiLanguage}>
-                      {lang.name}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown>
-              </Nav>
-            </Navbar.Body>
+            <Nav>
+              <Dropdown
+                placement="topStart"
+                trigger="click"
+                renderToggle={(props: object, ref: React.Ref<HTMLButtonElement>) => (
+                  <IconButton
+                    {...props}
+                    ref={ref}
+                    style={iconStyles}
+                    className="icon-selector"
+                    icon={<CogIcon />}
+                  />
+                )}>
+                <DropdownItemLink route={LogoutRoute.create({})}>
+                  {t('navbar.logout')}
+                </DropdownItemLink>
+              </Dropdown>
+            </Nav>
+            <Nav>
+              <Dropdown
+                placement="topStart"
+                trigger="click"
+                renderToggle={(props: object, ref: React.Ref<HTMLButtonElement>) => (
+                  <IconButton
+                    {...props}
+                    ref={ref}
+                    style={iconStyles}
+                    className="icon-selector"
+                    icon={<GlobeIcon />}
+                  />
+                )}>
+                {AVAILABLE_LANG.map(lang => (
+                  <Dropdown.Item
+                    key={lang.id}
+                    onSelect={() => setUILanguage(lang.id)}
+                    active={lang.id === uiLanguage}>
+                    {lang.name}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown>
+            </Nav>
           </Navbar>
         </Sidebar>
         <Container

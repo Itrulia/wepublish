@@ -118,6 +118,15 @@ export function UserRoleEditPanel({id, onClose, onSave}: UserRoleEditPanelProps)
         <Drawer.Title>
           {id ? t('userRoles.panels.editUserRole') : t('userRoles.panels.createUserRole')}
         </Drawer.Title>
+
+        <Drawer.Actions>
+          <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
+            {id ? t('userRoles.panels.save') : t('userRoles.panels.create')}
+          </Button>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {t('userRoles.panels.close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -160,15 +169,6 @@ export function UserRoleEditPanel({id, onClose, onSave}: UserRoleEditPanelProps)
           </Form.Group>
         </Form>
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
-          {id ? t('userRoles.panels.save') : t('userRoles.panels.create')}
-        </Button>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {t('userRoles.panels.close')}
-        </Button>
-      </Drawer.Footer>
     </>
   )
 }

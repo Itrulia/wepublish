@@ -305,6 +305,18 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
         <Drawer.Title>
           {id ? t('userSubscriptionEdit.editTitle') : t('userSubscriptionEdit.createTitle')}
         </Drawer.Title>
+
+        <Drawer.Actions>
+          <Button
+            appearance={'primary'}
+            disabled={isDisabled || isDeactivated}
+            onClick={() => handleSave()}>
+            {id ? t('save') : t('create')}
+          </Button>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {t('close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -455,18 +467,6 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
           </Panel>
         )}
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button
-          appearance={'primary'}
-          disabled={isDisabled || isDeactivated}
-          onClick={() => handleSave()}>
-          {id ? t('save') : t('create')}
-        </Button>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {t('close')}
-        </Button>
-      </Drawer.Footer>
 
       {id && user && (
         <Modal

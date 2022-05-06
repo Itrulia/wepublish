@@ -30,7 +30,8 @@ import {
   Dropdown,
   toaster,
   Message,
-  Panel
+  Panel,
+  Pagination
 } from 'rsuite'
 
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
@@ -46,7 +47,7 @@ import EditIcon from '@rsuite/icons/legacy/Edit'
 import CheckIcon from '@rsuite/icons/legacy/Check'
 import ReplyIcon from '@rsuite/icons/legacy/Reply'
 
-const {Column, HeaderCell, Cell, Pagination} = Table
+const {Column, HeaderCell, Cell} = Table
 
 enum ConfirmAction {
   Approve = 'approve',
@@ -240,7 +241,7 @@ export function CommentList() {
           sortColumn={sortField}
           sortType={sortOrder}
           onSortColumn={(sortColumn, sortType) => {
-            setSortOrder(sortType)
+            setSortOrder(sortType ?? 'asc')
             setSortField(sortColumn)
           }}>
           <Column width={350} align="left" resizable>
@@ -355,19 +356,19 @@ export function CommentList() {
         </Table>
 
         <Pagination
-          style={{height: '50px'}}
-          lengthMenu={DEFAULT_TABLE_PAGE_SIZES}
+          limit={limit}
+          limitOptions={DEFAULT_TABLE_PAGE_SIZES}
+          layout={['total', '-', 'limit', '|', 'pager', 'skip']}
+          total={data?.comments.totalCount ?? 0}
           activePage={page}
-          displayLength={limit}
-          total={data?.comments.totalCount}
           onChangePage={page => setPage(page)}
-          onChangeLength={limit => setLimit(limit)}
+          onChangeLimit={limit => setLimit(limit)}
         />
       </div>
       {confirmAction && (
         <Modal
           open={isConfirmationDialogOpen}
-          width="sm"
+          size="sm"
           overflow
           onClose={() => {
             setConfirmationDialogOpen(false)

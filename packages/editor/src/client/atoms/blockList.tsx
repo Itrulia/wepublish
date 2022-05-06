@@ -21,7 +21,7 @@ export type BlockConstructorFn<V = any> = (props: BlockProps<V>) => JSX.Element
 
 export interface BlockCaseProps<V = any> {
   label: string
-  icon: string
+  icon: React.ReactElement
   defaultValue: ValueConstructor<V>
   field: BlockConstructorFn<V>
 }
@@ -41,7 +41,7 @@ export type BlockMapForValue<R extends BlockListValue> = UnionToIntersection<
 export interface BlockListItemProps<T extends string = string, V = any> {
   index: number
   value: BlockListValue<T, V>
-  icon: string
+  icon: React.ReactElement
   autofocus: boolean
   disabled?: boolean
 
@@ -233,7 +233,7 @@ export function BlockList<V extends BlockListValue>({
 
 interface ListItemWrapperProps {
   children?: ReactNode
-  icon?: string
+  icon?: React.ReactElement
   disabled?: boolean
 
   onDelete?: () => void
@@ -301,7 +301,6 @@ function ListItemWrapper({
           fontSize: 24,
           fill: 'gray'
         }}>
-        {/* {icon && <Icon icon={icon} />} */}
         {icon}
       </div>
     </div>

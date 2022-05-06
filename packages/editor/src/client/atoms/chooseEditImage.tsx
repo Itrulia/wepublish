@@ -49,8 +49,14 @@ export function ChooseEditImage({
             {(openChooseModalOpen || openEditModalOpen || removeImage) && (
               <div style={{position: 'absolute', left: left, top: top}}>
                 <Dropdown
-                  renderToggle={() => (
-                    <IconButton appearance="primary" icon={<WrenchIcon />} circle />
+                  renderToggle={(props: object, ref: React.Ref<HTMLButtonElement>) => (
+                    <IconButton
+                      {...props}
+                      ref={ref}
+                      icon={<WrenchIcon />}
+                      circle
+                      appearance="primary"
+                    />
                   )}>
                   {openChooseModalOpen && (
                     <Dropdown.Item disabled={disabled} onClick={() => openChooseModalOpen()}>

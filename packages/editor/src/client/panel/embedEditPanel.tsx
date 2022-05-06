@@ -106,6 +106,15 @@ export function EmbedEditPanel({value, onClose, onConfirm}: EmbedEditPanel) {
     <>
       <Drawer.Header>
         <Drawer.Title>{t('blocks.embeds.panels.editEmbed')}</Drawer.Title>
+
+        <Drawer.Actions>
+          <Button appearance={'primary'} disabled={isEmpty} onClick={() => onConfirm(embed)}>
+            {t('blocks.embeds.panels.confirm')}
+          </Button>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {t('blocks.embeds.panels.close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -129,15 +138,6 @@ export function EmbedEditPanel({value, onClose, onConfirm}: EmbedEditPanel) {
         </div>
         <EmbedPreview value={embed} />
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button appearance={'primary'} disabled={isEmpty} onClick={() => onConfirm(embed)}>
-          {t('blocks.embeds.panels.confirm')}
-        </Button>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {t('blocks.embeds.panels.close')}
-        </Button>
-      </Drawer.Footer>
     </>
   )
 }

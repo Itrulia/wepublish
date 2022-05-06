@@ -188,6 +188,15 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
         <Drawer.Title>
           {id ? t('userList.panels.editUser') : t('userList.panels.createUser')}
         </Drawer.Title>
+
+        <Drawer.Actions>
+          <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
+            {id ? t('userList.panels.save') : t('userList.panels.create')}
+          </Button>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {t('userList.panels.close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -346,6 +355,7 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
                 block={true}
                 value={roles.map(role => role.id)}
                 data={userRoles.map(userRole => ({value: userRole.id, label: userRole.name}))}
+                placement={'auto'}
                 onChange={value => {
                   setRoles(userRoles.filter(userRole => value.includes(userRole.id)))
                 }}
@@ -354,15 +364,6 @@ export function UserEditPanel({id, onClose, onSave}: UserEditPanelProps) {
           </Form>
         </Panel>
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
-          {id ? t('userList.panels.save') : t('userList.panels.create')}
-        </Button>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {t('userList.panels.close')}
-        </Button>
-      </Drawer.Footer>
 
       <Modal open={isResetUserPasswordOpen} onClose={() => setIsResetUserPasswordOpen(false)}>
         <Modal.Header>

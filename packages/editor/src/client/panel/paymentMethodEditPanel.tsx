@@ -136,6 +136,15 @@ export function PaymentMethodEditPanel({id, onClose, onSave}: PaymentMethodEditP
         <Drawer.Title>
           {id ? t('paymentMethodList.editTitle') : t('paymentMethodList.createTitle')}
         </Drawer.Title>
+
+        <Drawer.Actions>
+          <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
+            {id ? t('save') : t('create')}
+          </Button>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {t('close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -187,15 +196,6 @@ export function PaymentMethodEditPanel({id, onClose, onSave}: PaymentMethodEditP
           </Form>
         </Panel>
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
-          {id ? t('save') : t('create')}
-        </Button>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {t('close')}
-        </Button>
-      </Drawer.Footer>
     </>
   )
 }

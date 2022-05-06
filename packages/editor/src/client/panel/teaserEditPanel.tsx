@@ -42,6 +42,26 @@ export function TeaserEditPanel({
     <>
       <Drawer.Header>
         <Drawer.Title>{t('articleEditor.panels.editTeaser')}</Drawer.Title>
+
+        <Drawer.Actions>
+          <Button
+            appearance={'primary'}
+            onClick={() => {
+              onConfirm({
+                ...initialTeaser,
+                style,
+                preTitle: preTitle || undefined,
+                title: title || undefined,
+                lead: lead || undefined,
+                image
+              })
+            }}>
+            {t('articleEditor.panels.confirm')}
+          </Button>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {closeLabel}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -62,18 +82,22 @@ export function TeaserEditPanel({
             <Form.Group>
               <Form.ControlLabel>{t('articleEditor.panels.preTitle')}</Form.ControlLabel>
               <Form.Control
-                name={''}
+                name={'pre-title'}
                 value={preTitle}
                 onChange={(preTitle: string) => setPreTitle(preTitle)}
               />
             </Form.Group>
             <Form.Group>
               <Form.ControlLabel>{t('articleEditor.panels.title')}</Form.ControlLabel>
-              <Form.Control name={''} value={title} onChange={(title: string) => setTitle(title)} />
+              <Form.Control
+                name={'title'}
+                value={title}
+                onChange={(title: string) => setTitle(title)}
+              />
             </Form.Group>
             <Form.Group>
               <Form.ControlLabel>{t('articleEditor.panels.lead')}</Form.ControlLabel>
-              <Form.Control name={''} value={lead} onChange={(lead: string) => setLead(lead)} />
+              <Form.Control name={'lead'} value={lead} onChange={(lead: string) => setLead(lead)} />
             </Form.Group>
           </Form>
         </Panel>
@@ -86,26 +110,6 @@ export function TeaserEditPanel({
           removeImage={() => setImage(undefined)}
         />
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button
-          appearance={'primary'}
-          onClick={() => {
-            onConfirm({
-              ...initialTeaser,
-              style,
-              preTitle: preTitle || undefined,
-              title: title || undefined,
-              lead: lead || undefined,
-              image
-            })
-          }}>
-          {t('articleEditor.panels.confirm')}
-        </Button>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {closeLabel}
-        </Button>
-      </Drawer.Footer>
 
       <Drawer open={isChooseModalOpen} size={'sm'} onClose={() => setChooseModalOpen(false)}>
         <ImageSelectPanel

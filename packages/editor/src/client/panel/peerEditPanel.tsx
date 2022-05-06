@@ -130,6 +130,15 @@ export function PeerEditPanel({id, hostURL, onClose, onSave}: PeerEditPanelProps
         <Drawer.Title>
           {id ? t('peerList.panels.editPeer') : t('peerList.panels.createPeer')}
         </Drawer.Title>
+
+        <Drawer.Actions>
+          <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
+            {id ? t('peerList.panels.save') : t('peerList.panels.create')}
+          </Button>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {t('peerList.panels.close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -237,15 +246,6 @@ export function PeerEditPanel({id, hostURL, onClose, onSave}: PeerEditPanelProps
           </Panel>
         )}
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
-          {id ? t('peerList.panels.save') : t('peerList.panels.create')}
-        </Button>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {t('peerList.panels.close')}
-        </Button>
-      </Drawer.Footer>
     </>
   )
 }

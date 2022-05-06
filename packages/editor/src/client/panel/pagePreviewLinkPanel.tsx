@@ -73,7 +73,11 @@ export function PagePreviewLinkPanel({props, onClose}: PagePreviewLinkPanelProps
             <Form.ControlLabel>
               {t('articleEditor.panels.articlePreviewLinkField')}
             </Form.ControlLabel>
-            <Form.Control name={''} disabled={isLoading} value={data?.pagePreviewLink} />
+            <Form.Control
+              name={'page-preview-link'}
+              disabled={isLoading}
+              value={data?.pagePreviewLink}
+            />
           </Form.Group>
         </Form>
       </Modal.Body>

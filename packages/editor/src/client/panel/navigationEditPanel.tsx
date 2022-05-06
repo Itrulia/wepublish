@@ -205,6 +205,15 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
         <Drawer.Title>
           {id ? t('navigation.panels.editNavigation') : t('navigation.panels.createNavigation')}
         </Drawer.Title>
+
+        <Drawer.Actions>
+          <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
+            {id ? t('navigation.panels.save') : t('navigation.panels.create')}
+          </Button>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {t('navigation.panels.close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
       <Drawer.Body>
         <Panel>
@@ -212,7 +221,7 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
             <Form.Group>
               <Form.ControlLabel>{t('navigation.panels.name')}</Form.ControlLabel>
               <Form.Control
-                name={''}
+                name={'name'}
                 placeholder={t('navigation.panels.name')}
                 value={name}
                 disabled={isDisabled}
@@ -224,7 +233,7 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
             <Form.Group>
               <Form.ControlLabel>{t('navigation.panels.key')}</Form.ControlLabel>
               <Form.Control
-                name={''}
+                name={'key'}
                 placeholder={t('navigation.panels.key')}
                 value={key}
                 disabled={isDisabled}
@@ -306,15 +315,6 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
           </ListInput>
         </Panel>
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button appearance={'primary'} disabled={isDisabled} onClick={() => handleSave()}>
-          {id ? t('navigation.panels.save') : t('navigation.panels.create')}
-        </Button>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {t('navigation.panels.close')}
-        </Button>
-      </Drawer.Footer>
     </>
   )
 }

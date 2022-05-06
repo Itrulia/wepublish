@@ -41,6 +41,17 @@ export function TokenGeneratePanel({onClose}: TokenGeneratePanelProps) {
     <>
       <Drawer.Header>
         <Drawer.Title>{t('tokenList.panels.generateToken')}</Drawer.Title>
+
+        <Drawer.Actions>
+          {!hasGeneratedToken && (
+            <Button disabled={isDisabled} onClick={handleSave} appearance="primary">
+              {t('tokenList.panels.generate')}
+            </Button>
+          )}
+          <Button onClick={() => onClose?.()} appearance="subtle">
+            {t('tokenList.panels.close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
       <Drawer.Body>
         {token ? (
@@ -62,17 +73,6 @@ export function TokenGeneratePanel({onClose}: TokenGeneratePanelProps) {
           />
         )}
       </Drawer.Body>
-
-      <Drawer.Footer>
-        {!hasGeneratedToken && (
-          <Button disabled={isDisabled} onClick={handleSave} appearance="primary">
-            {t('tokenList.panels.generate')}
-          </Button>
-        )}
-        <Button onClick={() => onClose?.()} appearance="subtle">
-          {t('tokenList.panels.close')}
-        </Button>
-      </Drawer.Footer>
     </>
   )
 }

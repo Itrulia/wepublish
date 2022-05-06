@@ -40,6 +40,15 @@ export function GalleryListEditPanel({
     <>
       <Drawer.Header>
         <Drawer.Title>{t('blocks.imageGallery.panels.editGallery')}</Drawer.Title>
+
+        <Drawer.Actions>
+          <Button appearance={'primary'} onClick={() => onSave?.(images.map(({value}) => value))}>
+            {t('blocks.imageGallery.panels.save')}
+          </Button>
+          <Button appearance={'subtle'} onClick={() => onClose?.()}>
+            {t('blocks.imageGallery.panels.close')}
+          </Button>
+        </Drawer.Actions>
       </Drawer.Header>
 
       <Drawer.Body>
@@ -50,15 +59,6 @@ export function GalleryListEditPanel({
           {props => <GalleryListItem {...props} />}
         </ListInput>
       </Drawer.Body>
-
-      <Drawer.Footer>
-        <Button appearance={'primary'} onClick={() => onSave?.(images.map(({value}) => value))}>
-          {t('blocks.imageGallery.panels.save')}
-        </Button>
-        <Button appearance={'subtle'} onClick={() => onClose?.()}>
-          {t('blocks.imageGallery.panels.close')}
-        </Button>
-      </Drawer.Footer>
     </>
   )
 }
@@ -88,7 +88,7 @@ export function GalleryListItem({value, onChange}: FieldProps<GalleryImageEdge>)
           <Form.Group>
             <Form.ControlLabel>{t('blocks.imageGallery.panels.caption')}</Form.ControlLabel>
             <Form.Control
-              name={''}
+              name={'caption'}
               rows={1}
               as="textarea"
               value={caption}

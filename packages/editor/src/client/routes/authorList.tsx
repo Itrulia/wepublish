@@ -26,14 +26,15 @@ import {
   Avatar,
   Drawer,
   Modal,
-  Button
+  Button,
+  Pagination
 } from 'rsuite'
 import {DescriptionList, DescriptionListItem} from '../atoms/descriptionList'
 import {DEFAULT_TABLE_PAGE_SIZES, mapTableSortTypeToGraphQLSortOrder} from '../utility'
 import TrashIcon from '@rsuite/icons/legacy/Trash'
 import SearchIcon from '@rsuite/icons/legacy/Search'
 
-const {Column, HeaderCell, Cell, Pagination} = Table
+const {Column, HeaderCell, Cell} = Table
 
 function mapColumFieldToGraphQLField(columnField: string): AuthorSort | null {
   switch (columnField) {
@@ -152,11 +153,11 @@ export function AuthorList() {
           sortColumn={sortField}
           sortType={sortOrder}
           onSortColumn={(sortColumn, sortType) => {
-            setSortOrder(sortType)
+            setSortOrder(sortType ?? 'asc')
             setSortField(sortColumn)
           }}>
           <Column width={100} align="left" resizable>
-            <HeaderCell></HeaderCell>
+            <HeaderCell>{}</HeaderCell>
             <Cell style={{padding: 2}}>
               {(rowData: FullAuthorFragment) => (
                 <Avatar circle src={rowData.image?.squareURL || undefined} />
@@ -207,13 +208,13 @@ export function AuthorList() {
         </Table>
 
         <Pagination
-          style={{height: '50px'}}
-          lengthMenu={DEFAULT_TABLE_PAGE_SIZES}
+          limit={limit}
+          limitOptions={DEFAULT_TABLE_PAGE_SIZES}
+          layout={['total', '-', 'limit', '|', 'pager', 'skip']}
+          total={data?.authors.totalCount ?? 0}
           activePage={page}
-          displayLength={limit}
-          total={data?.authors.totalCount}
-          onChangePage={(newPage: number) => setPage(newPage)}
-          onChangeLength={(limit: number) => setLimit(limit)}
+          onChangePage={page => setPage(page)}
+          onChangeLimit={limit => setLimit(limit)}
         />
       </div>
 

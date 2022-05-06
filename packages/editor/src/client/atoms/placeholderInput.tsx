@@ -36,8 +36,8 @@ export function PlaceholderInput({children, onAddClick}: PlaceholderInputProps) 
         backgroundColor: '#f7f9fa'
       }}>
       <IconButton
-        size={'lg'}
-        icon={<PlusCircleIcon style={{fontSize: '5em'}} />}
+        size={'sm'}
+        icon={<PlusCircleIcon />}
         onClick={() => onAddClick && onAddClick()}
       />
     </div>

@@ -18,7 +18,8 @@ import {
   Popover,
   SelectPicker,
   Table,
-  Whisper
+  Whisper,
+  Pagination
 } from 'rsuite'
 import {useTranslation} from 'react-i18next'
 import {Link} from '../route'
@@ -91,7 +92,7 @@ export function PeerArticleList() {
     refetch(listVariables)
   }, [filter, page, limit, sortOrder, sortField, peerFilter])
 
-  const {Column, HeaderCell, Cell, Pagination} = Table
+  const {Column, HeaderCell, Cell} = Table
 
   useEffect(() => {
     if (peerArticleListError) {
@@ -141,14 +142,14 @@ export function PeerArticleList() {
         }}>
         <Table
           onSortColumn={(sortColumn, sortType) => {
-            setSortOrder(sortType)
+            setSortOrder(sortType ?? 'asc')
             setSortField(sortColumn)
           }}
           minHeight={600}
           autoHeight={true}
           style={{flex: 1}}
           loading={isLoading}
-          data={peerArticles}
+          data={peerArticles as any[]}
           sortColumn={sortField}
           sortType={sortOrder}>
           <Column width={200} align="left" resizable>
@@ -260,13 +261,13 @@ export function PeerArticleList() {
         </Table>
 
         <Pagination
-          style={{height: '50px'}}
-          lengthMenu={DEFAULT_TABLE_PAGE_SIZES}
+          limit={limit}
+          limitOptions={DEFAULT_TABLE_PAGE_SIZES}
+          layout={['total', '-', 'limit', '|', 'pager', 'skip']}
+          total={peerArticleListData?.peerArticles.totalCount ?? 0}
           activePage={page}
-          displayLength={limit}
-          total={peerArticleListData?.peerArticles.totalCount}
           onChangePage={page => setPage(page)}
-          onChangeLength={limit => setLimit(limit)}
+          onChangeLimit={limit => setLimit(limit)}
         />
       </div>
     </>
