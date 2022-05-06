@@ -1,7 +1,7 @@
 import {hot} from 'react-hot-loader/root'
 import React, {useContext, useEffect, useState} from 'react'
 
-import 'rsuite/lib/styles/index.less'
+import 'rsuite/styles/index.less'
 
 import {useRoute, RouteType, Route, useRouteDispatch, LoginRoute} from './route'
 

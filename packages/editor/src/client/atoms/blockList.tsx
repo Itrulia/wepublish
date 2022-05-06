@@ -6,8 +6,6 @@ import {isValueConstructor, ValueConstructor, UnionToIntersection} from '@karma.
 
 import {AddBlockInput} from './addBlockInput'
 import {IconButton, Panel} from 'rsuite'
-import {IconNames} from 'rsuite/lib/Icon/Icon'
-import {SVGIcon} from 'rsuite/lib/@types/common'
 import TrashIcon from '@rsuite/icons/legacy/Trash'
 import ArrowUpIcon from '@rsuite/icons/legacy/ArrowUp'
 import ArrowDownIcon from '@rsuite/icons/legacy/ArrowDown'
@@ -23,7 +21,7 @@ export type BlockConstructorFn<V = any> = (props: BlockProps<V>) => JSX.Element
 
 export interface BlockCaseProps<V = any> {
   label: string
-  icon: IconNames | SVGIcon
+  icon: string
   defaultValue: ValueConstructor<V>
   field: BlockConstructorFn<V>
 }
@@ -303,7 +301,8 @@ function ListItemWrapper({
           fontSize: 24,
           fill: 'gray'
         }}>
-        {icon && <Icon icon={icon} />}
+        {/* {icon && <Icon icon={icon} />} */}
+        {icon}
       </div>
     </div>
   )

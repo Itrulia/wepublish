@@ -57,9 +57,9 @@ export function ImageBlock({value, onChange, autofocus}: BlockProps<ImageBlockVa
                 backgroundImage: `url(${image?.largeURL ?? 'https://via.placeholder.com/240x240'})`
               }}>
               <Dropdown
-                renderTitle={() => {
-                  return <IconButton appearance="subtle" icon={<WrenchIcon />} circle />
-                }}>
+                renderToggle={() => (
+                  <IconButton appearance="subtle" icon={<WrenchIcon />} circle />
+                )}>
                 <Dropdown.Item onClick={() => setChooseModalOpen(true)}>
                   <ImageIcon /> {t('blocks.image.overview.chooseImage')}
                 </Dropdown.Item>

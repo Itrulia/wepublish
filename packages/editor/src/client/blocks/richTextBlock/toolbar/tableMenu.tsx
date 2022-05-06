@@ -8,7 +8,7 @@ import {ControlsContainer, SubMenuContext} from '../../../atoms/toolbar'
 import {WepublishEditor} from '../editor/wepublishEditor'
 import {BlockFormat} from '../editor/formats'
 import {DEFAULT_BORDER_COLOR, emptyCellsTable} from '../editor/elements'
-import BanIcon from '@rsuite/icons/legacy/BanIcon'
+import BanIcon from '@rsuite/icons/legacy/Ban'
 
 import './tableMenu.less'
 

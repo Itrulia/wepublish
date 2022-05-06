@@ -153,7 +153,7 @@ export function UserList() {
           sortColumn={sortField}
           sortType={sortOrder}
           onSortColumn={(sortColumn, sortType) => {
-            setSortOrder(sortType)
+            setSortOrder(sortType!)
             setSortField(sortColumn)
           }}>
           <Column width={200} align="left" resizable sortable>

@@ -237,7 +237,7 @@ export function Base({children}: BaseProps) {
                 <Dropdown
                   placement="topStart"
                   trigger="click"
-                  renderTitle={() => <CogIcon style={iconStyles} className="icon-selector" />}>
+                  renderToggle={() => <CogIcon style={iconStyles} className="icon-selector" />}>
                   <DropdownItemLink route={LogoutRoute.create({})}>
                     {t('navbar.logout')}
                   </DropdownItemLink>
@@ -247,7 +247,7 @@ export function Base({children}: BaseProps) {
                 <Dropdown
                   placement="topStart"
                   trigger="click"
-                  renderTitle={() => (
+                  renderToggle={() => (
                     <GlobeIcon
                       className="icon-selector"
                       style={{

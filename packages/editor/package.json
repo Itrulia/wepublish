@@ -113,7 +113,6 @@
     "@types/webpack": "^4.41.0",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.3",
     "babel-loader": "^8.0.6",
-    "babel-preset-rsuite": "^4.0.1",
     "clean-webpack-plugin": "^3.0.0",
     "crlf": "^1.1.1",
     "css-loader": "^4.2.1",
