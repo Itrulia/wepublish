@@ -41,7 +41,7 @@ export type BlockMapForValue<R extends BlockListValue> = UnionToIntersection<
 export interface BlockListItemProps<T extends string = string, V = any> {
   index: number
   value: BlockListValue<T, V>
-  icon: IconNames | SVGIcon
+  icon: string
   autofocus: boolean
   disabled?: boolean
 
@@ -233,7 +233,7 @@ export function BlockList<V extends BlockListValue>({
 
 interface ListItemWrapperProps {
   children?: ReactNode
-  icon?: IconNames | SVGIcon
+  icon?: string
   disabled?: boolean
 
   onDelete?: () => void

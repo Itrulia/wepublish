@@ -253,7 +253,6 @@ export function NavigationEditPanel({id, onClose, onSave}: NavigationEditPanelPr
                 <SelectPicker
                   block
                   virtualized
-                  label={t('navigation.panels.linkType')}
                   value={value.type}
                   style={{marginBottom: 4}}
                   data={linkTypes}

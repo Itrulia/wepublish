@@ -29,7 +29,7 @@ export function FormControlUrl({placeholder, name, value, onChange}: UrlValidati
         placeholder={placeholder}
         name={name}
         value={value}
-        onChange={url => {
+        onChange={(url: string) => {
           handleUrlValidation(url)
           onChange(url)
         }}

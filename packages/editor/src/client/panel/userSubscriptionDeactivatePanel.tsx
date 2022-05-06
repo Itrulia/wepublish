@@ -5,8 +5,8 @@ import {Button, DatePicker, Form, Message, Modal, SelectPicker} from 'rsuite'
 import {SubscriptionDeactivationReason} from '../api'
 
 export interface DeactivateSubscription {
-  date: Date | null
-  reason: SubscriptionDeactivationReason | null
+  date: Date
+  reason: SubscriptionDeactivationReason
 }
 
 export interface SubscriptionDeactivatePanelProps {
@@ -109,7 +109,7 @@ export function UserSubscriptionDeactivatePanel({
           onClick={() =>
             isDeactivated
               ? onReactivate()
-              : onDeactivate({date: deactivationDate, reason: deactivationReason!})
+              : onDeactivate({date: deactivationDate!, reason: deactivationReason!})
           }>
           {t(
             isDeactivated

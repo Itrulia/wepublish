@@ -124,11 +124,11 @@ export const SubMenuButton = forwardRef<PopoverProps, SubMenuButtonProps>(
     const triggerRef = (ref || localRef) as typeof localRef
 
     const closeMenu = () => {
-      triggerRef.current!.close()
+      triggerRef.current!.visible = false
     }
 
     const openMenu = () => {
-      triggerRef.current!.open()
+      triggerRef.current!.visible = true
     }
 
     const menuRef = useCallback((node: any) => {

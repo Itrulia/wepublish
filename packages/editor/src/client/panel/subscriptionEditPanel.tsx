@@ -416,7 +416,7 @@ export function SubscriptionEditPanel({id, onClose, onSave}: SubscriptionEditPan
                 block
                 value={startsAt}
                 disabled={isDisabled || hasNoMemberPlanSelected || isDeactivated}
-                onChange={value => setStartsAt(value)}
+                onChange={value => setStartsAt(value!)}
               />
             </Form.Group>
             <Form.Group>

@@ -63,7 +63,7 @@ export function EditorSubMenuButton({
   const triggerRef = useRef<PopoverProps>(null)
 
   useEffect(() => {
-    if (!editorHasFocus && triggerRef.current) triggerRef.current!.close()
+    if (!editorHasFocus && triggerRef.current) triggerRef.current!.visible = false
   }, [editorHasFocus])
 
   return (

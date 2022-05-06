@@ -1,11 +1,12 @@
 import React, {useState, useEffect, useContext} from 'react'
 import {useTranslation} from 'react-i18next'
-import {Button, Form, ButtonToolbar, InputGroup} from 'rsuite'
+import {Button, Form, ButtonToolbar, InputGroup, IconButton} from 'rsuite'
 import {Transforms, Range, Editor} from 'slate'
 import {useSlate} from 'slate-react'
 import {WepublishEditor} from '../editor/wepublishEditor'
 import {InlineFormat} from '../editor/formats'
 import {SubMenuContext} from '../../../atoms/toolbar'
+import UnlinkIcon from '@rsuite/icons/legacy/Unlink'
 
 export function LinkMenu() {
   const editor = useSlate()
@@ -98,7 +99,7 @@ export function LinkMenu() {
               <option value={prefixType.other}>{prefixType.other}</option>
             </select>
 
-            <Form.Control value={url} onChange={url => setURL(url)} />
+            <Form.Control name={''} value={url} onChange={(url: string) => setURL(url)} />
           </InputGroup>
           {prefix !== prefixType.mailto && url && !isValidURL ? (
             <Form.HelpText> {t('blocks.richText.invalidLink')}</Form.HelpText>
@@ -110,8 +111,9 @@ export function LinkMenu() {
         <Form.Group>
           <Form.ControlLabel>{t('blocks.richText.text')}</Form.ControlLabel>
           <Form.Control
+            name={''}
             value={title}
-            onChange={title => {
+            onChange={(title: string) => {
               setTitle(title)
             }}
           />
@@ -169,8 +171,8 @@ export function RemoveLinkFormatButton() {
   const {t} = useTranslation()
 
   return (
-    <Button
-      icon="unlink"
+    <IconButton
+      icon={<UnlinkIcon />}
       active={WepublishEditor.isFormatActive(editor, InlineFormat.Link)}
       disabled={!WepublishEditor.isFormatActive(editor, InlineFormat.Link)}
       onMouseDown={() => {
@@ -178,7 +180,7 @@ export function RemoveLinkFormatButton() {
         closeMenu()
       }}>
       {t('blocks.richText.remove')}
-    </Button>
+    </IconButton>
   )
 }
 
