@@ -1,112 +1,117 @@
+import {UserInputError} from 'apollo-server-express'
 import {
-  GraphQLObjectType,
+  GraphQLID,
+  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
-  GraphQLInt,
-  GraphQLID,
+  GraphQLObjectType,
   GraphQLString,
   Kind
 } from 'graphql'
-
+import {ExtractField, WrapQuery} from 'graphql-tools'
+import {Context} from '../context'
+import {ArticleSort, PeerArticle} from '../db/article'
+import {AuthorSort} from '../db/author'
+import {CommentSort} from '../db/comment'
+import {ConnectionResult, InputCursor, Limit, SortOrder} from '../db/common'
+import {ImageSort} from '../db/image'
+import {InvoiceSort} from '../db/invoice'
+import {MemberPlanSort} from '../db/memberPlan'
+import {PageSort} from '../db/page'
+import {PaymentSort} from '../db/payment'
+import {Subscription, SubscriptionSort} from '../db/subscription'
+import {User, UserSort} from '../db/user'
+import {UserRoleSort} from '../db/userRole'
+import {NotAuthorisedError, NotFound} from '../error'
+import {base64Decode, base64Encode, delegateToPeerSchema, mapSubscriptionsAsCsv} from '../utility'
 import {
-  WrapQuery,
-  ExtractField,
-  introspectSchema,
-  delegateToSchema,
-  makeRemoteExecutableSchema
-} from 'graphql-tools'
-
-import {UserInputError} from 'apollo-server-express'
-
-import {Context, createFetcher} from '../context'
-
-import {GraphQLSession} from './session'
-import {GraphQLAuthProvider} from './auth'
-
-import {
-  GraphQLArticleConnection,
-  GraphQLArticleSort,
-  GraphQLArticleFilter,
   GraphQLArticle,
+  GraphQLArticleConnection,
+  GraphQLArticleFilter,
+  GraphQLArticleSort,
   GraphQLPeerArticleConnection
 } from './article'
-
-import {ConnectionResult, InputCursor, Limit, SortOrder} from '../db/common'
-import {ArticleSort, PeerArticle} from '../db/article'
-import {GraphQLSortOrder} from './common'
-import {GraphQLImageConnection, GraphQLImageFilter, GraphQLImageSort, GraphQLImage} from './image'
-import {ImageSort} from '../db/image'
-
+import {getArticleById, getArticlePreviewLink, getArticles} from './article/article.private-queries'
+import {GraphQLAuthProvider} from './auth'
 import {
+  GraphQLAuthor,
   GraphQLAuthorConnection,
   GraphQLAuthorFilter,
-  GraphQLAuthorSort,
-  GraphQLAuthor
+  GraphQLAuthorSort
 } from './author'
-
-import {AuthorSort} from '../db/author'
-import {User, UserSort} from '../db/user'
-import {GraphQLNavigation} from './navigation'
-import {GraphQLSlug} from './slug'
-
-import {GraphQLPage, GraphQLPageConnection, GraphQLPageFilter, GraphQLPageSort} from './page'
-
-import {PageSort} from '../db/page'
-
-import {SessionType} from '../db/session'
-import {GraphQLPeer, GraphQLPeerProfile} from './peer'
-import {GraphQLToken} from './token'
+import {getAuthorByIdOrSlug} from './author/author.private-queries'
+import {GraphQLCommentConnection, GraphQLCommentFilter, GraphQLCommentSort} from './comment'
+import {GraphQLSortOrder} from './common'
+import {GraphQLImage, GraphQLImageConnection, GraphQLImageFilter, GraphQLImageSort} from './image'
+import {getImageById} from './image/image.private-queries'
 import {
-  delegateToPeerSchema,
-  base64Encode,
-  base64Decode,
-  markResultAsProxied,
-  mapSubscriptionsAsCsv
-} from '../utility'
-
+  GraphQLInvoice,
+  GraphQLInvoiceConnection,
+  GraphQLinvoiceFilter,
+  GraphQLInvoiceSort
+} from './invoice'
+import {getInvoiceById} from './invoice/invoice.private-queries'
+import {getMemberPlanByIdOrSlug} from './member-plan/member-plan.private-queries'
+import {
+  GraphQLMemberPlan,
+  GraphQLMemberPlanConnection,
+  GraphQLMemberPlanFilter,
+  GraphQLMemberPlanSort
+} from './memberPlan'
+import {GraphQLNavigation} from './navigation'
+import {getNavigationByIdOrKey, getNavigations} from './navigation/navigation.private-queries'
+import {GraphQLPage, GraphQLPageConnection, GraphQLPageFilter, GraphQLPageSort} from './page'
+import {getPageById} from './page/page.private-queries'
+import {
+  GraphQLPayment,
+  GraphQLPaymentConnection,
+  GraphQLPaymentFilter,
+  GraphQLPaymentSort
+} from './payment'
+import {
+  getPaymentMethodById,
+  getPaymentMethods
+} from './payment-method/payment-method.private-queries'
+import {getPaymentById} from './payment/payment.private-queries'
+import {GraphQLPaymentMethod, GraphQLPaymentProvider} from './paymentMethod'
+import {GraphQLPeer, GraphQLPeerProfile} from './peer'
+import {getPeerProfile, getRemotePeerProfile} from './peer-profile/peer-profile.private-queries'
+import {getPeerById, getPeers} from './peer/peer.private-queries'
+import {getPermissions} from './permission/permission.private-queries'
 import {
   authorise,
-  isAuthorised,
-  CanGetArticle,
   CanGetArticles,
-  CanGetAuthor,
   CanGetAuthors,
-  CanGetImage,
+  CanGetComments,
   CanGetImages,
-  CanGetNavigation,
-  CanGetPage,
+  CanGetInvoices,
+  CanGetMemberPlans,
+  CanGetPagePreviewLink,
   CanGetPages,
-  CanGetPermissions,
-  CanGetUser,
-  CanGetUserRole,
-  CanGetUserRoles,
-  CanGetUsers,
-  CanGetSharedArticle,
+  CanGetPaymentProviders,
+  CanGetPayments,
   CanGetPeerArticle,
   CanGetPeerArticles,
-  CanGetNavigations,
   CanGetSharedArticles,
-  CanGetPeerProfile,
-  CanGetPeers,
-  CanGetPeer,
-  AllPermissions,
-  CanGetComments,
-  CanGetMemberPlan,
-  CanGetMemberPlans,
-  CanGetPaymentMethods,
-  CanGetPaymentMethod,
-  CanGetInvoice,
-  CanGetInvoices,
-  CanGetPayment,
-  CanGetPayments,
-  CanGetPaymentProviders,
-  CanGetArticlePreviewLink,
-  CanGetPagePreviewLink,
-  CanCreatePeer,
   CanGetSubscriptions,
-  CanGetSubscription
+  CanGetUserRoles,
+  CanGetUsers,
+  isAuthorised
 } from './permissions'
-import {GraphQLUserConnection, GraphQLUserFilter, GraphQLUserSort, GraphQLUser} from './user'
+import {GraphQLSession} from './session'
+import {GraphQLSlug} from './slug'
+import {
+  GraphQLSubscription,
+  GraphQLSubscriptionConnection,
+  GraphQLSubscriptionFilter,
+  GraphQLSubscriptionSort
+} from './subscription'
+import {getSubscriptionById} from './subscription/subscription.private-queries'
+import {GraphQLToken} from './token'
+import {getTokens} from './token/token.private-queries'
+import {GraphQLUser, GraphQLUserConnection, GraphQLUserFilter, GraphQLUserSort} from './user'
+import {getUserRoleById} from './user-role/user-role.private-queries'
+import {getMe, getUserById} from './user/user.private-queries'
 import {
   GraphQLPermission,
   GraphQLUserRole,
@@ -114,40 +119,7 @@ import {
   GraphQLUserRoleFilter,
   GraphQLUserRoleSort
 } from './userRole'
-import {UserRoleSort} from '../db/userRole'
-
-import {NotAuthorisedError, NotFound, PeerTokenInvalidError} from '../error'
-import {GraphQLCommentConnection, GraphQLCommentFilter, GraphQLCommentSort} from './comment'
-import {
-  GraphQLMemberPlan,
-  GraphQLMemberPlanConnection,
-  GraphQLMemberPlanFilter,
-  GraphQLMemberPlanSort
-} from './memberPlan'
-import {MemberPlanSort} from '../db/memberPlan'
-import {GraphQLPaymentMethod, GraphQLPaymentProvider} from './paymentMethod'
-import {
-  GraphQLInvoice,
-  GraphQLInvoiceConnection,
-  GraphQLinvoiceFilter,
-  GraphQLInvoiceSort
-} from './invoice'
-import {InvoiceSort} from '../db/invoice'
-import {
-  GraphQLPayment,
-  GraphQLPaymentConnection,
-  GraphQLPaymentFilter,
-  GraphQLPaymentSort
-} from './payment'
-import {PaymentSort} from '../db/payment'
-import {CommentSort} from '../db/comment'
-import {Subscription, SubscriptionSort} from '../db/subscription'
-import {
-  GraphQLSubscription,
-  GraphQLSubscriptionConnection,
-  GraphQLSubscriptionFilter,
-  GraphQLSubscriptionSort
-} from './subscription'
+import {decodeCursor} from './queries/cursor'
 
 export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
   name: 'Query',
@@ -161,60 +133,25 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
         hostURL: {type: GraphQLNonNull(GraphQLString)},
         token: {type: GraphQLNonNull(GraphQLString)}
       },
-      async resolve(root, {hostURL, token}, {authenticate}, info) {
-        const {roles} = authenticate()
-        authorise(CanCreatePeer, roles)
-        const link = new URL('/admin', hostURL)
-        const fetcher = await createFetcher(link.toString(), token)
-        const schema = await introspectSchema(fetcher)
-        const remoteExecutableSchema = await makeRemoteExecutableSchema({
-          schema,
-          fetcher
-        })
-        const remoteAnswer = await delegateToSchema({
-          info,
-          fieldName: 'peerProfile',
-          args: {},
-          schema: remoteExecutableSchema,
-          transforms: []
-        })
-
-        if (remoteAnswer?.extensions?.code === 'UNAUTHENTICATED') {
-          // check for unauthenticated error and throw more specific error.
-          // otherwise client doesn't know who (own or remote api) threw the error
-          throw new PeerTokenInvalidError(link.toString())
-        } else {
-          return await markResultAsProxied(remoteAnswer)
-        }
-      }
+      resolve: (root, {hostURL, token}, {authenticate}, info) =>
+        getRemotePeerProfile(hostURL, token, authenticate, info)
     },
 
     peerProfile: {
       type: GraphQLNonNull(GraphQLPeerProfile),
-      async resolve(root, args, {authenticate, hostURL, websiteURL, dbAdapter}) {
-        const {roles} = authenticate()
-        authorise(CanGetPeerProfile, roles)
-        return {...(await dbAdapter.peer.getPeerProfile()), hostURL, websiteURL}
-      }
+      resolve: (root, args, {authenticate, hostURL, websiteURL, prisma: {peerProfile}}) =>
+        getPeerProfile(hostURL, websiteURL, authenticate, peerProfile)
     },
 
     peers: {
       type: GraphQLList(GraphQLNonNull(GraphQLPeer)),
-      resolve(root, {id}, {authenticate, dbAdapter}) {
-        const {roles} = authenticate()
-        authorise(CanGetPeers, roles)
-        return dbAdapter.peer.getPeers()
-      }
+      resolve: (root, _, {authenticate, prisma: {peer}}) => getPeers(authenticate, peer)
     },
 
     peer: {
       type: GraphQLPeer,
       args: {id: {type: GraphQLNonNull(GraphQLID)}},
-      resolve(root, {id}, {authenticate, dbAdapter, loaders}) {
-        const {roles} = authenticate()
-        authorise(CanGetPeer, roles)
-        return loaders.peer.load(id)
-      }
+      resolve: (root, {id}, {authenticate, loaders: {peer}}) => getPeerById(id, authenticate, peer)
     },
 
     // User
@@ -222,10 +159,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     me: {
       type: GraphQLUser,
-      resolve(root, args, {authenticate}) {
-        const session = authenticate()
-        return session?.type === SessionType.User ? session.user : null
-      }
+      resolve: (root, args, {authenticate}) => getMe(authenticate)
     },
 
     // Session
@@ -251,6 +185,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
             redirect_uri: `${redirectUri}/${client.name}`,
             state: 'fakeRandomString'
           })
+
           return {
             name: client.name,
             url
@@ -264,15 +199,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     user: {
       type: GraphQLUser,
       args: {id: {type: GraphQLID}},
-      resolve(root, {id}, {authenticate, dbAdapter}) {
-        const {roles} = authenticate()
-        authorise(CanGetUser, roles)
-
-        if (id == null) {
-          throw new UserInputError('You must provide `id`')
-        }
-        return dbAdapter.user.getUserByID(id)
-      }
+      resolve: (root, {id}, {authenticate, prisma: {user}}) => getUserById(id, authenticate, user)
     },
 
     users: {
@@ -310,11 +237,8 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     subscription: {
       type: GraphQLSubscription,
       args: {id: {type: GraphQLNonNull(GraphQLID)}},
-      resolve(root, {id}, {authenticate, dbAdapter}) {
-        const {roles} = authenticate()
-        authorise(CanGetSubscription, roles)
-        return dbAdapter.subscription.getSubscriptionByID(id)
-      }
+      resolve: (root, {id}, {authenticate, prisma: {subscription}}) =>
+        getSubscriptionById(id, authenticate, subscription)
     },
 
     subscriptions: {
@@ -400,15 +324,8 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     userRole: {
       type: GraphQLUserRole,
       args: {id: {type: GraphQLID}},
-      resolve(root, {id}, {authenticate, dbAdapter}) {
-        const {roles} = authenticate()
-        authorise(CanGetUserRole, roles)
-
-        if (id == null) {
-          throw new UserInputError('You must provide `id`')
-        }
-        return dbAdapter.userRole.getUserRoleByID(id)
-      }
+      resolve: (root, {id}, {authenticate, loaders}) =>
+        getUserRoleById(id, authenticate, loaders.userRolesByID)
     },
 
     userRoles: {
@@ -442,12 +359,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     permissions: {
       type: GraphQLList(GraphQLNonNull(GraphQLPermission)),
       args: {},
-      resolve(root, {}, {authenticate}) {
-        const {roles} = authenticate()
-        authorise(CanGetPermissions, roles)
-
-        return AllPermissions
-      }
+      resolve: (root, _, {authenticate}) => getPermissions(authenticate)
     },
 
     // Token
@@ -455,10 +367,8 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     tokens: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLToken))),
-      resolve(root, args, {authenticateUser, dbAdapter}) {
-        authenticateUser()
-        return dbAdapter.token.getTokens()
-      }
+      resolve: (root, args, {authenticateUser, prisma: {token}}) =>
+        getTokens(authenticateUser, token)
     },
 
     // Navigation
@@ -467,26 +377,14 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     navigation: {
       type: GraphQLNavigation,
       args: {id: {type: GraphQLID}, key: {type: GraphQLID}},
-      resolve(root, {id, key}, {authenticate, loaders}) {
-        const {roles} = authenticate()
-        authorise(CanGetNavigation, roles)
-
-        if ((id == null && key == null) || (id != null && key != null)) {
-          throw new UserInputError('You must provide either `id` or `key`.')
-        }
-
-        return id ? loaders.navigationByID.load(id) : loaders.navigationByKey.load(key)
-      }
+      resolve: (root, {id, key}, {authenticate, loaders: {navigationByID, navigationByKey}}) =>
+        getNavigationByIdOrKey(id, key, authenticate, navigationByID, navigationByKey)
     },
 
     navigations: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLNavigation))),
-      resolve(root, args, {authenticate, dbAdapter}) {
-        const {roles} = authenticate()
-        authorise(CanGetNavigations, roles)
-
-        return dbAdapter.navigation.getNavigations()
-      }
+      resolve: (root, args, {authenticate, prisma: {navigation}}) =>
+        getNavigations(authenticate, navigation)
     },
 
     // Author
@@ -495,16 +393,8 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     author: {
       type: GraphQLAuthor,
       args: {id: {type: GraphQLID}, slug: {type: GraphQLSlug}},
-      resolve(root, {id, slug}, {authenticate, loaders}) {
-        const {roles} = authenticate()
-        authorise(CanGetAuthor, roles)
-
-        if ((id == null && slug == null) || (id != null && slug != null)) {
-          throw new UserInputError('You must provide either `id` or `slug`.')
-        }
-
-        return id ? loaders.authorsByID.load(id) : loaders.authorsBySlug.load(slug)
-      }
+      resolve: (root, {id, slug}, {authenticate, loaders: {authorsByID, authorsBySlug}}) =>
+        getAuthorByIdOrSlug(id, slug, authenticate, authorsByID, authorsBySlug)
     },
 
     authors: {
@@ -543,11 +433,8 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     image: {
       type: GraphQLImage,
       args: {id: {type: GraphQLID}},
-      resolve(root, {id}, {authenticate, loaders}) {
-        const {roles} = authenticate()
-        authorise(CanGetImage, roles)
-        return loaders.images.load(id)
-      }
+      resolve: (root, {id}, {authenticate, loaders: {images}}) =>
+        getImageById(id, authenticate, images)
     },
 
     images: {
@@ -624,24 +511,8 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     article: {
       type: GraphQLArticle,
       args: {id: {type: GraphQLNonNull(GraphQLID)}},
-      async resolve(root, {id}, {authenticate, loaders}) {
-        const {roles} = authenticate()
-
-        const canGetArticle = isAuthorised(CanGetArticle, roles)
-        const canGetSharedArticle = isAuthorised(CanGetSharedArticle, roles)
-
-        if (canGetArticle || canGetSharedArticle) {
-          const article = await loaders.articles.load(id)
-
-          if (canGetArticle) {
-            return article
-          } else {
-            return article?.shared ? article : null
-          }
-        } else {
-          throw new NotAuthorisedError()
-        }
-      }
+      resolve: (root, {id}, {authenticate, loaders}) =>
+        getArticleById(id, authenticate, loaders.articles)
     },
 
     articles: {
@@ -659,12 +530,22 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
       resolve(
         root,
         {filter, sort, order, after, before, first, skip, last},
-        {authenticate, dbAdapter}
+        {authenticate, dbAdapter, prisma}
       ) {
         const {roles} = authenticate()
 
         const canGetArticles = isAuthorised(CanGetArticles, roles)
         const canGetSharedArticles = isAuthorised(CanGetSharedArticles, roles)
+
+        const cursor = InputCursor(after, before)
+        getArticles(
+          filter,
+          sort,
+          order,
+          decodeCursor(cursor),
+          Limit(first, last, skip),
+          prisma.article
+        )
 
         if (canGetArticles || canGetSharedArticles) {
           return dbAdapter.article.getArticles({
@@ -901,23 +782,11 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     articlePreviewLink: {
       type: GraphQLString,
       args: {id: {type: GraphQLNonNull(GraphQLID)}, hours: {type: GraphQLNonNull(GraphQLInt)}},
-      async resolve(root, {id, hours}, {authenticate, loaders, urlAdapter, generateJWT}) {
-        const {roles} = authenticate()
-        authorise(CanGetArticlePreviewLink, roles)
-
-        const article = await loaders.articles.load(id)
-
-        if (!article) throw new NotFound('article', id)
-
-        if (!article.draft) throw new UserInputError('Article needs to have a draft')
-
-        const token = generateJWT({
-          id: article.id,
-          expiresInMinutes: hours * 60
-        })
-
-        return urlAdapter.getArticlePreviewURL(token)
-      }
+      resolve: async (
+        root,
+        {id, hours},
+        {authenticate, loaders: {articles}, urlAdapter, generateJWT}
+      ) => getArticlePreviewLink(id, hours, authenticate, generateJWT, urlAdapter, articles)
     },
 
     // Page
@@ -926,11 +795,8 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     page: {
       type: GraphQLPage,
       args: {id: {type: GraphQLID}},
-      resolve(root, {id}, {authenticate, loaders}) {
-        const {roles} = authenticate()
-        authorise(CanGetPage, roles)
-        return loaders.pages.load(id)
-      }
+      resolve: (root, {id}, {authenticate, loaders: {pages}}) =>
+        getPageById(id, authenticate, pages)
     },
 
     pages: {
@@ -991,16 +857,8 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     memberPlan: {
       type: GraphQLMemberPlan,
       args: {id: {type: GraphQLID}, slug: {type: GraphQLSlug}},
-      resolve(root, {id, slug}, {authenticate, loaders}) {
-        const {roles} = authenticate()
-        authorise(CanGetMemberPlan, roles)
-
-        if ((id == null && slug == null) || (id != null && slug != null)) {
-          throw new UserInputError('You must provide either `id` or `slug`.')
-        }
-
-        return id ? loaders.memberPlansByID.load(id) : loaders.memberPlansBySlug.load(slug)
-      }
+      resolve: (root, {id, slug}, {authenticate, loaders: {memberPlansByID, memberPlansBySlug}}) =>
+        getMemberPlanByIdOrSlug(id, slug, authenticate, memberPlansByID, memberPlansBySlug)
     },
 
     memberPlans: {
@@ -1034,27 +892,19 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     paymentMethod: {
       type: GraphQLPaymentMethod,
       args: {id: {type: GraphQLID}},
-      resolve(root, {id}, {authenticate, loaders}) {
-        const {roles} = authenticate()
-        authorise(CanGetPaymentMethod, roles)
-
-        return loaders.paymentMethodsByID.load(id)
-      }
+      resolve: (root, {id}, {authenticate, loaders: {paymentMethodsByID}}) =>
+        getPaymentMethodById(id, authenticate, paymentMethodsByID)
     },
 
     paymentMethods: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLPaymentMethod))),
-      resolve(root, {}, {authenticate, dbAdapter}) {
-        const {roles} = authenticate()
-        authorise(CanGetPaymentMethods, roles)
-
-        return dbAdapter.paymentMethod.getPaymentMethods()
-      }
+      resolve: (root, _, {authenticate, prisma: {paymentMethod}}) =>
+        getPaymentMethods(authenticate, paymentMethod)
     },
 
     paymentProviders: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLPaymentProvider))),
-      resolve(root, {}, {authenticate, paymentProviders}) {
+      resolve(root, _, {authenticate, paymentProviders}) {
         const {roles} = authenticate()
         authorise(CanGetPaymentProviders, roles)
 
@@ -1071,12 +921,8 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     invoice: {
       type: GraphQLInvoice,
       args: {id: {type: GraphQLID}},
-      resolve(root, {id}, {authenticate, loaders}) {
-        const {roles} = authenticate()
-        authorise(CanGetInvoice, roles)
-
-        return loaders.invoicesByID.load(id)
-      }
+      resolve: (root, {id}, {authenticate, loaders: {invoicesByID}}) =>
+        getInvoiceById(id, authenticate, invoicesByID)
     },
 
     invoices: {
@@ -1110,12 +956,8 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     payment: {
       type: GraphQLPayment,
       args: {id: {type: GraphQLID}},
-      resolve(root, {id}, {authenticate, loaders}) {
-        const {roles} = authenticate()
-        authorise(CanGetPayment, roles)
-
-        return loaders.paymentsByID.load(id)
-      }
+      resolve: (root, {id}, {authenticate, loaders: {paymentsByID}}) =>
+        getPaymentById(id, authenticate, paymentsByID)
     },
 
     payments: {

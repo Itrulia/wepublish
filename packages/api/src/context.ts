@@ -48,6 +48,7 @@ import {User} from './db/user'
 import {ChallengeProvider} from './challenges/challengeProvider'
 import NodeCache from 'node-cache'
 import {logger} from './server'
+import {PrismaClient} from '@prisma/client'
 
 /**
  * Peered article cache configuration and setup
@@ -122,6 +123,7 @@ export interface Context {
   readonly memberContext: MemberContext
 
   readonly dbAdapter: DBAdapter
+  readonly prisma: PrismaClient
   readonly mediaAdapter: MediaAdapter
   readonly urlAdapter: URLAdapter
   readonly oauth2Providers: Oauth2Provider[]
@@ -171,6 +173,7 @@ export interface ContextOptions {
   readonly websiteURL: string
 
   readonly dbAdapter: DBAdapter
+  readonly prisma: PrismaClient
   readonly mediaAdapter: MediaAdapter
   readonly urlAdapter: URLAdapter
   readonly mailProvider?: BaseMailProvider
@@ -204,12 +207,23 @@ export interface GenerateJWTProps {
   expiresInMinutes?: number
 }
 
+const createOptionalsArray = <Data, Attribute extends keyof Data, Key extends Data[Attribute]>(
+  keys: Key[],
+  data: Data[],
+  attribute: Attribute
+): Array<Data | null> => {
+  const dataMap = Object.fromEntries(data.map(entry => [entry[attribute], entry]))
+
+  return keys.map(id => dataMap[id] ?? null)
+}
+
 export async function contextFromRequest(
   req: IncomingMessage | null,
   {
     hostURL,
     websiteURL,
     dbAdapter,
+    prisma,
     mediaAdapter,
     urlAdapter,
     oauth2Providers,
@@ -229,32 +243,157 @@ export async function contextFromRequest(
     : false
 
   const peerDataLoader = new DataLoader<string, OptionalPeer>(async ids =>
-    dbAdapter.peer.getPeersByID(ids)
+    createOptionalsArray(
+      ids as string[],
+      await prisma.peer.findMany({
+        where: {
+          id: {
+            in: ids as string[]
+          }
+        }
+      }),
+      'id'
+    )
   )
 
   const loaders: DataLoaderContext = {
-    navigationByID: new DataLoader(ids => dbAdapter.navigation.getNavigationsByID(ids)),
-    navigationByKey: new DataLoader(keys => dbAdapter.navigation.getNavigationsByKey(keys)),
+    navigationByID: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          await prisma.navigation.findMany({
+            where: {
+              id: {
+                in: ids as string[]
+              }
+            }
+          }),
+          'id'
+        ) as any[]
+    ),
+    navigationByKey: new DataLoader(
+      async keys =>
+        createOptionalsArray(
+          keys as string[],
+          await prisma.navigation.findMany({
+            where: {
+              key: {
+                in: keys as string[]
+              }
+            }
+          }),
+          'key'
+        ) as any[]
+    ),
 
-    authorsByID: new DataLoader(ids => dbAdapter.author.getAuthorsByID(ids)),
-    authorsBySlug: new DataLoader(slugs => dbAdapter.author.getAuthorsBySlug(slugs)),
+    authorsByID: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          await prisma.author.findMany({
+            where: {
+              id: {
+                in: ids as string[]
+              }
+            }
+          }),
+          'id'
+        ) as any[]
+    ),
+    authorsBySlug: new DataLoader(
+      async slugs =>
+        createOptionalsArray(
+          slugs as string[],
+          await prisma.author.findMany({
+            where: {
+              slug: {
+                in: slugs as string[]
+              }
+            }
+          }),
+          'slug'
+        ) as any[]
+    ),
 
-    images: new DataLoader(ids => dbAdapter.image.getImagesByID(ids)),
+    images: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          await prisma.image.findMany({
+            where: {
+              id: {
+                in: ids as string[]
+              }
+            }
+          }),
+          'id'
+        ) as any[]
+    ),
 
-    articles: new DataLoader(ids => dbAdapter.article.getArticlesByID(ids)),
+    // articles: new DataLoader(async ids => dbAdapter.article.getArticlesByID(ids)),
+    articles: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          await prisma.article.findMany({
+            where: {
+              id: {
+                in: ids as string[]
+              }
+            }
+          }),
+          'id'
+        ) as any[]
+    ),
     publicArticles: new DataLoader(ids => dbAdapter.article.getPublishedArticlesByID(ids)),
 
     pages: new DataLoader(ids => dbAdapter.page.getPagesByID(ids)),
     publicPagesByID: new DataLoader(ids => dbAdapter.page.getPublishedPagesByID(ids)),
     publicPagesBySlug: new DataLoader(slugs => dbAdapter.page.getPublishedPagesBySlug(slugs)),
 
-    userRolesByID: new DataLoader(ids => dbAdapter.userRole.getUserRolesByID(ids)),
+    userRolesByID: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          await prisma.userRole.findMany({
+            where: {
+              id: {
+                in: ids as string[]
+              }
+            }
+          }),
+          'id'
+        ) as any[]
+    ),
 
-    mailLogsByID: new DataLoader(ids => dbAdapter.mailLog.getMailLogsByID(ids)),
+    mailLogsByID: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          await prisma.mailLog.findMany({
+            where: {
+              id: {
+                in: ids as string[]
+              }
+            }
+          }),
+          'id'
+        ) as any[]
+    ),
 
     peer: peerDataLoader,
-    peerBySlug: new DataLoader<string, OptionalPeer>(async slugs =>
-      dbAdapter.peer.getPeersBySlug(slugs)
+    peerBySlug: new DataLoader(async slugs =>
+      createOptionalsArray(
+        slugs as string[],
+        await prisma.peer.findMany({
+          where: {
+            slug: {
+              in: slugs as string[]
+            }
+          }
+        }),
+        'slug'
+      )
     ),
 
     peerSchema: new DataLoader(async ids => {
@@ -311,23 +450,134 @@ export async function contextFromRequest(
       )
     }),
 
-    memberPlansByID: new DataLoader(ids => dbAdapter.memberPlan.getMemberPlansByID(ids)),
-    memberPlansBySlug: new DataLoader(slugs => dbAdapter.memberPlan.getMemberPlansBySlug(slugs)),
-    activeMemberPlansByID: new DataLoader(ids =>
-      dbAdapter.memberPlan.getActiveMemberPlansByID(ids)
+    memberPlansByID: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          await prisma.memberPlan.findMany({
+            where: {
+              id: {
+                in: ids as string[]
+              }
+            }
+          }),
+          'id'
+        ) as any[]
     ),
-    activeMemberPlansBySlug: new DataLoader(slugs =>
-      dbAdapter.memberPlan.getActiveMemberPlansBySlug(slugs)
+    memberPlansBySlug: new DataLoader(
+      async slugs =>
+        createOptionalsArray(
+          slugs as string[],
+          await prisma.memberPlan.findMany({
+            where: {
+              slug: {
+                in: slugs as string[]
+              }
+            }
+          }),
+          'slug'
+        ) as any[]
     ),
-    paymentMethodsByID: new DataLoader(ids => dbAdapter.paymentMethod.getPaymentMethodsByID(ids)),
-    activePaymentMethodsByID: new DataLoader(ids =>
-      dbAdapter.paymentMethod.getActivePaymentMethodsByID(ids)
+    activeMemberPlansByID: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          await prisma.memberPlan.findMany({
+            where: {
+              id: {
+                in: ids as string[]
+              },
+              active: true
+            }
+          }),
+          'id'
+        ) as any[]
     ),
-    activePaymentMethodsBySlug: new DataLoader(slugs =>
-      dbAdapter.paymentMethod.getActivePaymentMethodsBySlug(slugs)
+    activeMemberPlansBySlug: new DataLoader(
+      async slugs =>
+        createOptionalsArray(
+          slugs as string[],
+          await prisma.memberPlan.findMany({
+            where: {
+              slug: {
+                in: slugs as string[]
+              },
+              active: true
+            }
+          }),
+          'slug'
+        ) as any[]
     ),
-    invoicesByID: new DataLoader(ids => dbAdapter.invoice.getInvoicesByID(ids)),
-    paymentsByID: new DataLoader(ids => dbAdapter.payment.getPaymentsByID(ids))
+    paymentMethodsByID: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          await prisma.paymentMethod.findMany({
+            where: {
+              id: {
+                in: ids as string[]
+              }
+            }
+          }),
+          'id'
+        ) as any[]
+    ),
+    activePaymentMethodsByID: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.paymentMethod.findMany({
+          where: {
+            id: {
+              in: ids as string[]
+            },
+            active: true
+          }
+        }),
+        'id'
+      )
+    ),
+    activePaymentMethodsBySlug: new DataLoader(async slugs =>
+      createOptionalsArray(
+        slugs as string[],
+        await prisma.paymentMethod.findMany({
+          where: {
+            slug: {
+              in: slugs as string[]
+            },
+            active: true
+          }
+        }),
+        'slug'
+      )
+    ),
+    invoicesByID: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          await prisma.invoice.findMany({
+            where: {
+              id: {
+                in: ids as string[]
+              }
+            }
+          }),
+          'id'
+        ) as any[]
+    ),
+    paymentsByID: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          await prisma.payment.findMany({
+            where: {
+              id: {
+                in: ids as string[]
+              }
+            }
+          }),
+          'id'
+        ) as any[]
+    )
   }
 
   const mailContext = new MailContext({
@@ -376,7 +626,7 @@ export async function contextFromRequest(
     websiteURL,
     session: isSessionValid ? session : null,
     loaders,
-
+    prisma,
     memberContext,
     mailContext,
     dbAdapter,

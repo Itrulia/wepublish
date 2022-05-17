@@ -95,6 +95,9 @@
     "pretty-quick": "^1.11.1",
     "testcafe": "^1.8.5"
   },
+  "prisma": {
+    "schema": "packages/api/prisma/schema.prisma"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged --pattern \"{examples,packages,services}/**/*.{js,ts,tsx,json}\""

@@ -74,7 +74,7 @@ export class MongoDBPaymentMethodAdapter implements DBPaymentMethodAdapter {
   }
 
   async getPaymentMethods(): Promise<PaymentMethod[]> {
-    const paymentMethods = await this.paymentMethods.find().sort({createAd: -1}).toArray()
+    const paymentMethods = await this.paymentMethods.find().sort({createdAt: -1}).toArray()
     return paymentMethods.map(({_id: id, ...data}) => ({id, ...data}))
   }
 
