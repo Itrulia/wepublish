@@ -1,6 +1,9 @@
 import {Context} from '../../context'
 import {UserInputError} from '../../error'
-import {authorise, CanGetAuthor} from '../permissions'
+import {authorise, CanGetAuthor, CanGetAuthors} from '../permissions'
+import {PrismaClient} from '@prisma/client'
+import {AuthorFilter, AuthorSort} from '../../db/author'
+import {getAuthors} from './author.queries'
 
 export const getAuthorByIdOrSlug = (
   id: string | null,
@@ -17,4 +20,20 @@ export const getAuthorByIdOrSlug = (
   }
 
   return id ? authorsByID.load(id) : authorsBySlug.load(slug!)
+}
+
+export const getAdminAuthors = async (
+  filter: Partial<AuthorFilter>,
+  sortedField: AuthorSort,
+  order: 1 | -1,
+  cursorId: string,
+  skip: number,
+  take: number,
+  authenticate: Context['authenticate'],
+  author: PrismaClient['author']
+) => {
+  const {roles} = authenticate()
+  authorise(CanGetAuthors, roles)
+
+  return getAuthors(filter, sortedField, order, cursorId, skip, take, author)
 }

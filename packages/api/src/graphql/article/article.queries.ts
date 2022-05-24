@@ -1,5 +1,5 @@
 import {Prisma, PrismaClient} from '@prisma/client'
-import {ArticleSort} from '../../db/article'
+import {ArticleFilter, ArticleSort} from '../../db/article'
 import {getSortOrder, SortOrder} from '../queries/sort'
 
 export const createArticleOrder = (
@@ -38,16 +38,6 @@ export const createArticleOrder = (
         }
       }
   }
-}
-
-type ArticleFilter = {
-  title: string
-  published: boolean
-  draft: boolean
-  pending: boolean
-  shared: boolean
-  tags: string[]
-  authors: string[]
 }
 
 const createTitleFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereInput => {
@@ -124,7 +114,7 @@ const createTagsFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereIn
   if (filter.tags) {
     const hasTags = {
       is: {
-        tags: {hasEvery: filter.tags}
+        tags: {hasSome: filter.tags}
       }
     }
 
@@ -140,7 +130,7 @@ const createAuthorFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhere
   if (filter.authors) {
     const hasTags = {
       is: {
-        authorIDs: {hasEvery: filter.tags}
+        authorIDs: {hasSome: filter.tags}
       }
     }
 

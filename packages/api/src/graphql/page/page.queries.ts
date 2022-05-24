@@ -1,5 +1,5 @@
 import {Prisma, PrismaClient} from '@prisma/client'
-import {PageSort} from '../../db/page'
+import {PageFilter, PageSort} from '../../db/page'
 import {getSortOrder, SortOrder} from '../queries/sort'
 
 export const createPageOrder = (
@@ -38,16 +38,6 @@ export const createPageOrder = (
         }
       }
   }
-}
-
-type PageFilter = {
-  title: string
-  published: boolean
-  draft: boolean
-  pending: boolean
-  shared: boolean
-  tags: string[]
-  authors: string[]
 }
 
 const createTitleFilter = (filter: Partial<PageFilter>): Prisma.PageWhereInput => {
@@ -114,7 +104,7 @@ const createTagsFilter = (filter: Partial<PageFilter>): Prisma.PageWhereInput =>
   if (filter.tags) {
     const hasTags = {
       is: {
-        tags: {hasEvery: filter.tags}
+        tags: {hasSome: filter.tags}
       }
     }
 

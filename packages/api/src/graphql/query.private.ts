@@ -42,11 +42,11 @@ import {
   GraphQLAuthorFilter,
   GraphQLAuthorSort
 } from './author'
-import {getAuthorByIdOrSlug} from './author/author.private-queries'
+import {getAdminAuthors, getAuthorByIdOrSlug} from './author/author.private-queries'
 import {GraphQLCommentConnection, GraphQLCommentFilter, GraphQLCommentSort} from './comment'
 import {GraphQLSortOrder} from './common'
 import {GraphQLImage, GraphQLImageConnection, GraphQLImageFilter, GraphQLImageSort} from './image'
-import {getImageById} from './image/image.private-queries'
+import {getAdminImages, getImageById} from './image/image.private-queries'
 import {
   GraphQLInvoice,
   GraphQLInvoiceConnection,
@@ -54,7 +54,10 @@ import {
   GraphQLInvoiceSort
 } from './invoice'
 import {getInvoiceById} from './invoice/invoice.private-queries'
-import {getMemberPlanByIdOrSlug} from './member-plan/member-plan.private-queries'
+import {
+  getAdminMemberPlans,
+  getMemberPlanByIdOrSlug
+} from './member-plan/member-plan.private-queries'
 import {
   GraphQLMemberPlan,
   GraphQLMemberPlanConnection,
@@ -83,11 +86,8 @@ import {getPeerById, getPeers} from './peer/peer.private-queries'
 import {getPermissions} from './permission/permission.private-queries'
 import {
   authorise,
-  CanGetAuthors,
   CanGetComments,
-  CanGetImages,
   CanGetInvoices,
-  CanGetMemberPlans,
   CanGetPaymentProviders,
   CanGetPayments,
   CanGetPeerArticle,
@@ -398,31 +398,18 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     authors: {
       type: GraphQLNonNull(GraphQLAuthorConnection),
       args: {
-        after: {type: GraphQLID},
-        before: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        last: {type: GraphQLInt},
-        skip: {type: GraphQLInt},
+        cursor: {type: GraphQLID},
+        take: {type: GraphQLInt, defaultValue: 10},
+        skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLAuthorFilter},
         sort: {type: GraphQLAuthorSort, defaultValue: AuthorSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
-      resolve(
+      resolve: (
         root,
-        {filter, sort, order, after, before, first, skip, last},
-        {authenticate, dbAdapter}
-      ) {
-        const {roles} = authenticate()
-        authorise(CanGetAuthors, roles)
-
-        return dbAdapter.author.getAuthors({
-          filter,
-          sort,
-          order,
-          cursor: InputCursor(after, before),
-          limit: Limit(first, last, skip)
-        })
-      }
+        {filter, sort, order, take, skip, cursor},
+        {authenticate, prisma: {author}}
+      ) => getAdminAuthors(filter, sort, order, cursor, skip, take, authenticate, author)
     },
 
     // Image
@@ -438,31 +425,15 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     images: {
       type: GraphQLNonNull(GraphQLImageConnection),
       args: {
-        after: {type: GraphQLID},
-        before: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        last: {type: GraphQLInt},
-        skip: {type: GraphQLInt},
+        cursor: {type: GraphQLID},
+        take: {type: GraphQLInt, defaultValue: 5},
+        skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLImageFilter},
         sort: {type: GraphQLImageSort, defaultValue: ImageSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
-      resolve(
-        root,
-        {filter, sort, order, after, before, first, skip, last},
-        {authenticate, dbAdapter}
-      ) {
-        const {roles} = authenticate()
-        authorise(CanGetImages, roles)
-
-        return dbAdapter.image.getImages({
-          filter,
-          sort,
-          order,
-          cursor: InputCursor(after, before),
-          limit: Limit(first, last, skip)
-        })
-      }
+      resolve: (root, {filter, sort, order, skip, take, cursor}, {authenticate, prisma: {image}}) =>
+        getAdminImages(filter, sort, order, cursor, skip, take, authenticate, image)
     },
 
     // Comments
@@ -802,26 +773,18 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     memberPlans: {
       type: GraphQLNonNull(GraphQLMemberPlanConnection),
       args: {
-        after: {type: GraphQLID},
-        before: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        last: {type: GraphQLInt},
+        cursor: {type: GraphQLID},
+        take: {type: GraphQLInt, defaultValue: 10},
+        skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLMemberPlanFilter},
         sort: {type: GraphQLMemberPlanSort, defaultValue: MemberPlanSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
-      resolve(root, {filter, sort, order, after, before, first, last}, {authenticate, dbAdapter}) {
-        const {roles} = authenticate()
-        authorise(CanGetMemberPlans, roles)
-
-        return dbAdapter.memberPlan.getMemberPlans({
-          filter,
-          sort,
-          order,
-          cursor: InputCursor(after, before),
-          limit: Limit(first, last)
-        })
-      }
+      resolve: (
+        root,
+        {filter, sort, order, cursor, take, skip},
+        {authenticate, prisma: {memberPlan}}
+      ) => getAdminMemberPlans(filter, sort, order, cursor, skip, take, authenticate, memberPlan)
     },
 
     // PaymentMethod

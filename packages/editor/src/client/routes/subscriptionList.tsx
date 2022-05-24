@@ -150,7 +150,7 @@ export function SubscriptionList() {
   } = useMemberPlanListQuery({
     fetchPolicy: 'network-only',
     variables: {
-      first: 200 // TODO: Pagination
+      take: 200 // TODO: Pagination
     }
   })
 

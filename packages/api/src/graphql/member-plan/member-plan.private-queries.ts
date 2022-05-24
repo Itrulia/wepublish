@@ -1,6 +1,9 @@
+import {PrismaClient} from '@prisma/client'
 import {Context} from '../../context'
+import {MemberPlanFilter, MemberPlanSort} from '../../db/memberPlan'
 import {UserInputError} from '../../error'
-import {authorise, CanGetMemberPlan} from '../permissions'
+import {authorise, CanGetMemberPlan, CanGetMemberPlans} from '../permissions'
+import {getMemberPlans} from './member-plan.queries'
 
 export const getMemberPlanByIdOrSlug = (
   id: string | null,
@@ -17,4 +20,20 @@ export const getMemberPlanByIdOrSlug = (
   }
 
   return id ? memberPlansByID.load(id) : memberPlansBySlug.load(slug!)
+}
+
+export const getAdminMemberPlans = async (
+  filter: Partial<MemberPlanFilter>,
+  sortedField: MemberPlanSort,
+  order: 1 | -1,
+  cursorId: string,
+  skip: number,
+  take: number,
+  authenticate: Context['authenticate'],
+  memberPlan: PrismaClient['memberPlan']
+) => {
+  const {roles} = authenticate()
+  authorise(CanGetMemberPlans, roles)
+
+  return getMemberPlans(filter, sortedField, order, cursorId, skip, take, memberPlan)
 }

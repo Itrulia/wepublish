@@ -63,7 +63,7 @@ export function MemberPlanList() {
   const {data, /* fetchMore, */ loading: isLoading} = useMemberPlanListQuery({
     variables: {
       filter: filter || undefined,
-      first: 50
+      take: 50
     },
     fetchPolicy: 'network-only'
   })

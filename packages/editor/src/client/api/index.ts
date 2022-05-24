@@ -1499,10 +1499,8 @@ export type QueryAuthorArgs = {
 
 
 export type QueryAuthorsArgs = {
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<AuthorFilter>;
   sort?: Maybe<AuthorSort>;
@@ -1516,10 +1514,8 @@ export type QueryImageArgs = {
 
 
 export type QueryImagesArgs = {
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<ImageFilter>;
   sort?: Maybe<ImageSort>;
@@ -1606,10 +1602,9 @@ export type QueryMemberPlanArgs = {
 
 
 export type QueryMemberPlansArgs = {
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<MemberPlanFilter>;
   sort?: Maybe<MemberPlanSort>;
   order?: Maybe<SortOrder>;
@@ -2407,10 +2402,8 @@ export type FullAuthorFragment = (
 
 export type AuthorListQueryVariables = Exact<{
   filter?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   order?: Maybe<SortOrder>;
   sort?: Maybe<AuthorSort>;
@@ -2795,10 +2788,8 @@ export type FullImageFragment = (
 
 export type ImageListQueryVariables = Exact<{
   filter?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
 }>;
 
@@ -2893,10 +2884,9 @@ export type FullMemberPlanFragment = (
 
 export type MemberPlanListQueryVariables = Exact<{
   filter?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -5061,8 +5051,8 @@ export type CreateSessionWithJwtMutationHookResult = ReturnType<typeof useCreate
 export type CreateSessionWithJwtMutationResult = Apollo.MutationResult<CreateSessionWithJwtMutation>;
 export type CreateSessionWithJwtMutationOptions = Apollo.BaseMutationOptions<CreateSessionWithJwtMutation, CreateSessionWithJwtMutationVariables>;
 export const AuthorListDocument = gql`
-    query AuthorList($filter: String, $after: ID, $before: ID, $first: Int, $last: Int, $skip: Int, $order: SortOrder, $sort: AuthorSort) {
-  authors(filter: {name: $filter}, after: $after, before: $before, first: $first, last: $last, skip: $skip, order: $order, sort: $sort) {
+    query AuthorList($filter: String, $cursor: ID, $take: Int, $skip: Int, $order: SortOrder, $sort: AuthorSort) {
+  authors(filter: {name: $filter}, cursor: $cursor, take: $take, skip: $skip, order: $order, sort: $sort) {
     nodes {
       ...FullAuthor
     }
@@ -5090,10 +5080,8 @@ export const AuthorListDocument = gql`
  * const { data, loading, error } = useAuthorListQuery({
  *   variables: {
  *      filter: // value for 'filter'
- *      after: // value for 'after'
- *      before: // value for 'before'
- *      first: // value for 'first'
- *      last: // value for 'last'
+ *      cursor: // value for 'cursor'
+ *      take: // value for 'take'
  *      skip: // value for 'skip'
  *      order: // value for 'order'
  *      sort: // value for 'sort'
@@ -5398,8 +5386,8 @@ export type RequestChangesOnCommentMutationHookResult = ReturnType<typeof useReq
 export type RequestChangesOnCommentMutationResult = Apollo.MutationResult<RequestChangesOnCommentMutation>;
 export type RequestChangesOnCommentMutationOptions = Apollo.BaseMutationOptions<RequestChangesOnCommentMutation, RequestChangesOnCommentMutationVariables>;
 export const ImageListDocument = gql`
-    query ImageList($filter: String, $after: ID, $before: ID, $first: Int, $last: Int, $skip: Int) {
-  images(filter: {title: $filter}, after: $after, before: $before, first: $first, last: $last, skip: $skip) {
+    query ImageList($filter: String, $cursor: ID, $take: Int, $skip: Int) {
+  images(filter: {title: $filter}, cursor: $cursor, take: $take, skip: $skip) {
     nodes {
       ...ImageRef
     }
@@ -5427,10 +5415,8 @@ export const ImageListDocument = gql`
  * const { data, loading, error } = useImageListQuery({
  *   variables: {
  *      filter: // value for 'filter'
- *      after: // value for 'after'
- *      before: // value for 'before'
- *      first: // value for 'first'
- *      last: // value for 'last'
+ *      cursor: // value for 'cursor'
+ *      take: // value for 'take'
  *      skip: // value for 'skip'
  *   },
  * });
@@ -5580,8 +5566,8 @@ export type DeleteImageMutationHookResult = ReturnType<typeof useDeleteImageMuta
 export type DeleteImageMutationResult = Apollo.MutationResult<DeleteImageMutation>;
 export type DeleteImageMutationOptions = Apollo.BaseMutationOptions<DeleteImageMutation, DeleteImageMutationVariables>;
 export const MemberPlanListDocument = gql`
-    query MemberPlanList($filter: String, $after: ID, $before: ID, $first: Int, $last: Int) {
-  memberPlans(filter: {name: $filter}, after: $after, before: $before, first: $first, last: $last) {
+    query MemberPlanList($filter: String, $cursor: ID, $take: Int, $skip: Int) {
+  memberPlans(filter: {name: $filter}, cursor: $cursor, take: $take, skip: $skip) {
     nodes {
       ...FullMemberPlan
     }
@@ -5609,10 +5595,9 @@ export const MemberPlanListDocument = gql`
  * const { data, loading, error } = useMemberPlanListQuery({
  *   variables: {
  *      filter: // value for 'filter'
- *      after: // value for 'after'
- *      before: // value for 'before'
- *      first: // value for 'first'
- *      last: // value for 'last'
+ *      cursor: // value for 'cursor'
+ *      take: // value for 'take'
+ *      skip: // value for 'skip'
  *   },
  * });
  */

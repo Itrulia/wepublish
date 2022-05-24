@@ -37,7 +37,7 @@ export function ImageSelectPanel({onClose, onSelect}: ImageSelectPanelProps) {
     fetchPolicy: 'network-only',
     variables: {
       filter: filter,
-      first: ImagesPerPage
+      take: ImagesPerPage
     }
   })
 

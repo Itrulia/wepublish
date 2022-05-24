@@ -65,8 +65,8 @@ export function ImageList() {
 
   const listVariables = {
     filter: filter || undefined,
-    first: limit,
-    skip: activePage - 1
+    take: limit,
+    skip: (activePage - 1) * limit
   }
 
   const {data, refetch, /* fetchMore, */ loading: isLoading} = useImageListQuery({
