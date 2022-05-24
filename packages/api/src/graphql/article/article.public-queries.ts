@@ -1,5 +1,5 @@
 import {ArticleFilter, ArticleSort} from '../../db/article'
-import {getArticles} from './article.private-queries'
+import {getArticles} from './article.queries'
 import {PrismaClient} from '@prisma/client'
 
 export const getPublishedArticles = async (

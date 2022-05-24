@@ -1097,14 +1097,6 @@ export type PageConnection = {
   totalCount: Scalars['Int'];
 };
 
-export type PageFilter = {
-  title?: Maybe<Scalars['String']>;
-  draft?: Maybe<Scalars['Boolean']>;
-  published?: Maybe<Scalars['Boolean']>;
-  pending?: Maybe<Scalars['Boolean']>;
-  tags?: Maybe<Array<Scalars['String']>>;
-};
-
 export type PageInfo = {
   __typename?: 'PageInfo';
   startCursor?: Maybe<Scalars['String']>;
@@ -1553,10 +1545,8 @@ export type QueryArticleArgs = {
 
 
 export type QueryArticlesArgs = {
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<ArticleFilter>;
   sort?: Maybe<ArticleSort>;
@@ -1594,12 +1584,10 @@ export type QueryPageArgs = {
 
 
 export type QueryPagesArgs = {
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  filter?: Maybe<PageFilter>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
+  filter?: Maybe<ArticleFilter>;
   sort?: Maybe<PageSort>;
   order?: Maybe<SortOrder>;
 };
@@ -2070,10 +2058,8 @@ export type ArticleRefFragment = (
 
 export type ArticleListQueryVariables = Exact<{
   filter?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   order?: Maybe<SortOrder>;
   sort?: Maybe<ArticleSort>;
@@ -3105,10 +3091,8 @@ export type PageRefFragment = (
 
 export type PageListQueryVariables = Exact<{
   filter?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   order?: Maybe<SortOrder>;
   sort?: Maybe<PageSort>;
@@ -4495,8 +4479,8 @@ export const TokenRefFragmentDoc = gql`
 }
     `;
 export const ArticleListDocument = gql`
-    query ArticleList($filter: String, $after: ID, $before: ID, $first: Int, $last: Int, $skip: Int, $order: SortOrder, $sort: ArticleSort) {
-  articles(filter: {title: $filter}, after: $after, before: $before, first: $first, last: $last, skip: $skip, order: $order, sort: $sort) {
+    query ArticleList($filter: String, $cursor: ID, $take: Int, $skip: Int, $order: SortOrder, $sort: ArticleSort) {
+  articles(filter: {title: $filter}, cursor: $cursor, take: $take, skip: $skip, order: $order, sort: $sort) {
     nodes {
       ...ArticleRef
     }
@@ -4524,10 +4508,8 @@ export const ArticleListDocument = gql`
  * const { data, loading, error } = useArticleListQuery({
  *   variables: {
  *      filter: // value for 'filter'
- *      after: // value for 'after'
- *      before: // value for 'before'
- *      first: // value for 'first'
- *      last: // value for 'last'
+ *      cursor: // value for 'cursor'
+ *      take: // value for 'take'
  *      skip: // value for 'skip'
  *      order: // value for 'order'
  *      sort: // value for 'sort'
@@ -5946,8 +5928,8 @@ export type DeleteNavigationMutationHookResult = ReturnType<typeof useDeleteNavi
 export type DeleteNavigationMutationResult = Apollo.MutationResult<DeleteNavigationMutation>;
 export type DeleteNavigationMutationOptions = Apollo.BaseMutationOptions<DeleteNavigationMutation, DeleteNavigationMutationVariables>;
 export const PageListDocument = gql`
-    query PageList($filter: String, $after: ID, $before: ID, $first: Int, $last: Int, $skip: Int, $order: SortOrder, $sort: PageSort) {
-  pages(filter: {title: $filter}, after: $after, before: $before, first: $first, last: $last, skip: $skip, order: $order, sort: $sort) {
+    query PageList($filter: String, $cursor: ID, $take: Int, $skip: Int, $order: SortOrder, $sort: PageSort) {
+  pages(filter: {title: $filter}, cursor: $cursor, take: $take, skip: $skip, order: $order, sort: $sort) {
     nodes {
       ...PageRef
     }
@@ -5975,10 +5957,8 @@ export const PageListDocument = gql`
  * const { data, loading, error } = usePageListQuery({
  *   variables: {
  *      filter: // value for 'filter'
- *      after: // value for 'after'
- *      before: // value for 'before'
- *      first: // value for 'first'
- *      last: // value for 'last'
+ *      cursor: // value for 'cursor'
+ *      take: // value for 'take'
  *      skip: // value for 'skip'
  *      order: // value for 'order'
  *      sort: // value for 'sort'

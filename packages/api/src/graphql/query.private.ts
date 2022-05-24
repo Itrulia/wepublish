@@ -1,4 +1,3 @@
-import {UserInputError} from 'apollo-server-express'
 import {
   GraphQLID,
   GraphQLInt,
@@ -22,7 +21,7 @@ import {PaymentSort} from '../db/payment'
 import {Subscription, SubscriptionSort} from '../db/subscription'
 import {User, UserSort} from '../db/user'
 import {UserRoleSort} from '../db/userRole'
-import {NotAuthorisedError, NotFound} from '../error'
+import {NotAuthorisedError} from '../error'
 import {base64Decode, base64Encode, delegateToPeerSchema, mapSubscriptionsAsCsv} from '../utility'
 import {
   GraphQLArticle,
@@ -31,7 +30,11 @@ import {
   GraphQLArticleSort,
   GraphQLPeerArticleConnection
 } from './article'
-import {getArticleById, getArticlePreviewLink, getArticles} from './article/article.private-queries'
+import {
+  getAdminArticles,
+  getArticleById,
+  getArticlePreviewLink
+} from './article/article.private-queries'
 import {GraphQLAuthProvider} from './auth'
 import {
   GraphQLAuthor,
@@ -60,8 +63,8 @@ import {
 } from './memberPlan'
 import {GraphQLNavigation} from './navigation'
 import {getNavigationByIdOrKey, getNavigations} from './navigation/navigation.private-queries'
-import {GraphQLPage, GraphQLPageConnection, GraphQLPageFilter, GraphQLPageSort} from './page'
-import {getPageById} from './page/page.private-queries'
+import {GraphQLPage, GraphQLPageConnection, GraphQLPageSort} from './page'
+import {getAdminPages, getPageById, getPagePreviewLink} from './page/page.private-queries'
 import {
   GraphQLPayment,
   GraphQLPaymentConnection,
@@ -80,19 +83,15 @@ import {getPeerById, getPeers} from './peer/peer.private-queries'
 import {getPermissions} from './permission/permission.private-queries'
 import {
   authorise,
-  CanGetArticles,
   CanGetAuthors,
   CanGetComments,
   CanGetImages,
   CanGetInvoices,
   CanGetMemberPlans,
-  CanGetPagePreviewLink,
-  CanGetPages,
   CanGetPaymentProviders,
   CanGetPayments,
   CanGetPeerArticle,
   CanGetPeerArticles,
-  CanGetSharedArticles,
   CanGetSubscriptions,
   CanGetUserRoles,
   CanGetUsers,
@@ -524,26 +523,11 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
         sort: {type: GraphQLArticleSort, defaultValue: ArticleSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
-      resolve(root, {filter, sort, order, skip, take, cursor}, {authenticate, prisma: {article}}) {
-        const {roles} = authenticate()
-
-        const canGetArticles = isAuthorised(CanGetArticles, roles)
-        const canGetSharedArticles = isAuthorised(CanGetSharedArticles, roles)
-
-        if (canGetArticles || canGetSharedArticles) {
-          return getArticles(
-            {...filter, shared: !canGetArticles ? true : undefined},
-            sort,
-            order,
-            cursor,
-            skip,
-            take,
-            article
-          )
-        } else {
-          throw new NotAuthorisedError()
-        }
-      }
+      resolve: (
+        root,
+        {filter, sort, order, skip, take, cursor},
+        {authenticate, prisma: {article}}
+      ) => getAdminArticles(filter, sort, order, cursor, skip, take, authenticate, article)
     },
 
     // Peer Article
@@ -787,53 +771,22 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     pages: {
       type: GraphQLNonNull(GraphQLPageConnection),
       args: {
-        after: {type: GraphQLID},
-        before: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        last: {type: GraphQLInt},
-        filter: {type: GraphQLPageFilter},
-        skip: {type: GraphQLInt},
+        cursor: {type: GraphQLID},
+        take: {type: GraphQLInt, defaultValue: 10},
+        skip: {type: GraphQLInt, defaultValue: 0},
+        filter: {type: GraphQLArticleFilter},
         sort: {type: GraphQLPageSort, defaultValue: PageSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
-      resolve(
-        root,
-        {filter, sort, order, after, before, first, last, skip},
-        {authenticate, dbAdapter}
-      ) {
-        const {roles} = authenticate()
-        authorise(CanGetPages, roles)
-
-        return dbAdapter.page.getPages({
-          filter,
-          sort,
-          order,
-          cursor: InputCursor(after, before),
-          limit: Limit(first, last, skip)
-        })
-      }
+      resolve: (root, {filter, sort, order, skip, take, cursor}, {authenticate, prisma: {page}}) =>
+        getAdminPages(filter, sort, order, cursor, skip, take, authenticate, page)
     },
 
     pagePreviewLink: {
       type: GraphQLString,
       args: {id: {type: GraphQLNonNull(GraphQLID)}, hours: {type: GraphQLNonNull(GraphQLInt)}},
-      async resolve(root, {id, hours}, {authenticate, loaders, urlAdapter, generateJWT}) {
-        const {roles} = authenticate()
-        authorise(CanGetPagePreviewLink, roles)
-
-        const page = await loaders.pages.load(id)
-
-        if (!page) throw new NotFound('page', id)
-
-        if (!page.draft) throw new UserInputError('Page needs to have a draft')
-
-        const token = generateJWT({
-          id: page.id,
-          expiresInMinutes: hours * 60
-        })
-
-        return urlAdapter.getPagePreviewURL(token)
-      }
+      resolve: (root, {id, hours}, {authenticate, loaders: {pages}, urlAdapter, generateJWT}) =>
+        getPagePreviewLink(id, hours, authenticate, generateJWT, urlAdapter, pages)
     },
 
     // MemberPlan
