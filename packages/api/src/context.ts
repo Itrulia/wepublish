@@ -330,7 +330,6 @@ export async function contextFromRequest(
         ) as any[]
     ),
 
-    // articles: new DataLoader(async ids => dbAdapter.article.getArticlesByID(ids)),
     articles: new DataLoader(
       async ids =>
         createOptionalsArray(
@@ -345,11 +344,110 @@ export async function contextFromRequest(
           'id'
         ) as any[]
     ),
-    publicArticles: new DataLoader(ids => dbAdapter.article.getPublishedArticlesByID(ids)),
+    publicArticles: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          (
+            await prisma.article.findMany({
+              where: {
+                id: {
+                  in: ids as string[]
+                },
+                OR: [
+                  {
+                    published: {
+                      isNot: null
+                    }
+                  },
+                  {
+                    pending: {
+                      isNot: null
+                    }
+                  }
+                ]
+              }
+            })
+          ).map(({id, shared, published, pending}) => ({id, shared, ...(published || pending)})),
+          'id'
+        ) as any[]
+    ),
 
-    pages: new DataLoader(ids => dbAdapter.page.getPagesByID(ids)),
-    publicPagesByID: new DataLoader(ids => dbAdapter.page.getPublishedPagesByID(ids)),
-    publicPagesBySlug: new DataLoader(slugs => dbAdapter.page.getPublishedPagesBySlug(slugs)),
+    pages: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          await prisma.page.findMany({
+            where: {
+              id: {
+                in: ids as string[]
+              }
+            }
+          }),
+          'id'
+        ) as any[]
+    ),
+    publicPagesByID: new DataLoader(
+      async ids =>
+        createOptionalsArray(
+          ids as string[],
+          (
+            await prisma.page.findMany({
+              where: {
+                id: {
+                  in: ids as string[]
+                },
+                OR: [
+                  {
+                    published: {
+                      isNot: null
+                    }
+                  },
+                  {
+                    pending: {
+                      isNot: null
+                    }
+                  }
+                ]
+              }
+            })
+          ).map(({id, published, pending}) => ({id, ...(published || pending)})),
+          'id'
+        ) as any[]
+    ),
+    publicPagesBySlug: new DataLoader(
+      async slugs =>
+        createOptionalsArray(
+          slugs as string[],
+          (
+            await prisma.page.findMany({
+              where: {
+                OR: [
+                  {
+                    published: {
+                      is: {
+                        slug: {
+                          in: slugs as string[]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    pending: {
+                      is: {
+                        slug: {
+                          in: slugs as string[]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            })
+          ).map(({id, published, pending}) => ({id, ...(published || pending)})),
+          'slug'
+        ) as any[]
+    ),
 
     userRolesByID: new DataLoader(
       async ids =>

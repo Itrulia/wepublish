@@ -1,17 +1,15 @@
+import {Prisma, PrismaClient} from '@prisma/client'
 import {Context} from '../../context'
-import {
-  isAuthorised,
-  CanGetArticle,
-  CanGetSharedArticle,
-  authorise,
-  CanGetArticlePreviewLink
-} from '../permissions'
-import {NotAuthorisedError, NotFound, UserInputError} from '../../error'
-import {PrismaClient, Prisma} from '@prisma/client'
-import {Limit} from '../../db/common'
 import {ArticleSort} from '../../db/article'
+import {NotAuthorisedError, NotFound, UserInputError} from '../../error'
+import {
+  authorise,
+  CanGetArticle,
+  CanGetArticlePreviewLink,
+  CanGetSharedArticle,
+  isAuthorised
+} from '../permissions'
 import {getSortOrder, SortOrder} from '../queries/sort'
-import {Cursor} from '../queries/cursor'
 
 export const getArticleById = async (
   id: string,
@@ -61,7 +59,7 @@ export const getArticlePreviewLink = async (
   return urlAdapter.getArticlePreviewURL(token)
 }
 
-const createArticleOrder = (
+export const createArticleOrder = (
   field: ArticleSort,
   sortOrder: SortOrder
 ): Prisma.ArticleFindManyArgs['orderBy'] => {
@@ -179,7 +177,7 @@ const createSharedFilter = (filter: Partial<ArticleFilter>) => {
   return {}
 }
 
-const createArticleFilter = (
+export const createArticleFilter = (
   filter: Partial<ArticleFilter>
 ): Prisma.ArticleFindManyArgs['where'] => ({
   ...createTitleFilter(filter),
@@ -193,24 +191,43 @@ export const getArticles = async (
   filter: Partial<ArticleFilter>,
   sortedField: ArticleSort,
   order: 1 | -1,
-  cursor: Cursor | null,
-  limit: Limit,
+  cursorId: string,
+  skip: number,
+  take: number,
   article: PrismaClient['article']
 ) => {
   const orderBy = createArticleOrder(sortedField, getSortOrder(order))
   const where = createArticleFilter(filter)
 
-  console.log(where)
+  const [totalCount, articles] = await Promise.all([
+    article.count({
+      where: where,
+      orderBy: orderBy
+    }),
+    article.findMany({
+      where: where,
+      skip: skip,
+      take: take + 1,
+      orderBy: orderBy,
+      cursor: cursorId ? {id: cursorId} : undefined
+    })
+  ])
 
-  const data = await article.findMany({
-    where: where,
-    skip: limit.skip,
-    take: limit.count,
-    orderBy: orderBy,
-    cursor: cursor ? {id: cursor.id} : undefined
-  })
+  const nodes = articles.slice(0, take)
+  const firstArticle = nodes[0]
+  const lastArticle = nodes[nodes.length - 1]
 
-  console.log(data.length)
+  const hasPreviousPage = Boolean(skip)
+  const hasNextPage = articles.length > nodes.length
 
-  return data
+  return {
+    nodes,
+    totalCount,
+    pageInfo: {
+      hasPreviousPage,
+      hasNextPage,
+      startCursor: firstArticle?.id,
+      lastArticle: lastArticle?.id
+    }
+  }
 }

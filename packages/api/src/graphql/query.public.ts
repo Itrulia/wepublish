@@ -51,6 +51,7 @@ import {NotFound} from '../error'
 import {Invoice} from '../db/invoice'
 import {GraphQLPublicSubscription} from './subscription'
 import {GraphQLChallenge} from './challenge'
+import {getPublishedArticles} from './article/article.public-queries'
 
 export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
   name: 'Query',
@@ -185,24 +186,16 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
     articles: {
       type: GraphQLNonNull(GraphQLPublicArticleConnection),
       args: {
-        after: {type: GraphQLID},
-        before: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        last: {type: GraphQLInt},
+        cursor: {type: GraphQLID},
+        take: {type: GraphQLInt, defaultValue: 10},
+        skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLPublicArticleFilter},
         sort: {type: GraphQLPublicArticleSort, defaultValue: ArticleSort.PublishedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
       description: 'This query returns the articles.',
-      resolve(root, {filter, sort, order, after, before, first, last}, {dbAdapter}) {
-        return dbAdapter.article.getPublishedArticles({
-          filter,
-          sort,
-          order,
-          cursor: InputCursor(after, before),
-          limit: Limit(first, last)
-        })
-      }
+      resolve: (root, {filter, sort, order, skip, take, cursor}, {prisma: {article}}) =>
+        getPublishedArticles(filter, sort, order, cursor, skip, take, article)
     },
 
     // Peer Article
@@ -347,7 +340,7 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
     invoices: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLPublicInvoice))),
       description: 'This query returns the invoices  of the authenticated user.',
-      async resolve(root, {}, {authenticateUser, dbAdapter}) {
+      async resolve(root, _, {authenticateUser, dbAdapter}) {
         const {user} = authenticateUser()
 
         const subscriptions = await dbAdapter.subscription.getSubscriptionsByUserID(user.id)
@@ -371,7 +364,7 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
     subscriptions: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLPublicSubscription))),
       description: 'This query returns the subscriptions of the authenticated user.',
-      async resolve(root, {}, {authenticateUser, dbAdapter}) {
+      async resolve(root, _, {authenticateUser, dbAdapter}) {
         const {user} = authenticateUser()
 
         return await dbAdapter.subscription.getSubscriptionsByUserID(user.id)

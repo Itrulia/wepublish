@@ -119,7 +119,6 @@ import {
   GraphQLUserRoleFilter,
   GraphQLUserRoleSort
 } from './userRole'
-import {decodeCursor} from './queries/cursor'
 
 export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
   name: 'Query',
@@ -518,43 +517,29 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     articles: {
       type: GraphQLNonNull(GraphQLArticleConnection),
       args: {
-        after: {type: GraphQLID},
-        before: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        last: {type: GraphQLInt},
-        skip: {type: GraphQLInt},
+        cursor: {type: GraphQLID},
+        take: {type: GraphQLInt, defaultValue: 10},
+        skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLArticleFilter},
         sort: {type: GraphQLArticleSort, defaultValue: ArticleSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
-      resolve(
-        root,
-        {filter, sort, order, after, before, first, skip, last},
-        {authenticate, dbAdapter, prisma}
-      ) {
+      resolve(root, {filter, sort, order, skip, take, cursor}, {authenticate, prisma: {article}}) {
         const {roles} = authenticate()
 
         const canGetArticles = isAuthorised(CanGetArticles, roles)
         const canGetSharedArticles = isAuthorised(CanGetSharedArticles, roles)
 
-        const cursor = InputCursor(after, before)
-        getArticles(
-          filter,
-          sort,
-          order,
-          decodeCursor(cursor),
-          Limit(first, last, skip),
-          prisma.article
-        )
-
         if (canGetArticles || canGetSharedArticles) {
-          return dbAdapter.article.getArticles({
-            filter: {...filter, shared: !canGetArticles ? true : undefined},
+          return getArticles(
+            {...filter, shared: !canGetArticles ? true : undefined},
             sort,
             order,
-            cursor: InputCursor(after, before),
-            limit: Limit(first, last, skip)
-          })
+            cursor,
+            skip,
+            take,
+            article
+          )
         } else {
           throw new NotAuthorisedError()
         }
