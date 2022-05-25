@@ -96,12 +96,12 @@ export interface UpdatePublicCommentArgs {
   readonly text: RichTextNode[]
 }
 
-export interface CommentFilterOptions {
-  readonly state?: CommentState
+export interface CommentFilter {
+  readonly states?: CommentState[]
 }
 
 export interface GetCommentsArgs {
-  readonly filter?: CommentFilterOptions
+  readonly filter?: CommentFilter
   readonly cursor: InputCursor
   readonly limit: Limit
   readonly sort: CommentSort

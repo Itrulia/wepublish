@@ -21,7 +21,6 @@ import {PaymentSort} from '../db/payment'
 import {Subscription, SubscriptionSort} from '../db/subscription'
 import {User, UserSort} from '../db/user'
 import {UserRoleSort} from '../db/userRole'
-import {NotAuthorisedError} from '../error'
 import {base64Decode, base64Encode, delegateToPeerSchema, mapSubscriptionsAsCsv} from '../utility'
 import {
   GraphQLArticle,
@@ -44,6 +43,7 @@ import {
 } from './author'
 import {getAdminAuthors, getAuthorByIdOrSlug} from './author/author.private-queries'
 import {GraphQLCommentConnection, GraphQLCommentFilter, GraphQLCommentSort} from './comment'
+import {getAdminComments} from './comment/comment.private-queries'
 import {GraphQLSortOrder} from './common'
 import {GraphQLImage, GraphQLImageConnection, GraphQLImageFilter, GraphQLImageSort} from './image'
 import {getAdminImages, getImageById} from './image/image.private-queries'
@@ -86,13 +86,11 @@ import {getPeerById, getPeers} from './peer/peer.private-queries'
 import {getPermissions} from './permission/permission.private-queries'
 import {
   authorise,
-  CanGetComments,
   CanGetPaymentProviders,
   CanGetPeerArticle,
   CanGetPeerArticles,
   CanGetSubscriptions,
-  CanGetUsers,
-  isAuthorised
+  CanGetUsers
 } from './permissions'
 import {GraphQLSession} from './session'
 import {GraphQLSlug} from './slug'
@@ -415,36 +413,18 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     comments: {
       type: GraphQLNonNull(GraphQLCommentConnection),
       args: {
-        after: {type: GraphQLID},
-        before: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        last: {type: GraphQLInt},
-        skip: {type: GraphQLInt},
+        cursor: {type: GraphQLID},
+        take: {type: GraphQLInt, defaultValue: 10},
+        skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLCommentFilter},
         sort: {type: GraphQLCommentSort, defaultValue: CommentSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
-      async resolve(
+      resolve: async (
         root,
-        {filter, sort, order, after, before, first, last, skip},
-        {authenticate, dbAdapter}
-      ) {
-        const {roles} = authenticate()
-
-        const canGetComments = isAuthorised(CanGetComments, roles)
-
-        if (canGetComments) {
-          return await dbAdapter.comment.getComments({
-            filter,
-            sort,
-            order,
-            cursor: InputCursor(after, before),
-            limit: Limit(first, last, skip)
-          })
-        } else {
-          throw new NotAuthorisedError()
-        }
-      }
+        {filter, sort, order, skip, take, cursor},
+        {authenticate, prisma: {comment}}
+      ) => getAdminComments(filter, sort, order, cursor, skip, take, authenticate, comment)
     },
 
     // Article

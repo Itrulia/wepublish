@@ -138,6 +138,13 @@ type CommentsRevisions {
   createdAt DateTime @default(now())
 }
 
+enum CommentState {
+  approved            @map("approved")
+  pendingApproval     @map("pendingApproval")
+  pendingUserChanges  @map("pendingUserChanges")
+  rejected            @map("rejected")
+}
+
 model Comment {
   id              String                  @id @default(cuid()) @map("_id")
   createdAt       DateTime                @default(now())
@@ -148,6 +155,7 @@ model Comment {
   parentID        String?                 @unique
   revisions       CommentsRevisions[]
   rejectionReason CommentRejectionReason?
+  state           CommentState
 
   user   User     @relation(fields: [userID], references: [id])
   parent Comment? @relation("CommentRelation", fields: [parentID], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -494,7 +502,6 @@ model User {
   roleIDs                  String[]
   paymentProviderCustomers PaymentProviderCustomer[]
 
-  // roles                    UserRole[]                @relation(fields: [roleIDs], references: [id])
   Comment      Comment[]
   Session      Session[]
   Subscription Subscription[]

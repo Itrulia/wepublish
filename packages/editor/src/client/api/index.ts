@@ -1521,10 +1521,8 @@ export type QueryImagesArgs = {
 
 
 export type QueryCommentsArgs = {
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<CommentFilter>;
   sort?: Maybe<CommentSort>;
@@ -2688,10 +2686,8 @@ export type FullCommentFragment = (
 );
 
 export type CommentListQueryVariables = Exact<{
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   order?: Maybe<SortOrder>;
   sort?: Maybe<CommentSort>;
@@ -5225,8 +5221,8 @@ export type DeleteAuthorMutationHookResult = ReturnType<typeof useDeleteAuthorMu
 export type DeleteAuthorMutationResult = Apollo.MutationResult<DeleteAuthorMutation>;
 export type DeleteAuthorMutationOptions = Apollo.BaseMutationOptions<DeleteAuthorMutation, DeleteAuthorMutationVariables>;
 export const CommentListDocument = gql`
-    query CommentList($after: ID, $before: ID, $first: Int, $last: Int, $skip: Int, $order: SortOrder, $sort: CommentSort) {
-  comments(after: $after, before: $before, first: $first, last: $last, skip: $skip, order: $order, sort: $sort) {
+    query CommentList($cursor: ID, $take: Int, $skip: Int, $order: SortOrder, $sort: CommentSort) {
+  comments(cursor: $cursor, take: $take, skip: $skip, order: $order, sort: $sort) {
     nodes {
       ...FullComment
     }
@@ -5253,10 +5249,8 @@ export const CommentListDocument = gql`
  * @example
  * const { data, loading, error } = useCommentListQuery({
  *   variables: {
- *      after: // value for 'after'
- *      before: // value for 'before'
- *      first: // value for 'first'
- *      last: // value for 'last'
+ *      cursor: // value for 'cursor'
+ *      take: // value for 'take'
  *      skip: // value for 'skip'
  *      order: // value for 'order'
  *      sort: // value for 'sort'

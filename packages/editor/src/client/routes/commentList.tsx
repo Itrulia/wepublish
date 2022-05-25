@@ -118,8 +118,8 @@ export function CommentList() {
   }, [errorApprove, errorRequestingChanges, errorRejecting])
 
   const commentListVariables = {
-    first: limit,
-    skip: page - 1,
+    take: limit,
+    skip: (page - 1) * limit,
     sort: mapColumFieldToGraphQLField(sortField),
     order: mapTableSortTypeToGraphQLSortOrder(sortOrder)
   }
@@ -131,8 +131,8 @@ export function CommentList() {
 
   useEffect(() => {
     refetch({
-      first: limit,
-      skip: page - 1,
+      take: limit,
+      skip: (page - 1) * limit,
       sort: mapColumFieldToGraphQLField(sortField),
       order: mapTableSortTypeToGraphQLSortOrder(sortOrder)
     })
