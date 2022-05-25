@@ -36,6 +36,7 @@ import {getPublicAuthors} from './author/author.public-queries'
 import {GraphQLChallenge} from './challenge'
 import {GraphQLSortOrder} from './common'
 import {GraphQLPublicInvoice} from './invoice'
+import {getPublicInvoices} from './invoice/invoice.public-queries'
 import {getActiveMemberPlans} from './member-plan/member-plan.public-queries'
 import {
   GraphQLMemberPlanFilter,
@@ -327,25 +328,8 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
     invoices: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLPublicInvoice))),
       description: 'This query returns the invoices  of the authenticated user.',
-      async resolve(root, _, {authenticateUser, dbAdapter}) {
-        const {user} = authenticateUser()
-
-        const subscriptions = await dbAdapter.subscription.getSubscriptionsByUserID(user.id)
-
-        const invoices: Invoice[] = []
-
-        for (const subscription of subscriptions) {
-          if (!subscription) continue
-          const subscriptionInvoices = await dbAdapter.invoice.getInvoicesBySubscriptionID(
-            subscription.id
-          )
-          for (const invoice of subscriptionInvoices) {
-            if (!invoice) continue
-            invoices.push(invoice)
-          }
-        }
-        return invoices
-      }
+      resolve: (root, _, {authenticateUser, prisma: {subscription, invoice}}) =>
+        getPublicInvoices(authenticateUser, subscription, invoice)
     },
 
     subscriptions: {
