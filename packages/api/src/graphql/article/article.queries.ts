@@ -41,7 +41,7 @@ export const createArticleOrder = (
 }
 
 const createTitleFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereInput => {
-  if (filter.title) {
+  if (filter?.title) {
     const containsTitle = {
       is: {
         title: {
@@ -60,7 +60,7 @@ const createTitleFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereI
 }
 
 const createPublishedFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereInput => {
-  if (filter.published != null) {
+  if (filter?.published != null) {
     return {
       published: filter.published
         ? {
@@ -74,7 +74,7 @@ const createPublishedFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWh
 }
 
 const createDraftFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereInput => {
-  if (filter.draft != null) {
+  if (filter?.draft != null) {
     return {
       draft: filter.draft
         ? {
@@ -88,7 +88,7 @@ const createDraftFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereI
 }
 
 const createPendingFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereInput => {
-  if (filter.pending != null) {
+  if (filter?.pending != null) {
     return {
       pending: filter.pending
         ? {
@@ -102,7 +102,7 @@ const createPendingFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWher
 }
 
 const createSharedFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereInput => {
-  if (filter.shared != null) {
+  if (filter?.shared != null) {
     return {
       shared: filter.shared
     }
@@ -112,7 +112,7 @@ const createSharedFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhere
 }
 
 const createTagsFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereInput => {
-  if (filter.tags) {
+  if (filter?.tags) {
     const hasTags = {
       is: {
         tags: {hasSome: filter.tags}
@@ -128,7 +128,7 @@ const createTagsFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereIn
 }
 
 const createAuthorFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereInput => {
-  if (filter.authors) {
+  if (filter?.authors) {
     const hasTags = {
       is: {
         authorIDs: {hasSome: filter.tags}

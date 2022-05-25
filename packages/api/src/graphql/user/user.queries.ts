@@ -30,7 +30,7 @@ export const createUserOrder = (
 }
 
 const createNameFilter = (filter: Partial<UserFilter>): Prisma.UserWhereInput => {
-  if (filter.name) {
+  if (filter?.name) {
     return {
       name: {
         contains: filter.text,
@@ -43,7 +43,7 @@ const createNameFilter = (filter: Partial<UserFilter>): Prisma.UserWhereInput =>
 }
 
 const createTextFilter = (filter: Partial<UserFilter>): Prisma.UserWhereInput => {
-  if (filter.text) {
+  if (filter?.text) {
     return {
       OR: [
         {

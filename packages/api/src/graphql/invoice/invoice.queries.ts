@@ -26,7 +26,7 @@ export const createInvoiceOrder = (
 }
 
 const createUserFilter = (filter: Partial<InvoiceFilter>): Prisma.InvoiceWhereInput => {
-  if (filter.userID) {
+  if (filter?.userID) {
     return {
       userID: filter.userID
     }
@@ -36,7 +36,7 @@ const createUserFilter = (filter: Partial<InvoiceFilter>): Prisma.InvoiceWhereIn
 }
 
 const createMailFilter = (filter: Partial<InvoiceFilter>): Prisma.InvoiceWhereInput => {
-  if (filter.mail) {
+  if (filter?.mail) {
     return {
       mail: {
         contains: filter.mail,
@@ -49,7 +49,7 @@ const createMailFilter = (filter: Partial<InvoiceFilter>): Prisma.InvoiceWhereIn
 }
 
 const createPaidAtFilter = (filter: Partial<InvoiceFilter>): Prisma.InvoiceWhereInput => {
-  if (filter.paidAt) {
+  if (filter?.paidAt) {
     const {comparison, date} = filter.paidAt
     const mappedComparison: keyof Prisma.DateTimeNullableFilter =
       comparison === DateFilterComparison.Equal ? 'equals' : comparison
@@ -65,7 +65,7 @@ const createPaidAtFilter = (filter: Partial<InvoiceFilter>): Prisma.InvoiceWhere
 }
 
 const createCancelledAtFilter = (filter: Partial<InvoiceFilter>): Prisma.InvoiceWhereInput => {
-  if (filter.canceledAt) {
+  if (filter?.canceledAt) {
     const {comparison, date} = filter.canceledAt
     const mappedComparison: keyof Prisma.DateTimeNullableFilter =
       comparison === DateFilterComparison.Equal ? 'equals' : comparison

@@ -20,7 +20,7 @@ export const createUserRoleOrder = (
 }
 
 const createNameFilter = (filter: Partial<UserRoleFilter>): Prisma.UserRoleWhereInput => {
-  if (filter.name) {
+  if (filter?.name) {
     return {
       name: filter.name
     }

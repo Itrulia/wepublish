@@ -20,7 +20,7 @@ export const createPaymentOrder = (
 }
 
 const createItendFilter = (filter: Partial<PaymentFilter>): Prisma.PaymentWhereInput => {
-  if (filter.intentID) {
+  if (filter?.intentID) {
     return {
       intentID: filter.intentID
     }

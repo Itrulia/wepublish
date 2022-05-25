@@ -41,7 +41,7 @@ export const createPageOrder = (
 }
 
 const createTitleFilter = (filter: Partial<PageFilter>): Prisma.PageWhereInput => {
-  if (filter.title) {
+  if (filter?.title) {
     const containsTitle = {
       is: {
         title: {
@@ -60,7 +60,7 @@ const createTitleFilter = (filter: Partial<PageFilter>): Prisma.PageWhereInput =
 }
 
 const createPublishedFilter = (filter: Partial<PageFilter>): Prisma.PageWhereInput => {
-  if (filter.published != null) {
+  if (filter?.published != null) {
     return {
       published: filter.published
         ? {
@@ -74,7 +74,7 @@ const createPublishedFilter = (filter: Partial<PageFilter>): Prisma.PageWhereInp
 }
 
 const createDraftFilter = (filter: Partial<PageFilter>): Prisma.PageWhereInput => {
-  if (filter.draft != null) {
+  if (filter?.draft != null) {
     return {
       draft: filter.draft
         ? {
@@ -88,7 +88,7 @@ const createDraftFilter = (filter: Partial<PageFilter>): Prisma.PageWhereInput =
 }
 
 const createPendingFilter = (filter: Partial<PageFilter>): Prisma.PageWhereInput => {
-  if (filter.pending != null) {
+  if (filter?.pending != null) {
     return {
       pending: filter.pending
         ? {
@@ -102,7 +102,7 @@ const createPendingFilter = (filter: Partial<PageFilter>): Prisma.PageWhereInput
 }
 
 const createTagsFilter = (filter: Partial<PageFilter>): Prisma.PageWhereInput => {
-  if (filter.tags) {
+  if (filter?.tags) {
     const hasTags = {
       is: {
         tags: {hasSome: filter.tags}

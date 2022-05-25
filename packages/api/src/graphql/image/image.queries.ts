@@ -20,7 +20,7 @@ export const createImageOrder = (
 }
 
 const createTitleFilter = (filter: Partial<ImageFilter>): Prisma.ImageWhereInput => {
-  if (filter.title) {
+  if (filter?.title) {
     return {
       OR: [
         {
@@ -43,7 +43,7 @@ const createTitleFilter = (filter: Partial<ImageFilter>): Prisma.ImageWhereInput
 }
 
 const createTagsFilter = (filter: Partial<ImageFilter>): Prisma.ImageWhereInput => {
-  if (filter.tags) {
+  if (filter?.tags) {
     return {
       tags: {
         hasSome: filter.tags

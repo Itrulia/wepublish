@@ -20,7 +20,7 @@ export const createCommentOrder = (
 }
 
 const createStateFilter = (filter: Partial<CommentFilter>): Prisma.CommentWhereInput => {
-  if (filter.states) {
+  if (filter?.states) {
     return {
       state: {
         in: filter.states

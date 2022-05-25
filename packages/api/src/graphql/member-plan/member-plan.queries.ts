@@ -20,7 +20,7 @@ export const createMemberPlanOrder = (
 }
 
 const createNameFilter = (filter: Partial<MemberPlanFilter>): Prisma.MemberPlanWhereInput => {
-  if (filter.name) {
+  if (filter?.name) {
     return {
       name: filter.name
     }
@@ -30,7 +30,7 @@ const createNameFilter = (filter: Partial<MemberPlanFilter>): Prisma.MemberPlanW
 }
 
 const createActiveFilter = (filter: Partial<MemberPlanFilter>): Prisma.MemberPlanWhereInput => {
-  if (filter.active != null) {
+  if (filter?.active != null) {
     return {
       active: filter.active
     }
@@ -40,7 +40,7 @@ const createActiveFilter = (filter: Partial<MemberPlanFilter>): Prisma.MemberPla
 }
 
 const createTagsFilter = (filter: Partial<MemberPlanFilter>): Prisma.MemberPlanWhereInput => {
-  if (filter.tags) {
+  if (filter?.tags) {
     return {
       tags: {
         hasSome: filter.tags
