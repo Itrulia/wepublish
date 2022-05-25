@@ -1,8 +1,10 @@
 import {Context} from '../../context'
 import {SessionType} from '../../db/session'
-import {CanGetUser, authorise} from '../permissions'
+import {CanGetUser, authorise, CanGetUsers} from '../permissions'
 import {UserInputError} from '../../error'
 import {PrismaClient} from '@prisma/client'
+import {UserFilter, UserSort} from '../../db/user'
+import {getUsers} from './user.queries'
 
 export const getMe = (authenticate: Context['authenticate']) => {
   const session = authenticate()
@@ -27,4 +29,20 @@ export const getUserById = (
       id
     }
   })
+}
+
+export const getAdminUsers = async (
+  filter: Partial<UserFilter>,
+  sortedField: UserSort,
+  order: 1 | -1,
+  cursorId: string,
+  skip: number,
+  take: number,
+  authenticate: Context['authenticate'],
+  user: PrismaClient['user']
+) => {
+  const {roles} = authenticate()
+  authorise(CanGetUsers, roles)
+
+  return getUsers(filter, sortedField, order, cursorId, skip, take, user)
 }

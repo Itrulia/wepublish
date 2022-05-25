@@ -53,7 +53,7 @@ import {
   GraphQLinvoiceFilter,
   GraphQLInvoiceSort
 } from './invoice'
-import {getInvoiceById} from './invoice/invoice.private-queries'
+import {getAdminInvoices, getInvoiceById} from './invoice/invoice.private-queries'
 import {
   getAdminMemberPlans,
   getMemberPlanByIdOrSlug
@@ -78,7 +78,7 @@ import {
   getPaymentMethodById,
   getPaymentMethods
 } from './payment-method/payment-method.private-queries'
-import {getPaymentById} from './payment/payment.private-queries'
+import {getAdminPayments, getPaymentById} from './payment/payment.private-queries'
 import {GraphQLPaymentMethod, GraphQLPaymentProvider} from './paymentMethod'
 import {GraphQLPeer, GraphQLPeerProfile} from './peer'
 import {getPeerProfile, getRemotePeerProfile} from './peer-profile/peer-profile.private-queries'
@@ -87,13 +87,10 @@ import {getPermissions} from './permission/permission.private-queries'
 import {
   authorise,
   CanGetComments,
-  CanGetInvoices,
   CanGetPaymentProviders,
-  CanGetPayments,
   CanGetPeerArticle,
   CanGetPeerArticles,
   CanGetSubscriptions,
-  CanGetUserRoles,
   CanGetUsers,
   isAuthorised
 } from './permissions'
@@ -109,8 +106,8 @@ import {getSubscriptionById} from './subscription/subscription.private-queries'
 import {GraphQLToken} from './token'
 import {getTokens} from './token/token.private-queries'
 import {GraphQLUser, GraphQLUserConnection, GraphQLUserFilter, GraphQLUserSort} from './user'
-import {getUserRoleById} from './user-role/user-role.private-queries'
-import {getMe, getUserById} from './user/user.private-queries'
+import {getAdminUserRoles, getUserRoleById} from './user-role/user-role.private-queries'
+import {getAdminUsers, getMe, getUserById} from './user/user.private-queries'
 import {
   GraphQLPermission,
   GraphQLUserRole,
@@ -203,31 +200,15 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     users: {
       type: GraphQLNonNull(GraphQLUserConnection),
       args: {
-        after: {type: GraphQLID},
-        before: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        last: {type: GraphQLInt},
-        skip: {type: GraphQLInt},
+        cursor: {type: GraphQLID},
+        take: {type: GraphQLInt, defaultValue: 10},
+        skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLUserFilter},
         sort: {type: GraphQLUserSort, defaultValue: UserSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
-      async resolve(
-        root,
-        {filter, sort, order, after, before, first, skip, last},
-        {authenticate, dbAdapter}
-      ) {
-        const {roles} = authenticate()
-        authorise(CanGetUsers, roles)
-
-        return await dbAdapter.user.getUsers({
-          filter,
-          sort,
-          order,
-          cursor: InputCursor(after, before),
-          limit: Limit(first, last, skip)
-        })
-      }
+      resolve: (root, {filter, sort, order, take, skip, cursor}, {authenticate, prisma: {user}}) =>
+        getAdminUsers(filter, sort, order, cursor, skip, take, authenticate, user)
     },
 
     // Subscriptions
@@ -329,26 +310,18 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     userRoles: {
       type: GraphQLNonNull(GraphQLUserRoleConnection),
       args: {
-        after: {type: GraphQLID},
-        before: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        last: {type: GraphQLInt},
+        cursor: {type: GraphQLID},
+        take: {type: GraphQLInt, defaultValue: 10},
+        skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLUserRoleFilter},
         sort: {type: GraphQLUserRoleSort, defaultValue: UserRoleSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
-      resolve(root, {filter, sort, order, after, before, first, last}, {authenticate, dbAdapter}) {
-        const {roles} = authenticate()
-        authorise(CanGetUserRoles, roles)
-
-        return dbAdapter.userRole.getUserRoles({
-          filter,
-          sort,
-          order,
-          cursor: InputCursor(after, before),
-          limit: Limit(first, last)
-        })
-      }
+      resolve: (
+        root,
+        {filter, sort, order, take, skip, cursor},
+        {authenticate, prisma: {userRole}}
+      ) => getAdminUserRoles(filter, sort, order, cursor, skip, take, authenticate, userRole)
     },
 
     // Permissions
@@ -809,9 +782,9 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
         const {roles} = authenticate()
         authorise(CanGetPaymentProviders, roles)
 
-        return paymentProviders.map(paymentProvider => ({
-          id: paymentProvider.id,
-          name: paymentProvider.name
+        return paymentProviders.map(({id, name}) => ({
+          id: id,
+          name: name
         }))
       }
     },
@@ -829,26 +802,18 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     invoices: {
       type: GraphQLNonNull(GraphQLInvoiceConnection),
       args: {
-        after: {type: GraphQLID},
-        before: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        last: {type: GraphQLInt},
+        cursor: {type: GraphQLID},
+        take: {type: GraphQLInt, defaultValue: 10},
+        skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLinvoiceFilter},
         sort: {type: GraphQLInvoiceSort, defaultValue: InvoiceSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
-      resolve(root, {filter, sort, order, after, before, first, last}, {authenticate, dbAdapter}) {
-        const {roles} = authenticate()
-        authorise(CanGetInvoices, roles)
-
-        return dbAdapter.invoice.getInvoices({
-          filter,
-          sort,
-          order,
-          cursor: InputCursor(after, before),
-          limit: Limit(first, last)
-        })
-      }
+      resolve: (
+        root,
+        {filter, sort, order, cursor, take, skip},
+        {authenticate, prisma: {invoice}}
+      ) => getAdminInvoices(filter, sort, order, cursor, skip, take, authenticate, invoice)
     },
 
     // Payment
@@ -864,26 +829,18 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     payments: {
       type: GraphQLNonNull(GraphQLPaymentConnection),
       args: {
-        after: {type: GraphQLID},
-        before: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        last: {type: GraphQLInt},
+        cursor: {type: GraphQLID},
+        take: {type: GraphQLInt, defaultValue: 10},
+        skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLPaymentFilter},
         sort: {type: GraphQLPaymentSort, defaultValue: PaymentSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
-      resolve(root, {filter, sort, order, after, before, first, last}, {authenticate, dbAdapter}) {
-        const {roles} = authenticate()
-        authorise(CanGetPayments, roles)
-
-        return dbAdapter.payment.getPayments({
-          filter,
-          sort,
-          order,
-          cursor: InputCursor(after, before),
-          limit: Limit(first, last)
-        })
-      }
+      resolve: (
+        root,
+        {filter, sort, order, cursor, take, skip},
+        {authenticate, prisma: {payment}}
+      ) => getAdminPayments(filter, sort, order, cursor, skip, take, authenticate, payment)
     }
   }
 })

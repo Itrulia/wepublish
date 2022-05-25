@@ -25,12 +25,14 @@ const createTitleFilter = (filter: Partial<ImageFilter>): Prisma.ImageWhereInput
       OR: [
         {
           title: {
-            contains: filter.title
+            contains: filter.title,
+            mode: 'insensitive'
           }
         },
         {
           filename: {
-            contains: filter.title
+            contains: filter.title,
+            mode: 'insensitive'
           }
         }
       ]

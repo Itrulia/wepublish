@@ -1,5 +1,8 @@
 import {Context} from '../../context'
-import {authorise, CanGetPayment} from '../permissions'
+import {PaymentFilter, PaymentSort} from '../../db/payment'
+import {authorise, CanGetPayment, CanGetPayments} from '../permissions'
+import {PrismaClient} from '@prisma/client'
+import {getPayments} from './payment.queries'
 
 export const getPaymentById = (
   id: string,
@@ -10,4 +13,20 @@ export const getPaymentById = (
   authorise(CanGetPayment, roles)
 
   return paymentsByID.load(id)
+}
+
+export const getAdminPayments = async (
+  filter: Partial<PaymentFilter>,
+  sortedField: PaymentSort,
+  order: 1 | -1,
+  cursorId: string,
+  skip: number,
+  take: number,
+  authenticate: Context['authenticate'],
+  payment: PrismaClient['payment']
+) => {
+  const {roles} = authenticate()
+  authorise(CanGetPayments, roles)
+
+  return getPayments(filter, sortedField, order, cursorId, skip, take, payment)
 }

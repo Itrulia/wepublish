@@ -178,8 +178,10 @@ model Invoice {
   canceledAt     DateTime?     @db.Date
   sentReminderAt DateTime?     @db.Date
   items          InvoiceItem[]
+  userID         String?
 
   subscription Subscription @relation(fields: [subscriptionID], references: [id])
+  user         User?        @relation(fields: [userID], references: [id])
   @@map("invoices")
 }
 
@@ -496,6 +498,7 @@ model User {
   Comment      Comment[]
   Session      Session[]
   Subscription Subscription[]
+  Invoice      Invoice[]
   @@map("users")
 }
 

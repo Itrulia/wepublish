@@ -53,7 +53,7 @@ export function UserRoleList() {
   const {data, refetch, loading: isLoading} = useUserRoleListQuery({
     variables: {
       filter: filter || undefined,
-      first: 200 // TODO: Pagination
+      take: 200 // TODO: Pagination
     },
     fetchPolicy: 'network-only'
   })

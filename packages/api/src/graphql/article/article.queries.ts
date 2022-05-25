@@ -46,7 +46,8 @@ const createTitleFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereI
       is: {
         title: {
           contains: filter.title
-        }
+        },
+        mode: 'insensitive'
       }
     }
 

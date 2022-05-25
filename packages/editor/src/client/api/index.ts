@@ -1437,10 +1437,8 @@ export type QueryUserArgs = {
 
 
 export type QueryUsersArgs = {
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<UserFilter>;
   sort?: Maybe<UserSort>;
@@ -1476,10 +1474,9 @@ export type QueryUserRoleArgs = {
 
 
 export type QueryUserRolesArgs = {
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<UserRoleFilter>;
   sort?: Maybe<UserRoleSort>;
   order?: Maybe<SortOrder>;
@@ -1622,10 +1619,9 @@ export type QueryInvoiceArgs = {
 
 
 export type QueryInvoicesArgs = {
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<InvoiceFilter>;
   sort?: Maybe<InvoiceSort>;
   order?: Maybe<SortOrder>;
@@ -1638,10 +1634,9 @@ export type QueryPaymentArgs = {
 
 
 export type QueryPaymentsArgs = {
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<PaymentFilter>;
   sort?: Maybe<PaymentSort>;
   order?: Maybe<SortOrder>;
@@ -3674,10 +3669,8 @@ export type FullUserFragment = (
 
 export type UserListQueryVariables = Exact<{
   filter?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   order?: Maybe<SortOrder>;
   sort?: Maybe<UserSort>;
@@ -3790,10 +3783,9 @@ export type FullUserRoleFragment = (
 
 export type UserRoleListQueryVariables = Exact<{
   filter?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
+  skip?: Maybe<Scalars['Int']>;
 }>;
 
 
@@ -7057,8 +7049,8 @@ export type DeleteTokenMutationHookResult = ReturnType<typeof useDeleteTokenMuta
 export type DeleteTokenMutationResult = Apollo.MutationResult<DeleteTokenMutation>;
 export type DeleteTokenMutationOptions = Apollo.BaseMutationOptions<DeleteTokenMutation, DeleteTokenMutationVariables>;
 export const UserListDocument = gql`
-    query UserList($filter: String, $after: ID, $before: ID, $first: Int, $last: Int, $skip: Int, $order: SortOrder, $sort: UserSort) {
-  users(filter: {text: $filter}, after: $after, before: $before, first: $first, last: $last, skip: $skip, order: $order, sort: $sort) {
+    query UserList($filter: String, $cursor: ID, $take: Int, $skip: Int, $order: SortOrder, $sort: UserSort) {
+  users(filter: {text: $filter}, cursor: $cursor, take: $take, skip: $skip, order: $order, sort: $sort) {
     nodes {
       ...FullUser
     }
@@ -7086,10 +7078,8 @@ export const UserListDocument = gql`
  * const { data, loading, error } = useUserListQuery({
  *   variables: {
  *      filter: // value for 'filter'
- *      after: // value for 'after'
- *      before: // value for 'before'
- *      first: // value for 'first'
- *      last: // value for 'last'
+ *      cursor: // value for 'cursor'
+ *      take: // value for 'take'
  *      skip: // value for 'skip'
  *      order: // value for 'order'
  *      sort: // value for 'sort'
@@ -7307,8 +7297,8 @@ export type SendWebsiteLoginMutationHookResult = ReturnType<typeof useSendWebsit
 export type SendWebsiteLoginMutationResult = Apollo.MutationResult<SendWebsiteLoginMutation>;
 export type SendWebsiteLoginMutationOptions = Apollo.BaseMutationOptions<SendWebsiteLoginMutation, SendWebsiteLoginMutationVariables>;
 export const UserRoleListDocument = gql`
-    query UserRoleList($filter: String, $after: ID, $before: ID, $first: Int, $last: Int) {
-  userRoles(filter: {name: $filter}, after: $after, before: $before, first: $first, last: $last) {
+    query UserRoleList($filter: String, $cursor: ID, $take: Int, $skip: Int) {
+  userRoles(filter: {name: $filter}, cursor: $cursor, take: $take, skip: $skip) {
     nodes {
       ...FullUserRole
     }
@@ -7336,10 +7326,9 @@ export const UserRoleListDocument = gql`
  * const { data, loading, error } = useUserRoleListQuery({
  *   variables: {
  *      filter: // value for 'filter'
- *      after: // value for 'after'
- *      before: // value for 'before'
- *      first: // value for 'first'
- *      last: // value for 'last'
+ *      cursor: // value for 'cursor'
+ *      take: // value for 'take'
+ *      skip: // value for 'skip'
  *   },
  * });
  */

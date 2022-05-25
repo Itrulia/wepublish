@@ -21,6 +21,7 @@ export interface Invoice {
   canceledAt: Date | null
   sentReminderAt?: Date
   items: InvoiceItem[]
+  userID?: string
 }
 
 export type OptionalInvoice = Invoice | null

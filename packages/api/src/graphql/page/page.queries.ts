@@ -46,7 +46,8 @@ const createTitleFilter = (filter: Partial<PageFilter>): Prisma.PageWhereInput =
       is: {
         title: {
           contains: filter.title
-        }
+        },
+        mode: 'insensitive'
       }
     }
 
