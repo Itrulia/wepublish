@@ -69,8 +69,4 @@ export interface DBPaymentAdapter {
   createPayment(args: CreatePaymentArgs): Promise<Payment>
   updatePayment(args: UpdatePaymentArgs): Promise<OptionalPayment>
   deletePayment(args: DeletePaymentArgs): Promise<string | null>
-
-  getPaymentsByID(ids: readonly string[]): Promise<OptionalPayment[]>
-  getPaymentsByInvoiceID(invoiceID: string): Promise<OptionalPayment[]>
-  getPayments(args: GetPaymentsArgs): Promise<ConnectionResult<Payment>>
 }

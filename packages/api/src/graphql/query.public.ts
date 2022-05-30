@@ -52,6 +52,7 @@ import {
 } from './page'
 import {getPublishedPages} from './page/page.public-queries'
 import {GraphQLPeer, GraphQLPeerProfile} from './peer'
+import {getPublicPeerProfile} from './peer-profile/peer-profile.public-queries'
 import {GraphQLSlug} from './slug'
 import {GraphQLPublicSubscription} from './subscription'
 import {GraphQLPublicUser} from './user'
@@ -65,9 +66,8 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
     peerProfile: {
       type: GraphQLNonNull(GraphQLPeerProfile),
       description: 'This query returns the peer profile.',
-      async resolve(root, args, {hostURL, websiteURL, dbAdapter}) {
-        return {...(await dbAdapter.peer.getPeerProfile()), hostURL, websiteURL}
-      }
+      resolve: (root, args, {hostURL, websiteURL, prisma: {peerProfile}}) =>
+        getPublicPeerProfile(hostURL, websiteURL, peerProfile)
     },
 
     peer: {
@@ -379,18 +379,42 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
       description:
         'This mutation will check the invoice status and update with information from the paymentProvider',
       async resolve(root, {id}, context) {
-        const {authenticateUser, dbAdapter, paymentProviders} = context
+        const {authenticateUser, prisma, paymentProviders} = context
         const {user} = authenticateUser()
 
-        const invoice = await dbAdapter.invoice.getInvoiceByID(id)
-        if (!invoice) throw new NotFound('Invoice', id)
-        const subscription = await dbAdapter.subscription.getSubscriptionByID(
-          invoice.subscriptionID
-        )
-        if (!subscription || subscription.userID !== user.id) throw new NotFound('Invoice', id)
+        const invoice = await prisma.invoice.findUnique({
+          where: {
+            id
+          }
+        })
 
-        const payments = await dbAdapter.payment.getPaymentsByInvoiceID(invoice.id)
-        const paymentMethods = await dbAdapter.paymentMethod.getActivePaymentMethods()
+        if (!invoice) {
+          throw new NotFound('Invoice', id)
+        }
+
+        const subscription = await prisma.subscription.findUnique({
+          where: {
+            id: invoice.subscriptionID
+          }
+        })
+
+        if (!subscription || subscription.userID !== user.id) {
+          throw new NotFound('Invoice', id)
+        }
+
+        const payments = await prisma.payment.findMany({
+          where: {
+            invoiceID: invoice.id
+          }
+        })
+        const paymentMethods = await prisma.paymentMethod.findMany({
+          where: {
+            active: true
+          },
+          orderBy: {
+            createdAt: 'desc'
+          }
+        })
 
         for (const payment of payments) {
           if (!payment || !payment.intentID) continue
@@ -414,7 +438,12 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
         // FIXME: We need to implement a way to wait for all the database
         //  event hooks to finish before we return data. Will be solved in WPC-498
         await new Promise(resolve => setTimeout(resolve, 100))
-        return await dbAdapter.invoice.getInvoiceByID(id)
+
+        return await prisma.invoice.findUnique({
+          where: {
+            id
+          }
+        })
       }
     },
 

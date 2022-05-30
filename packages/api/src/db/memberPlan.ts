@@ -85,12 +85,4 @@ export interface DBMemberPlanAdapter {
   createMemberPlan(args: CreateMemberPlanArgs): Promise<MemberPlan>
   updateMemberPlan(args: UpdateMemberPlanArgs): Promise<OptionalMemberPlan>
   deleteMemberPlan(args: DeleteMemberPlanArgs): Promise<string | null>
-
-  getMemberPlansByID(ids: readonly string[]): Promise<OptionalMemberPlan[]>
-  getMemberPlansBySlug(slugs: readonly string[]): Promise<OptionalMemberPlan[]>
-  getActiveMemberPlansByID(ids: readonly string[]): Promise<OptionalMemberPlan[]>
-  getActiveMemberPlansBySlug(slugs: readonly string[]): Promise<OptionalMemberPlan[]>
-
-  getMemberPlans(args: GetMemberPlansArgs): Promise<ConnectionResult<MemberPlan>>
-  getActiveMemberPlans(args: GetMemberPlansArgs): Promise<ConnectionResult<MemberPlan>>
 }

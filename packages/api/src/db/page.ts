@@ -134,14 +134,4 @@ export interface DBPageAdapter {
   publishPage(args: PublishPageArgs): Promise<OptionalPage>
   unpublishPage(args: UnpublishPageArgs): Promise<OptionalPage>
   deletePage(args: DeletePageArgs): Promise<boolean | null>
-
-  getPagesByID(ids: readonly string[]): Promise<OptionalPage[]>
-  getPublishedPagesByID(ids: readonly string[]): Promise<OptionalPublicPage[]>
-  getPublishedPagesBySlug(slugs: readonly string[]): Promise<OptionalPublicPage[]>
-
-  getPages(args: GetPagesArgs): Promise<ConnectionResult<Page>>
-  getPublishedPages(args: GetPublishedPagesArgs): Promise<ConnectionResult<PublicPage>>
-
-  // TODO: Implement page history
-  // getPageHistory(args: GetPageHistoryArgs): Promise<OptionalPageHistory>
 }

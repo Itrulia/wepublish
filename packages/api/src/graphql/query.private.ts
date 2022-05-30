@@ -12,7 +12,7 @@ import {Context} from '../context'
 import {ArticleSort, PeerArticle} from '../db/article'
 import {AuthorSort} from '../db/author'
 import {CommentSort} from '../db/comment'
-import {SortOrder} from '../db/common'
+import {ConnectionResult, SortOrder} from '../db/common'
 import {ImageSort} from '../db/image'
 import {InvoiceSort} from '../db/invoice'
 import {MemberPlanSort} from '../db/memberPlan'
@@ -81,7 +81,10 @@ import {
 import {getAdminPayments, getPaymentById} from './payment/payment.private-queries'
 import {GraphQLPaymentMethod, GraphQLPaymentProvider} from './paymentMethod'
 import {GraphQLPeer, GraphQLPeerProfile} from './peer'
-import {getPeerProfile, getRemotePeerProfile} from './peer-profile/peer-profile.private-queries'
+import {
+  getAdminPeerProfile,
+  getRemotePeerProfile
+} from './peer-profile/peer-profile.private-queries'
 import {getPeerById, getPeers} from './peer/peer.private-queries'
 import {getPermissions} from './permission/permission.private-queries'
 import {
@@ -139,7 +142,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     peerProfile: {
       type: GraphQLNonNull(GraphQLPeerProfile),
       resolve: (root, args, {authenticate, hostURL, websiteURL, prisma: {peerProfile}}) =>
-        getPeerProfile(hostURL, websiteURL, authenticate, peerProfile)
+        getAdminPeerProfile(hostURL, websiteURL, authenticate, peerProfile)
     },
 
     peers: {
@@ -254,7 +257,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
         let hasMore = true
         let afterCursor: string | null = null
         while (hasMore) {
-          const listResult = await getSubscriptions(
+          const listResult = (await getSubscriptions(
             filter,
             SubscriptionSort.ModifiedAt,
             SortOrder.Descending,
@@ -262,7 +265,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
             afterCursor ? 1 : 0,
             100,
             subscription
-          )
+          )) as ConnectionResult<Subscription> // SEE: https://github.com/microsoft/TypeScript/issues/36687
           subscriptions.push(...listResult.nodes)
           hasMore = listResult.pageInfo.hasNextPage
           afterCursor = listResult.pageInfo.endCursor
@@ -272,7 +275,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
         afterCursor = null
 
         while (hasMore) {
-          const listResult = await getUsers(
+          const listResult = (await getUsers(
             {},
             UserSort.ModifiedAt,
             SortOrder.Descending,
@@ -280,7 +283,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
             afterCursor ? 1 : 0,
             100,
             user
-          )
+          )) as ConnectionResult<User> // SEE: https://github.com/microsoft/TypeScript/issues/36687
           users.push(...listResult.nodes)
           hasMore = listResult.pageInfo.hasNextPage
           afterCursor = listResult.pageInfo.endCursor
@@ -469,31 +472,26 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
       type: GraphQLNonNull(GraphQLPeerArticleConnection),
       args: {
         after: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        filter: {type: GraphQLArticleFilter},
         sort: {type: GraphQLArticleSort, defaultValue: ArticleSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending},
-        peerFilter: {type: GraphQLString},
-        last: {type: GraphQLInt},
-        skip: {type: GraphQLInt}
+        peerFilter: {type: GraphQLString}
       },
 
-      async resolve(
-        root,
-        {filter, sort, order, after, first, peerFilter, last, skip},
-        context,
-        info
-      ) {
-        const {authenticate, loaders, dbAdapter} = context
+      async resolve(root, {sort, order, after, peerFilter}, context, info) {
+        const {authenticate, loaders, prisma} = context
         const {roles} = authenticate()
 
         authorise(CanGetPeerArticles, roles)
 
         after = after ? JSON.parse(base64Decode(after)) : null
 
-        const peers = (await dbAdapter.peer.getPeers()).filter(peer =>
-          peerFilter ? peer.name === peerFilter : true
-        )
+        const peers = (
+          await prisma.peer.findMany({
+            orderBy: {
+              createdAt: 'desc'
+            }
+          })
+        ).filter(peer => (peerFilter ? peer.name === peerFilter : true))
 
         for (const peer of peers) {
           // Prime loader cache so we don't need to refetch inside `delegateToPeerSchema`.

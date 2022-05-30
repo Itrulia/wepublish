@@ -128,10 +128,4 @@ export interface DBSubscriptionAdapter {
 
   addSubscriptionPeriod(args: CreateSubscriptionPeriodArgs): Promise<OptionalSubscription>
   deleteSubscriptionPeriod(args: DeleteSubscriptionPeriodArgs): Promise<OptionalSubscription>
-
-  getSubscriptionByID(id: string): Promise<OptionalSubscription>
-  getSubscriptionsByID(ids: readonly string[]): Promise<OptionalSubscription[]>
-  getSubscriptionsByUserID(userID: string): Promise<OptionalSubscription[]>
-
-  getSubscriptions(args: GetSubscriptionArgs): Promise<ConnectionResult<Subscription>>
 }

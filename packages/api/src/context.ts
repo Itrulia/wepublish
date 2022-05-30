@@ -217,6 +217,69 @@ const createOptionalsArray = <Data, Attribute extends keyof Data, Key extends Da
   return keys.map(id => dataMap[id] ?? null)
 }
 
+const getSessionByToken = async (
+  token: string,
+  sessionClient: PrismaClient['session'],
+  tokenClient: PrismaClient['token'],
+  userClient: PrismaClient['user'],
+  userRoleClient: PrismaClient['userRole']
+): Promise<OptionalSession> => {
+  const [tokenMatch, session] = await Promise.all([
+    tokenClient.findFirst({
+      where: {
+        token
+      }
+    }),
+    sessionClient.findFirst({
+      where: {
+        token
+      }
+    })
+  ])
+
+  if (tokenMatch) {
+    return {
+      type: SessionType.Token,
+      id: tokenMatch.id,
+      name: tokenMatch.name,
+      token: tokenMatch.token,
+      roles: await userRoleClient.findMany({
+        where: {
+          id: {
+            in: tokenMatch.roleIDs
+          }
+        }
+      })
+    }
+  } else if (session) {
+    const user = await userClient.findUnique({
+      where: {
+        id: session.userID
+      }
+    })
+
+    if (!user) return null
+
+    return {
+      type: SessionType.User,
+      id: session.id,
+      token: session.token,
+      createdAt: session.createdAt,
+      expiresAt: session.expiresAt,
+      user,
+      roles: await userRoleClient.findMany({
+        where: {
+          id: {
+            in: user.roleIDs
+          }
+        }
+      })
+    }
+  }
+
+  return null
+}
+
 export async function contextFromRequest(
   req: IncomingMessage | null,
   {
@@ -235,10 +298,12 @@ export async function contextFromRequest(
   }: ContextOptions
 ): Promise<Context> {
   const token = tokenFromRequest(req)
-  const session = token ? await dbAdapter.session.getSessionByToken(token) : null
+  const session = token
+    ? await getSessionByToken(token, prisma.session, prisma.token, prisma.user, prisma.userRole)
+    : null
   const isSessionValid = session
     ? session.type === SessionType.User
-      ? session.expiresAt > new Date()
+      ? session.expiresAt! > new Date()
       : true
     : false
 
@@ -707,6 +772,7 @@ export async function contextFromRequest(
   const memberContext = new MemberContext({
     loaders,
     dbAdapter,
+    prisma,
     paymentProviders,
     mailContext,
     getLoginUrlForUser(user: User): string {

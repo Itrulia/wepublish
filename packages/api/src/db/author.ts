@@ -64,9 +64,4 @@ export interface DBAuthorAdapter {
   createAuthor(args: CreateAuthorArgs): Promise<Author>
   updateAuthor(args: UpdateAuthorArgs): Promise<OptionalAuthor>
   deleteAuthor(args: DeleteAuthorArgs): Promise<string | null>
-
-  getAuthorsByID(ids: readonly string[]): Promise<OptionalAuthor[]>
-  getAuthorsBySlug(slugs: readonly string[]): Promise<OptionalAuthor[]>
-
-  getAuthors(args: GetAuthorsArgs): Promise<ConnectionResult<Author>>
 }

@@ -1,13 +1,13 @@
 import {PrismaClient} from '@prisma/client'
 import {GraphQLResolveInfo} from 'graphql'
 import {delegateToSchema, introspectSchema, makeRemoteExecutableSchema} from 'graphql-tools'
-import {Context} from '../../context'
-import {createFetcher} from '../../context'
+import {Context, createFetcher} from '../../context'
 import {PeerTokenInvalidError} from '../../error'
 import {markResultAsProxied} from '../../utility'
 import {authorise, CanCreatePeer, CanGetPeerProfile} from '../permissions'
+import {getPeerProfile} from './peer-profile.queries'
 
-export const getPeerProfile = async (
+export const getAdminPeerProfile = async (
   hostURL: string,
   websiteURL: string,
   authenticate: Context['authenticate'],
@@ -16,9 +16,7 @@ export const getPeerProfile = async (
   const {roles} = authenticate()
   authorise(CanGetPeerProfile, roles)
 
-  const profile = await peerProfile.findFirst({})
-
-  return {...profile, hostURL, websiteURL}
+  return getPeerProfile(hostURL, websiteURL, peerProfile)
 }
 
 export const getRemotePeerProfile = async (

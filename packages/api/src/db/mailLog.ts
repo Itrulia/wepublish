@@ -63,8 +63,4 @@ export interface DBMailLogAdapter {
   createMailLog(args: CreateMailLogArgs): Promise<MailLog>
   updateMailLog(args: UpdateMailLogArgs): Promise<OptionalMailLog>
   deleteMailLog(args: DeleteMailLogArgs): Promise<string | null>
-
-  getMailLogsByID(ids: readonly string[]): Promise<OptionalMailLog[]>
-
-  getMailLogs(args: GetMailLogsArgs): Promise<ConnectionResult<MailLog>>
 }
