@@ -65,7 +65,7 @@ export const getAdminArticles = async (
   filter: Partial<ArticleFilter>,
   sortedField: ArticleSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

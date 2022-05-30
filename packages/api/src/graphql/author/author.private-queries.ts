@@ -26,7 +26,7 @@ export const getAdminAuthors = async (
   filter: Partial<AuthorFilter>,
   sortedField: AuthorSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

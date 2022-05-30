@@ -1,4 +1,5 @@
-import {Prisma, PrismaClient} from '@prisma/client'
+import {Page, Prisma, PrismaClient} from '@prisma/client'
+import {ConnectionResult} from '../../db/common'
 import {PageFilter, PageSort} from '../../db/page'
 import {getSortOrder, SortOrder} from '../queries/sort'
 
@@ -131,11 +132,11 @@ export const getPages = async (
   filter: Partial<PageFilter>,
   sortedField: PageSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   page: PrismaClient['page']
-) => {
+): Promise<ConnectionResult<Page>> => {
   const orderBy = createPageOrder(sortedField, getSortOrder(order))
   const where = createPageFilter(filter)
 
@@ -167,7 +168,7 @@ export const getPages = async (
       hasPreviousPage,
       hasNextPage,
       startCursor: firstPage?.id,
-      lastPage: lastPage?.id
+      endCursor: lastPage?.id
     }
   }
 }

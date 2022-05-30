@@ -1,5 +1,6 @@
-import {Prisma, PrismaClient} from '@prisma/client'
+import {Comment, Prisma, PrismaClient} from '@prisma/client'
 import {CommentFilter, CommentSort} from '../../db/comment'
+import {ConnectionResult} from '../../db/common'
 import {getSortOrder, SortOrder} from '../queries/sort'
 
 export const createCommentOrder = (
@@ -39,11 +40,11 @@ export const getComments = async (
   filter: Partial<CommentFilter>,
   sortedField: CommentSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   comment: PrismaClient['comment']
-) => {
+): Promise<ConnectionResult<Comment>> => {
   const orderBy = createCommentOrder(sortedField, getSortOrder(order))
   const where = createCommentFilter(filter)
 
@@ -75,7 +76,7 @@ export const getComments = async (
       hasPreviousPage,
       hasNextPage,
       startCursor: firstComment?.id,
-      lastComment: lastComment?.id
+      endCursor: lastComment?.id
     }
   }
 }

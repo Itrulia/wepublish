@@ -6,7 +6,7 @@ export const getActiveMemberPlans = async (
   filter: Partial<MemberPlanFilter>,
   sortedField: MemberPlanSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   memberPlan: PrismaClient['memberPlan']

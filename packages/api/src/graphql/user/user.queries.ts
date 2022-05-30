@@ -1,4 +1,5 @@
-import {Prisma, PrismaClient} from '@prisma/client'
+import {Prisma, PrismaClient, User} from '@prisma/client'
+import {ConnectionResult} from '../../db/common'
 import {UserFilter, UserSort} from '../../db/user'
 import {getSortOrder, SortOrder} from '../queries/sort'
 
@@ -85,11 +86,11 @@ export const getUsers = async (
   filter: Partial<UserFilter>,
   sortedField: UserSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   user: PrismaClient['user']
-) => {
+): Promise<ConnectionResult<User>> => {
   const orderBy = createUserOrder(sortedField, getSortOrder(order))
   const where = createUserFilter(filter)
 
@@ -121,7 +122,7 @@ export const getUsers = async (
       hasPreviousPage,
       hasNextPage,
       startCursor: firstUser?.id,
-      lastUser: lastUser?.id
+      endCursor: lastUser?.id
     }
   }
 }

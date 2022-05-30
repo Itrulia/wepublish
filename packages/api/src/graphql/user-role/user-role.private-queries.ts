@@ -24,7 +24,7 @@ export const getAdminUserRoles = async (
   filter: Partial<UserRoleFilter>,
   sortedField: UserRoleSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

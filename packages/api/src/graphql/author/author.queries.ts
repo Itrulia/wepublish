@@ -1,5 +1,6 @@
-import {Prisma, PrismaClient} from '@prisma/client'
+import {Author, Prisma, PrismaClient} from '@prisma/client'
 import {AuthorFilter, AuthorSort} from '../../db/author'
+import {ConnectionResult} from '../../db/common'
 import {getSortOrder, SortOrder} from '../queries/sort'
 
 export const createAuthorOrder = (
@@ -42,11 +43,11 @@ export const getAuthors = async (
   filter: Partial<AuthorFilter>,
   sortedField: AuthorSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   author: PrismaClient['author']
-) => {
+): Promise<ConnectionResult<Author>> => {
   const orderBy = createAuthorOrder(sortedField, getSortOrder(order))
   const where = createAuthorFilter(filter)
 
@@ -78,7 +79,7 @@ export const getAuthors = async (
       hasPreviousPage,
       hasNextPage,
       startCursor: firstAuthor?.id,
-      lastAuthor: lastAuthor?.id
+      endCursor: lastAuthor?.id
     }
   }
 }

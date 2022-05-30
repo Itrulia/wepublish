@@ -1,4 +1,5 @@
-import {Prisma, PrismaClient} from '@prisma/client'
+import {Payment, Prisma, PrismaClient} from '@prisma/client'
+import {ConnectionResult} from '../../db/common'
 import {PaymentFilter, PaymentSort} from '../../db/payment'
 import {getSortOrder, SortOrder} from '../queries/sort'
 
@@ -37,11 +38,11 @@ export const getPayments = async (
   filter: Partial<PaymentFilter>,
   sortedField: PaymentSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   payment: PrismaClient['payment']
-) => {
+): Promise<ConnectionResult<Payment>> => {
   const orderBy = createPaymentOrder(sortedField, getSortOrder(order))
   const where = createPaymentFilter(filter)
 
@@ -73,7 +74,7 @@ export const getPayments = async (
       hasPreviousPage,
       hasNextPage,
       startCursor: firstPayment?.id,
-      lastPayment: lastPayment?.id
+      endCursor: lastPayment?.id
     }
   }
 }

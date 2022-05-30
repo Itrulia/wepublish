@@ -1,5 +1,5 @@
-import {Prisma, PrismaClient} from '@prisma/client'
-import {DateFilterComparison} from '../../db/common'
+import {Invoice, Prisma, PrismaClient} from '@prisma/client'
+import {ConnectionResult, DateFilterComparison} from '../../db/common'
 import {InvoiceFilter, InvoiceSort} from '../../db/invoice'
 import {getSortOrder, SortOrder} from '../queries/sort'
 
@@ -93,11 +93,11 @@ export const getInvoices = async (
   filter: Partial<InvoiceFilter>,
   sortedField: InvoiceSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   invoice: PrismaClient['invoice']
-) => {
+): Promise<ConnectionResult<Invoice>> => {
   const orderBy = createInvoiceOrder(sortedField, getSortOrder(order))
   const where = createInvoiceFilter(filter)
 
@@ -129,7 +129,7 @@ export const getInvoices = async (
       hasPreviousPage,
       hasNextPage,
       startCursor: firstInvoice?.id,
-      lastInvoice: lastInvoice?.id
+      endCursor: lastInvoice?.id
     }
   }
 }

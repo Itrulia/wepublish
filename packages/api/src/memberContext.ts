@@ -162,7 +162,7 @@ function getNextReminderAndDeactivationDate({
   }
 }
 
-export class MemberContext implements MemberContext {
+export class MemberContext {
   dbAdapter: DBAdapter
   loaders: DataLoaderContext
   paymentProviders: PaymentProvider[]

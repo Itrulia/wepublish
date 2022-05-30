@@ -217,10 +217,10 @@ model MailLog {
 }
 
 enum PaymentPeriodicity {
-  Monthly    @map("monthly")
-  Quarterly  @map("quarterly")
-  Biannual   @map("biannual")
-  Yearly     @map("yearly")
+  monthly    @map("monthly")
+  quarterly  @map("quarterly")
+  biannual   @map("biannual")
+  yearly     @map("yearly")
 }
 
 type AvailablePaymentMethod {

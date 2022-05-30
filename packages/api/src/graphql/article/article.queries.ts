@@ -1,5 +1,6 @@
-import {Prisma, PrismaClient} from '@prisma/client'
+import {Article, Prisma, PrismaClient} from '@prisma/client'
 import {ArticleFilter, ArticleSort} from '../../db/article'
+import {ConnectionResult} from '../../db/common'
 import {getSortOrder, SortOrder} from '../queries/sort'
 
 export const createArticleOrder = (
@@ -159,11 +160,11 @@ export const getArticles = async (
   filter: Partial<ArticleFilter>,
   sortedField: ArticleSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   article: PrismaClient['article']
-) => {
+): Promise<ConnectionResult<Article>> => {
   const orderBy = createArticleOrder(sortedField, getSortOrder(order))
   const where = createArticleFilter(filter)
 
@@ -195,7 +196,7 @@ export const getArticles = async (
       hasPreviousPage,
       hasNextPage,
       startCursor: firstArticle?.id,
-      lastArticle: lastArticle?.id
+      endCursor: lastArticle?.id
     }
   }
 }

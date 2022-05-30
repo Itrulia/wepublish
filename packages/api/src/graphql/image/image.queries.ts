@@ -1,4 +1,5 @@
-import {Prisma, PrismaClient} from '@prisma/client'
+import {Image, Prisma, PrismaClient} from '@prisma/client'
+import {ConnectionResult} from '../../db/common'
 import {ImageFilter, ImageSort} from '../../db/image'
 import {getSortOrder, SortOrder} from '../queries/sort'
 
@@ -62,11 +63,11 @@ export const getImages = async (
   filter: Partial<ImageFilter>,
   sortedField: ImageSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   image: PrismaClient['image']
-) => {
+): Promise<ConnectionResult<Image>> => {
   const orderBy = createImageOrder(sortedField, getSortOrder(order))
   const where = createImageFilter(filter)
 
@@ -98,7 +99,7 @@ export const getImages = async (
       hasPreviousPage,
       hasNextPage,
       startCursor: firstImage?.id,
-      lastImage: lastImage?.id
+      endCursor: lastImage?.id
     }
   }
 }

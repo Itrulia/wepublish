@@ -1,4 +1,5 @@
-import {Prisma, PrismaClient} from '@prisma/client'
+import {MemberPlan, Prisma, PrismaClient} from '@prisma/client'
+import {ConnectionResult} from '../../db/common'
 import {MemberPlanFilter, MemberPlanSort} from '../../db/memberPlan'
 import {getSortOrder, SortOrder} from '../queries/sort'
 
@@ -61,11 +62,11 @@ export const getMemberPlans = async (
   filter: Partial<MemberPlanFilter>,
   sortedField: MemberPlanSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   memberPlan: PrismaClient['memberPlan']
-) => {
+): Promise<ConnectionResult<MemberPlan>> => {
   const orderBy = createMemberPlanOrder(sortedField, getSortOrder(order))
   const where = createMemberPlanFilter(filter)
 
@@ -97,7 +98,7 @@ export const getMemberPlans = async (
       hasPreviousPage,
       hasNextPage,
       startCursor: firstMemberPlan?.id,
-      lastMemberPlan: lastMemberPlan?.id
+      endCursor: lastMemberPlan?.id
     }
   }
 }

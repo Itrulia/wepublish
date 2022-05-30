@@ -19,7 +19,7 @@ export const getAdminImages = async (
   filter: Partial<ImageFilter>,
   sortedField: ImageSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

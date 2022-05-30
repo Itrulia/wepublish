@@ -12,7 +12,7 @@ import {Context} from '../context'
 import {ArticleSort, PeerArticle} from '../db/article'
 import {AuthorSort} from '../db/author'
 import {CommentSort} from '../db/comment'
-import {ConnectionResult, InputCursor, Limit, SortOrder} from '../db/common'
+import {SortOrder} from '../db/common'
 import {ImageSort} from '../db/image'
 import {InvoiceSort} from '../db/invoice'
 import {MemberPlanSort} from '../db/memberPlan'
@@ -93,6 +93,7 @@ import {
   CanGetUsers
 } from './permissions'
 import {GraphQLSession} from './session'
+import {getSessionsForUser} from './session/session.private-queries'
 import {GraphQLSlug} from './slug'
 import {
   GraphQLSubscription,
@@ -100,12 +101,17 @@ import {
   GraphQLSubscriptionFilter,
   GraphQLSubscriptionSort
 } from './subscription'
-import {getSubscriptionById} from './subscription/subscription.private-queries'
+import {
+  getAdminSubscriptions,
+  getSubscriptionById
+} from './subscription/subscription.private-queries'
+import {getSubscriptions} from './subscription/subscription.queries'
 import {GraphQLToken} from './token'
 import {getTokens} from './token/token.private-queries'
 import {GraphQLUser, GraphQLUserConnection, GraphQLUserFilter, GraphQLUserSort} from './user'
 import {getAdminUserRoles, getUserRoleById} from './user-role/user-role.private-queries'
 import {getAdminUsers, getMe, getUserById} from './user/user.private-queries'
+import {getUsers} from './user/user.queries'
 import {
   GraphQLPermission,
   GraphQLUserRole,
@@ -160,10 +166,8 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     sessions: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLSession))),
-      resolve(root, args, {authenticateUser, dbAdapter}) {
-        const session = authenticateUser()
-        return dbAdapter.session.getUserSessions(session.user)
-      }
+      resolve: (root, _, {authenticateUser, prisma: {session, userRole}}) =>
+        getSessionsForUser(authenticateUser, session, userRole)
     },
 
     authProviders: {
@@ -221,36 +225,25 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     subscriptions: {
       type: GraphQLNonNull(GraphQLSubscriptionConnection),
       args: {
-        after: {type: GraphQLID},
-        before: {type: GraphQLID},
-        first: {type: GraphQLInt},
-        last: {type: GraphQLInt},
-        skip: {type: GraphQLInt},
+        cursor: {type: GraphQLID},
+        take: {type: GraphQLInt, defaultValue: 10},
+        skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLSubscriptionFilter},
         sort: {type: GraphQLSubscriptionSort, defaultValue: SubscriptionSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending}
       },
-      async resolve(
+      resolve: (
         root,
-        {filter, sort, order, after, before, first, skip, last},
-        {authenticate, dbAdapter}
-      ) {
-        const {roles} = authenticate()
-        authorise(CanGetSubscriptions, roles)
-        return await dbAdapter.subscription.getSubscriptions({
-          filter,
-          sort,
-          order,
-          cursor: InputCursor(after, before),
-          limit: Limit(first, last, skip)
-        })
-      }
+        {filter, sort, order, take, skip, cursor},
+        {authenticate, prisma: {subscription}}
+      ) =>
+        getAdminSubscriptions(filter, sort, order, cursor, skip, take, authenticate, subscription)
     },
 
     subscriptionsAsCsv: {
       type: GraphQLString,
       args: {filter: {type: GraphQLSubscriptionFilter}},
-      async resolve(root, {filter}, {dbAdapter, authenticate}) {
+      async resolve(root, {filter}, {prisma: {subscription, user}, authenticate}) {
         const {roles} = authenticate()
         authorise(CanGetSubscriptions, roles)
         authorise(CanGetUsers, roles)
@@ -259,16 +252,16 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
         const users: User[] = []
 
         let hasMore = true
-        let afterCursor
+        let afterCursor: string | null = null
         while (hasMore) {
-          const listResult: ConnectionResult<Subscription> = await dbAdapter.subscription.getSubscriptions(
-            {
-              filter,
-              limit: Limit(100),
-              sort: SubscriptionSort.ModifiedAt,
-              cursor: InputCursor(afterCursor ?? undefined),
-              order: SortOrder.Descending
-            }
+          const listResult = await getSubscriptions(
+            filter,
+            SubscriptionSort.ModifiedAt,
+            SortOrder.Descending,
+            afterCursor,
+            afterCursor ? 1 : 0,
+            100,
+            subscription
           )
           subscriptions.push(...listResult.nodes)
           hasMore = listResult.pageInfo.hasNextPage
@@ -276,16 +269,18 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
         }
 
         hasMore = true
-        afterCursor = undefined
+        afterCursor = null
 
         while (hasMore) {
-          const listResult: ConnectionResult<User> = await dbAdapter.user.getUsers({
-            cursor: InputCursor(afterCursor ?? undefined),
-            filter: {},
-            limit: Limit(100),
-            sort: UserSort.ModifiedAt,
-            order: SortOrder.Descending
-          })
+          const listResult = await getUsers(
+            {},
+            UserSort.ModifiedAt,
+            SortOrder.Descending,
+            afterCursor,
+            afterCursor ? 1 : 0,
+            100,
+            user
+          )
           users.push(...listResult.nodes)
           hasMore = listResult.pageInfo.hasNextPage
           afterCursor = listResult.pageInfo.endCursor

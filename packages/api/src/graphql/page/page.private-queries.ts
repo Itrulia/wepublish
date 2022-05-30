@@ -46,7 +46,7 @@ export const getAdminPages = (
   filter: Partial<PageFilter>,
   sortedField: PageSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

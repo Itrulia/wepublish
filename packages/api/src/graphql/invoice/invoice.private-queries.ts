@@ -19,7 +19,7 @@ export const getAdminInvoices = async (
   filter: Partial<InvoiceFilter>,
   sortedField: InvoiceSort,
   order: 1 | -1,
-  cursorId: string,
+  cursorId: string | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],
