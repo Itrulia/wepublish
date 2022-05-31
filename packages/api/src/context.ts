@@ -1,54 +1,52 @@
-import {IncomingMessage} from 'http'
-import url from 'url'
-import crypto from 'crypto'
-import jwt, {SignOptions} from 'jsonwebtoken'
-import fetch from 'node-fetch'
+import {
+  Article,
+  Author,
+  Image,
+  MailLog,
+  MemberPlan,
+  Navigation,
+  Page,
+  PaymentMethod,
+  Peer,
+  PrismaClient,
+  UserRole,
+  Invoice,
+  Payment
+} from '@prisma/client'
 import AbortController from 'abort-controller'
-
+import {AuthenticationError} from 'apollo-server-express'
+import crypto from 'crypto'
 import DataLoader from 'dataloader'
-
 import {GraphQLError, GraphQLSchema, print} from 'graphql'
-
 import {
   Fetcher,
   IFetcherOperation,
   introspectSchema,
   makeRemoteExecutableSchema
 } from 'graphql-tools'
-
+import {IncomingMessage} from 'http'
+import jwt, {SignOptions} from 'jsonwebtoken'
+import NodeCache from 'node-cache'
+import fetch from 'node-fetch'
+import {Client, Issuer} from 'openid-client'
+import url from 'url'
+import {ChallengeProvider} from './challenges/challengeProvider'
+import {DBAdapter} from './db/adapter'
+import {OptionalPublicArticle} from './db/article'
+import {OptionalPublicPage} from './db/page'
+import {PaymentState} from './db/payment'
+import {OptionalPeer} from './db/peer'
+import {OptionalSession, Session, SessionType, TokenSession, UserSession} from './db/session'
+import {User} from './db/user'
 import {TokenExpiredError} from './error'
 import {Hooks} from './hooks'
-
-import {OptionalSession, Session, SessionType, TokenSession, UserSession} from './db/session'
-
-import {DBAdapter} from './db/adapter'
-import {MediaAdapter} from './mediaAdapter'
-import {URLAdapter} from './urlAdapter'
-
-import {AuthenticationError} from 'apollo-server-express'
-import {OptionalImage} from './db/image'
-import {OptionalArticle, OptionalPublicArticle} from './db/article'
-import {OptionalAuthor} from './db/author'
-import {OptionalNavigation} from './db/navigation'
-import {OptionalPage, OptionalPublicPage} from './db/page'
-
-import {OptionalPeer} from './db/peer'
-import {OptionalUserRole} from './db/userRole'
-import {OptionalMemberPlan} from './db/memberPlan'
-import {OptionalPaymentMethod} from './db/paymentMethod'
-import {Invoice, OptionalInvoice} from './db/invoice'
-import {OptionalPayment, Payment, PaymentState} from './db/payment'
-import {PaymentProvider} from './payments/paymentProvider'
-import {BaseMailProvider} from './mails/mailProvider'
-import {OptionalMailLog} from './db/mailLog'
-import {MemberContext} from './memberContext'
-import {Client, Issuer} from 'openid-client'
 import {MailContext, MailContextOptions} from './mails/mailContext'
-import {User} from './db/user'
-import {ChallengeProvider} from './challenges/challengeProvider'
-import NodeCache from 'node-cache'
+import {BaseMailProvider} from './mails/mailProvider'
+import {MediaAdapter} from './mediaAdapter'
+import {MemberContext} from './memberContext'
+import {PaymentProvider} from './payments/paymentProvider'
 import {logger} from './server'
-import {PrismaClient} from '@prisma/client'
+import {URLAdapter} from './urlAdapter'
 
 /**
  * Peered article cache configuration and setup
@@ -70,40 +68,40 @@ fetcherCache.on('expired', async function (key: string, value: PeerCacheValue) {
 })
 
 export interface DataLoaderContext {
-  readonly navigationByID: DataLoader<string, OptionalNavigation>
-  readonly navigationByKey: DataLoader<string, OptionalNavigation>
+  readonly navigationByID: DataLoader<string, Navigation | null>
+  readonly navigationByKey: DataLoader<string, Navigation | null>
 
-  readonly authorsByID: DataLoader<string, OptionalAuthor>
-  readonly authorsBySlug: DataLoader<string, OptionalAuthor>
+  readonly authorsByID: DataLoader<string, Author | null>
+  readonly authorsBySlug: DataLoader<string, Author | null>
 
-  readonly images: DataLoader<string, OptionalImage>
+  readonly images: DataLoader<string, Image | null>
 
-  readonly articles: DataLoader<string, OptionalArticle>
+  readonly articles: DataLoader<string, Article | null>
   readonly publicArticles: DataLoader<string, OptionalPublicArticle>
 
-  readonly pages: DataLoader<string, OptionalPage>
+  readonly pages: DataLoader<string, Page | null>
   readonly publicPagesByID: DataLoader<string, OptionalPublicPage>
   readonly publicPagesBySlug: DataLoader<string, OptionalPublicPage>
 
-  readonly userRolesByID: DataLoader<string, OptionalUserRole>
+  readonly userRolesByID: DataLoader<string, UserRole | null>
 
-  readonly mailLogsByID: DataLoader<string, OptionalMailLog>
+  readonly mailLogsByID: DataLoader<string, MailLog | null>
 
-  readonly peer: DataLoader<string, OptionalPeer>
-  readonly peerBySlug: DataLoader<string, OptionalPeer>
+  readonly peer: DataLoader<string, Peer | null>
+  readonly peerBySlug: DataLoader<string, Peer | null>
 
   readonly peerSchema: DataLoader<string, GraphQLSchema | null>
   readonly peerAdminSchema: DataLoader<string, GraphQLSchema | null>
 
-  readonly memberPlansByID: DataLoader<string, OptionalMemberPlan>
-  readonly memberPlansBySlug: DataLoader<string, OptionalMemberPlan>
-  readonly activeMemberPlansByID: DataLoader<string, OptionalMemberPlan>
-  readonly activeMemberPlansBySlug: DataLoader<string, OptionalMemberPlan>
-  readonly paymentMethodsByID: DataLoader<string, OptionalPaymentMethod>
-  readonly activePaymentMethodsByID: DataLoader<string, OptionalPaymentMethod>
-  readonly activePaymentMethodsBySlug: DataLoader<string, OptionalPaymentMethod>
-  readonly invoicesByID: DataLoader<string, OptionalInvoice>
-  readonly paymentsByID: DataLoader<string, OptionalPayment>
+  readonly memberPlansByID: DataLoader<string, MemberPlan | null>
+  readonly memberPlansBySlug: DataLoader<string, MemberPlan | null>
+  readonly activeMemberPlansByID: DataLoader<string, MemberPlan | null>
+  readonly activeMemberPlansBySlug: DataLoader<string, MemberPlan | null>
+  readonly paymentMethodsByID: DataLoader<string, PaymentMethod | null>
+  readonly activePaymentMethodsByID: DataLoader<string, PaymentMethod | null>
+  readonly activePaymentMethodsBySlug: DataLoader<string, PaymentMethod | null>
+  readonly invoicesByID: DataLoader<string, Invoice | null>
+  readonly paymentsByID: DataLoader<string, Payment | null>
 }
 
 export interface OAuth2Clients {
@@ -322,226 +320,214 @@ export async function contextFromRequest(
   )
 
   const loaders: DataLoaderContext = {
-    navigationByID: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
-          await prisma.navigation.findMany({
-            where: {
-              id: {
-                in: ids as string[]
-              }
+    navigationByID: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.navigation.findMany({
+          where: {
+            id: {
+              in: ids as string[]
             }
-          }),
-          'id'
-        ) as any[]
+          }
+        }),
+        'id'
+      )
     ),
-    navigationByKey: new DataLoader(
-      async keys =>
-        createOptionalsArray(
-          keys as string[],
-          await prisma.navigation.findMany({
-            where: {
-              key: {
-                in: keys as string[]
-              }
+    navigationByKey: new DataLoader(async keys =>
+      createOptionalsArray(
+        keys as string[],
+        await prisma.navigation.findMany({
+          where: {
+            key: {
+              in: keys as string[]
             }
-          }),
-          'key'
-        ) as any[]
+          }
+        }),
+        'key'
+      )
     ),
 
-    authorsByID: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
-          await prisma.author.findMany({
-            where: {
-              id: {
-                in: ids as string[]
-              }
+    authorsByID: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.author.findMany({
+          where: {
+            id: {
+              in: ids as string[]
             }
-          }),
-          'id'
-        ) as any[]
+          }
+        }),
+        'id'
+      )
     ),
-    authorsBySlug: new DataLoader(
-      async slugs =>
-        createOptionalsArray(
-          slugs as string[],
-          await prisma.author.findMany({
-            where: {
-              slug: {
-                in: slugs as string[]
-              }
+    authorsBySlug: new DataLoader(async slugs =>
+      createOptionalsArray(
+        slugs as string[],
+        await prisma.author.findMany({
+          where: {
+            slug: {
+              in: slugs as string[]
             }
-          }),
-          'slug'
-        ) as any[]
+          }
+        }),
+        'slug'
+      )
     ),
 
-    images: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
-          await prisma.image.findMany({
-            where: {
-              id: {
-                in: ids as string[]
-              }
+    images: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.image.findMany({
+          where: {
+            id: {
+              in: ids as string[]
             }
-          }),
-          'id'
-        ) as any[]
+          }
+        }),
+        'id'
+      )
     ),
 
-    articles: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
+    articles: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.article.findMany({
+          where: {
+            id: {
+              in: ids as string[]
+            }
+          }
+        }),
+        'id'
+      )
+    ),
+    publicArticles: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        (
           await prisma.article.findMany({
             where: {
               id: {
                 in: ids as string[]
-              }
-            }
-          }),
-          'id'
-        ) as any[]
-    ),
-    publicArticles: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
-          (
-            await prisma.article.findMany({
-              where: {
-                id: {
-                  in: ids as string[]
-                },
-                OR: [
-                  {
-                    published: {
-                      isNot: null
-                    }
-                  },
-                  {
-                    pending: {
-                      isNot: null
-                    }
+              },
+              OR: [
+                {
+                  published: {
+                    isNot: null
                   }
-                ]
-              }
-            })
-          ).map(({id, shared, published, pending}) => ({id, shared, ...(published || pending)})),
-          'id'
-        ) as any[]
+                },
+                {
+                  pending: {
+                    isNot: null
+                  }
+                }
+              ]
+            }
+          })
+        ).map(({id, shared, published, pending}) => ({id, shared, ...(published || pending!)})),
+        'id'
+      )
     ),
 
-    pages: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
+    pages: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.page.findMany({
+          where: {
+            id: {
+              in: ids as string[]
+            }
+          }
+        }),
+        'id'
+      )
+    ),
+    publicPagesByID: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        (
           await prisma.page.findMany({
             where: {
               id: {
                 in: ids as string[]
-              }
-            }
-          }),
-          'id'
-        ) as any[]
-    ),
-    publicPagesByID: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
-          (
-            await prisma.page.findMany({
-              where: {
-                id: {
-                  in: ids as string[]
+              },
+              OR: [
+                {
+                  published: {
+                    isNot: null
+                  }
                 },
-                OR: [
-                  {
-                    published: {
-                      isNot: null
-                    }
-                  },
-                  {
-                    pending: {
-                      isNot: null
-                    }
+                {
+                  pending: {
+                    isNot: null
                   }
-                ]
-              }
-            })
-          ).map(({id, published, pending}) => ({id, ...(published || pending)})),
-          'id'
-        ) as any[]
+                }
+              ]
+            }
+          })
+        ).map(({id, published, pending}) => ({id, ...(published || pending!)})),
+        'id'
+      )
     ),
-    publicPagesBySlug: new DataLoader(
-      async slugs =>
-        createOptionalsArray(
-          slugs as string[],
-          (
-            await prisma.page.findMany({
-              where: {
-                OR: [
-                  {
-                    published: {
-                      is: {
-                        slug: {
-                          in: slugs as string[]
-                        }
-                      }
-                    }
-                  },
-                  {
-                    pending: {
-                      is: {
-                        slug: {
-                          in: slugs as string[]
-                        }
+    publicPagesBySlug: new DataLoader(async slugs =>
+      createOptionalsArray(
+        slugs as string[],
+        (
+          await prisma.page.findMany({
+            where: {
+              OR: [
+                {
+                  published: {
+                    is: {
+                      slug: {
+                        in: slugs as string[]
                       }
                     }
                   }
-                ]
-              }
-            })
-          ).map(({id, published, pending}) => ({id, ...(published || pending)})),
-          'slug'
-        ) as any[]
+                },
+                {
+                  pending: {
+                    is: {
+                      slug: {
+                        in: slugs as string[]
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          })
+        ).map(({id, published, pending}) => ({id, ...(published || pending!)})),
+        'slug'
+      )
     ),
 
-    userRolesByID: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
-          await prisma.userRole.findMany({
-            where: {
-              id: {
-                in: ids as string[]
-              }
+    userRolesByID: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.userRole.findMany({
+          where: {
+            id: {
+              in: ids as string[]
             }
-          }),
-          'id'
-        ) as any[]
+          }
+        }),
+        'id'
+      )
     ),
 
-    mailLogsByID: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
-          await prisma.mailLog.findMany({
-            where: {
-              id: {
-                in: ids as string[]
-              }
+    mailLogsByID: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.mailLog.findMany({
+          where: {
+            id: {
+              in: ids as string[]
             }
-          }),
-          'id'
-        ) as any[]
+          }
+        }),
+        'id'
+      )
     ),
 
     peer: peerDataLoader,
@@ -613,77 +599,72 @@ export async function contextFromRequest(
       )
     }),
 
-    memberPlansByID: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
-          await prisma.memberPlan.findMany({
-            where: {
-              id: {
-                in: ids as string[]
-              }
+    memberPlansByID: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.memberPlan.findMany({
+          where: {
+            id: {
+              in: ids as string[]
             }
-          }),
-          'id'
-        ) as any[]
+          }
+        }),
+        'id'
+      )
     ),
-    memberPlansBySlug: new DataLoader(
-      async slugs =>
-        createOptionalsArray(
-          slugs as string[],
-          await prisma.memberPlan.findMany({
-            where: {
-              slug: {
-                in: slugs as string[]
-              }
+    memberPlansBySlug: new DataLoader(async slugs =>
+      createOptionalsArray(
+        slugs as string[],
+        await prisma.memberPlan.findMany({
+          where: {
+            slug: {
+              in: slugs as string[]
             }
-          }),
-          'slug'
-        ) as any[]
+          }
+        }),
+        'slug'
+      )
     ),
-    activeMemberPlansByID: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
-          await prisma.memberPlan.findMany({
-            where: {
-              id: {
-                in: ids as string[]
-              },
-              active: true
-            }
-          }),
-          'id'
-        ) as any[]
+    activeMemberPlansByID: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.memberPlan.findMany({
+          where: {
+            id: {
+              in: ids as string[]
+            },
+            active: true
+          }
+        }),
+        'id'
+      )
     ),
-    activeMemberPlansBySlug: new DataLoader(
-      async slugs =>
-        createOptionalsArray(
-          slugs as string[],
-          await prisma.memberPlan.findMany({
-            where: {
-              slug: {
-                in: slugs as string[]
-              },
-              active: true
-            }
-          }),
-          'slug'
-        ) as any[]
+    activeMemberPlansBySlug: new DataLoader(async slugs =>
+      createOptionalsArray(
+        slugs as string[],
+        await prisma.memberPlan.findMany({
+          where: {
+            slug: {
+              in: slugs as string[]
+            },
+            active: true
+          }
+        }),
+        'slug'
+      )
     ),
-    paymentMethodsByID: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
-          await prisma.paymentMethod.findMany({
-            where: {
-              id: {
-                in: ids as string[]
-              }
+    paymentMethodsByID: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.paymentMethod.findMany({
+          where: {
+            id: {
+              in: ids as string[]
             }
-          }),
-          'id'
-        ) as any[]
+          }
+        }),
+        'id'
+      )
     ),
     activePaymentMethodsByID: new DataLoader(async ids =>
       createOptionalsArray(
@@ -713,33 +694,31 @@ export async function contextFromRequest(
         'slug'
       )
     ),
-    invoicesByID: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
-          await prisma.invoice.findMany({
-            where: {
-              id: {
-                in: ids as string[]
-              }
+    invoicesByID: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.invoice.findMany({
+          where: {
+            id: {
+              in: ids as string[]
             }
-          }),
-          'id'
-        ) as any[]
+          }
+        }),
+        'id'
+      )
     ),
-    paymentsByID: new DataLoader(
-      async ids =>
-        createOptionalsArray(
-          ids as string[],
-          await prisma.payment.findMany({
-            where: {
-              id: {
-                in: ids as string[]
-              }
+    paymentsByID: new DataLoader(async ids =>
+      createOptionalsArray(
+        ids as string[],
+        await prisma.payment.findMany({
+          where: {
+            id: {
+              in: ids as string[]
             }
-          }),
-          'id'
-        ) as any[]
+          }
+        }),
+        'id'
+      )
     )
   }
 
@@ -908,7 +887,7 @@ export async function contextFromRequest(
 
       if (!updatedPayment) throw new Error('Error during updating payment') // TODO: this check needs to be removed
 
-      return updatedPayment
+      return updatedPayment as Payment
     },
     challenge
   }

@@ -13,3 +13,23 @@ export const getPublicChildrenCommentsByParentId = (
       modifiedAt: 'desc'
     }
   })
+
+export const getPublicCommentsForItemById = async (
+  itemId: string,
+  userId: string | null,
+  comment: PrismaClient['comment']
+) => {
+  const comments = await comment.findMany({
+    where: {
+      OR: [
+        {itemID: itemId, state: CommentState.approved, parentID: null},
+        userId ? {itemID: itemId, userID: userId, parentID: null} : {}
+      ]
+    }
+  })
+
+  return comments.map(({revisions, ...comment}) => ({
+    text: revisions[revisions.length - 1],
+    ...comment
+  }))
+}

@@ -5,10 +5,10 @@ import {
   BlockType,
   PageBlock,
   PaymentProviderCustomer,
-  Subscription,
-  SubscriptionDeactivationReason
+  Subscription
 } from '@wepublish/api'
 import {slugify} from './utility'
+import {SubscriptionDeactivationReason} from '@prisma/client'
 
 export interface Migration {
   readonly version: number
@@ -706,7 +706,7 @@ export const Migrations: Migration[] = [
           {
             $set: {
               'subscription.deactivation.date': '$subscription.deactivatedAt',
-              'subscription.deactivation.reason': SubscriptionDeactivationReason.None
+              'subscription.deactivation.reason': SubscriptionDeactivationReason.none
             }
           },
           {
@@ -868,6 +868,45 @@ export const Migrations: Migration[] = [
         }
         await pages.findOneAndReplace({_id: page._id}, page)
       }
+    }
+  },
+  {
+    version: 21,
+    async migrate(db) {
+      const subscriptions = db.collection(CollectionName.Subscriptions)
+
+      subscriptions.updateMany(
+        {
+          'deactivation.reason': 0
+        },
+        {
+          $set: {
+            'deactivation.reason': SubscriptionDeactivationReason.none
+          }
+        }
+      )
+
+      subscriptions.updateMany(
+        {
+          'deactivation.reason': 1
+        },
+        {
+          $set: {
+            'deactivation.reason': SubscriptionDeactivationReason.userSelfDeactivated
+          }
+        }
+      )
+
+      subscriptions.updateMany(
+        {
+          'deactivation.reason': 2
+        },
+        {
+          $set: {
+            'deactivation.reason': SubscriptionDeactivationReason.invoiceNotPaid
+          }
+        }
+      )
     }
   }
 ]

@@ -124,13 +124,13 @@ model Image {
 }
 
 enum CommentItemType {
-  Article  @map("article")
-  Page     @map("page")
+  article  @map("article")
+  page     @map("page")
 }
 
 enum CommentRejectionReason {
-  Misconduct  @map("misconduct")
-  Spam        @map("spam")
+  misconduct  @map("misconduct")
+  spam        @map("spam")
 }
 
 type CommentsRevisions {
@@ -149,7 +149,7 @@ model Comment {
   id              String                  @id @default(cuid()) @map("_id")
   createdAt       DateTime                @default(now())
   modifiedAt      DateTime                @db.Date // @updatedAt
-  userID          String
+  userID          String?
   itemID          String
   itemType        CommentItemType
   parentID        String?                 @unique
@@ -157,7 +157,7 @@ model Comment {
   rejectionReason CommentRejectionReason?
   state           CommentState
 
-  user   User     @relation(fields: [userID], references: [id])
+  user   User?    @relation(fields: [userID], references: [id])
   parent Comment? @relation("CommentRelation", fields: [parentID], references: [id], onDelete: NoAction, onUpdate: NoAction)
   child  Comment? @relation("CommentRelation")
   @@index([createdAt], map: "createdAt_-1")
@@ -194,12 +194,12 @@ model Invoice {
 }
 
 enum MailLogState {
-  Submitted  @map("submitted")
-  Accepted   @map("accepted")
-  Delivered  @map("delivered")
-  Deferred   @map("deferred")
-  Bounced    @map("bounced")
-  Rejected   @map("rejecte")
+  submitted  @map("submitted")
+  accepted   @map("accepted")
+  delivered  @map("delivered")
+  deferred   @map("deferred")
+  bounced    @map("bounced")
+  rejected   @map("rejecte")
 }
 
 model MailLog {
@@ -333,13 +333,13 @@ model PaymentMethod {
 }
 
 enum PaymentState {
-  Created             @map("created")
-  Submitted           @map("submitted")
-  RequiresUserAction  @map("requiresUserAction")
-  Processing          @map("processing")
-  Paid                @map("paid")
-  Canceled            @map("canceled")
-  Declined            @map("declined")
+  created             @map("created")
+  submitted           @map("submitted")
+  requiresUserAction  @map("requiresUserAction")
+  processing          @map("processing")
+  paid                @map("paid")
+  canceled            @map("canceled")
+  declined            @map("declined")
 }
 
 model Payment {
@@ -422,9 +422,9 @@ type SubscriptionPeriod {
 }
 
 enum SubscriptionDeactivationReason {
-  None
-  UserSelfDeactivated
-  InvoiceNotPaid
+  none                 @map("none")
+  userSelfDeactivated  @map("userSelfDeactivated")
+  invoiceNotPaid       @map("invoiceNotPaid")
 }
 
 type SubscriptionDeactivation {

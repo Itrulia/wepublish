@@ -62,7 +62,8 @@ import {logger} from '../server'
 import {GraphQLPublicSubscription, GraphQLPublicSubscriptionInput} from './subscription'
 import {SubscriptionDeactivationReason} from '../db/subscription'
 import {GraphQLMetadataPropertyPublicInput} from './common'
-import {Subscription} from '@prisma/client'
+import {Invoice, Subscription} from '@prisma/client'
+import {getUserForCredentials} from './user/user.queries'
 
 export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
   name: 'Mutation',
@@ -78,8 +79,8 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
       },
       description:
         "This mutation allows to create a user session by taking the user's credentials email and password as an input and returns a session with token.",
-      async resolve(root, {email, password}, {dbAdapter}) {
-        const user = await dbAdapter.user.getUserForCredentials({email, password})
+      async resolve(root, {email, password}, {dbAdapter, prisma}) {
+        const user = await getUserForCredentials(email, password, prisma.user)
         if (!user) throw new InvalidCredentialsError()
         if (!user.active) throw new NotActiveError()
         return await dbAdapter.session.createUserSession(user)
@@ -359,7 +360,7 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
         }
 
         return await createPaymentWithProvider({
-          invoice,
+          invoice: invoice as Invoice,
           saveCustomer: true,
           paymentMethodID: paymentMethod.id,
           successURL,
@@ -458,7 +459,7 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
         }
 
         return await createPaymentWithProvider({
-          invoice,
+          invoice: invoice as Invoice,
           saveCustomer: true,
           paymentMethodID: paymentMethod.id,
           successURL,

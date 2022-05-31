@@ -1,5 +1,5 @@
 import {RichTextNode} from '../graphql/richText'
-import {SortOrder, Limit, InputCursor, ConnectionResult} from './common'
+import {SortOrder, Limit, InputCursor} from './common'
 
 export enum CommentState {
   Approved = 'approved',
@@ -27,14 +27,14 @@ export enum CommentItemType {
 
 export interface CommentData {
   readonly id: string
-  readonly userID: string
+  readonly userID?: string | null
 
   readonly authorType: CommentAuthorType
 
   readonly itemID: string
   readonly itemType: CommentItemType
 
-  readonly parentID?: string
+  readonly parentID?: string | null
 
   readonly createdAt: Date
   readonly modifiedAt: Date

@@ -185,10 +185,10 @@ export class MongoDBAdapter implements DBAdapter {
 
     for (const migration of remainingMigrations) {
       await migration.migrate(db, locale)
-      await db.collection<DBMigration>(CollectionName.Migrations).insertOne({
-        version: migration.version,
-        createdAt: new Date()
-      })
+      // await db.collection<DBMigration>(CollectionName.Migrations).insertOne({
+      //   version: migration.version,
+      //   createdAt: new Date()
+      // })
     }
 
     if (!migrationState) {

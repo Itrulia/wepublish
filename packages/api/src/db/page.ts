@@ -1,25 +1,25 @@
 import {PageBlock} from './block'
-import {SortOrder, Limit, InputCursor, ConnectionResult, MetadataProperty} from './common'
+import {InputCursor, Limit, MetadataProperty, SortOrder} from './common'
 
 // TODO: Remove arg interfaces in favor of explicit arguments.
 
 export interface PageData {
-  readonly updatedAt?: Date
-  readonly publishedAt?: Date
+  readonly updatedAt?: Date | null
+  readonly publishedAt?: Date | null
 
   readonly slug: string
 
   readonly title: string
-  readonly description?: string
+  readonly description?: string | null
   readonly tags: string[]
 
   readonly properties: MetadataProperty[]
 
-  readonly imageID?: string
+  readonly imageID?: string | null
 
-  readonly socialMediaTitle?: string
-  readonly socialMediaDescription?: string
-  readonly socialMediaImageID?: string
+  readonly socialMediaTitle?: string | null
+  readonly socialMediaDescription?: string | null
+  readonly socialMediaImageID?: string | null
 
   readonly blocks: PageBlock[]
 }
@@ -52,8 +52,8 @@ export interface PageRevision extends PageData {
 export interface PublicPage extends PageData {
   readonly id: string
 
-  readonly updatedAt: Date
-  readonly publishedAt: Date
+  readonly updatedAt?: Date | null
+  readonly publishedAt?: Date | null
 
   readonly blocks: PageBlock[]
 }

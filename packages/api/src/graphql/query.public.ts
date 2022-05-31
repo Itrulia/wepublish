@@ -53,6 +53,7 @@ import {
 import {getPublishedPages} from './page/page.public-queries'
 import {GraphQLPeer, GraphQLPeerProfile} from './peer'
 import {getPublicPeerProfile} from './peer-profile/peer-profile.public-queries'
+import {getPeerByIdOrSlug} from './peer/peer.public-queries'
 import {GraphQLSlug} from './slug'
 import {GraphQLPublicSubscription} from './subscription'
 import {GraphQLPublicUser} from './user'
@@ -74,13 +75,8 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
       type: GraphQLPeer,
       args: {id: {type: GraphQLID}, slug: {type: GraphQLSlug}},
       description: 'This query takes either the ID or the slug and returns the peer profile.',
-      resolve(root, {id, slug}, {loaders}) {
-        if ((id == null && slug == null) || (id != null && slug != null)) {
-          throw new UserInputError('You must provide either `id` or `slug`.')
-        }
-
-        return id ? loaders.peer.load(id) : loaders.peerBySlug.load(slug)
-      }
+      resolve: (root, {id, slug}, {loaders: {peer, peerBySlug}}) =>
+        getPeerByIdOrSlug(id, slug, peer, peerBySlug)
     },
 
     // Navigation
@@ -90,7 +86,7 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
       type: GraphQLPublicNavigation,
       args: {id: {type: GraphQLID}, key: {type: GraphQLID}},
       description: 'This query takes either the ID or the key and returns the navigation.',
-      resolve(root, {id, key}, {authenticateUser, loaders}) {
+      resolve(root, {id, key}, {loaders}) {
         if ((id == null && key == null) || (id != null && key != null)) {
           throw new UserInputError('You must provide either `id` or `key`.')
         }
@@ -334,10 +330,14 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
     subscriptions: {
       type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLPublicSubscription))),
       description: 'This query returns the subscriptions of the authenticated user.',
-      async resolve(root, _, {authenticateUser, dbAdapter}) {
+      async resolve(root, _, {authenticateUser, prisma}) {
         const {user} = authenticateUser()
 
-        return await dbAdapter.subscription.getSubscriptionsByUserID(user.id)
+        return await prisma.subscription.findMany({
+          where: {
+            userID: user.id
+          }
+        })
       }
     },
 
@@ -346,7 +346,7 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
       args: {id: {type: GraphQLID}, slug: {type: GraphQLSlug}},
       description: 'This query returns a member plan.',
       resolve(root, {id, slug}, {loaders}) {
-        if ((id == null && slug == null) || (id != null && slug != null)) {
+        if ((!id && !slug) || (id && slug)) {
           throw new UserInputError('You must provide either `id` or `slug`.')
         }
 
@@ -431,7 +431,10 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
           await paymentProvider.updatePaymentWithIntentState({
             intentState,
             dbAdapter: context.dbAdapter,
-            loaders: context.loaders
+            paymentsByID: context.loaders.paymentsByID,
+            invoicesByID: context.loaders.invoicesByID,
+            subscriptionClient: prisma.subscription,
+            userClient: prisma.user
           })
         }
 

@@ -1,4 +1,5 @@
 import {MapDiscriminatedUnion} from '@karma.run/utility'
+import {Prisma} from '@prisma/client'
 import {RichTextNode} from '../graphql/richText'
 
 export enum BlockType {
@@ -239,6 +240,7 @@ export type ArticleBlock =
   | BildwurfAdBlock
   | TeaserGridBlock
   | TeaserGridFlexBlock
+  | Prisma.JsonValue
 
 export type PageBlock = ArticleBlock
 export type Block = ArticleBlock | PageBlock

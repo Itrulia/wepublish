@@ -1,5 +1,5 @@
-import {ConnectionResult, SortOrder, InputCursor, Limit} from './common'
 import {RichTextNode} from '../graphql/richText'
+import {InputCursor, Limit, SortOrder} from './common'
 
 export interface AuthorLink {
   title: string

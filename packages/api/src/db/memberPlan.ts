@@ -1,5 +1,5 @@
 import {RichTextNode} from '../graphql/richText'
-import {ConnectionResult, InputCursor, Limit, SortOrder} from './common'
+import {InputCursor, Limit, SortOrder} from './common'
 
 export enum PaymentPeriodicity {
   Monthly = 'monthly',

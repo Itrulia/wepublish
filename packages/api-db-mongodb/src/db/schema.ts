@@ -261,7 +261,7 @@ export interface DBComment {
   itemID: string
   itemType: CommentItemType
 
-  userID: string
+  userID?: string | null
 
   revisions: CommentRevision[]
   parentID?: string | null

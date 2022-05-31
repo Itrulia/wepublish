@@ -1,4 +1,4 @@
-import {SortOrder, InputCursor, Limit, ConnectionResult} from './common'
+import {InputCursor, Limit, SortOrder} from './common'
 
 export interface FocalPoint {
   readonly x: number

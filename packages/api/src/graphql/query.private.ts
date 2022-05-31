@@ -12,16 +12,16 @@ import {Context} from '../context'
 import {ArticleSort, PeerArticle} from '../db/article'
 import {AuthorSort} from '../db/author'
 import {CommentSort} from '../db/comment'
-import {ConnectionResult, SortOrder} from '../db/common'
+import {SortOrder} from '../db/common'
 import {ImageSort} from '../db/image'
 import {InvoiceSort} from '../db/invoice'
 import {MemberPlanSort} from '../db/memberPlan'
 import {PageSort} from '../db/page'
 import {PaymentSort} from '../db/payment'
-import {Subscription, SubscriptionSort} from '../db/subscription'
-import {User, UserSort} from '../db/user'
+import {SubscriptionSort} from '../db/subscription'
+import {UserSort} from '../db/user'
 import {UserRoleSort} from '../db/userRole'
-import {base64Decode, base64Encode, delegateToPeerSchema, mapSubscriptionsAsCsv} from '../utility'
+import {base64Decode, base64Encode, delegateToPeerSchema} from '../utility'
 import {
   GraphQLArticle,
   GraphQLArticleConnection,
@@ -91,9 +91,7 @@ import {
   authorise,
   CanGetPaymentProviders,
   CanGetPeerArticle,
-  CanGetPeerArticles,
-  CanGetSubscriptions,
-  CanGetUsers
+  CanGetPeerArticles
 } from './permissions'
 import {GraphQLSession} from './session'
 import {getSessionsForUser} from './session/session.private-queries'
@@ -106,15 +104,14 @@ import {
 } from './subscription'
 import {
   getAdminSubscriptions,
-  getSubscriptionById
+  getSubscriptionById,
+  getSubscriptionsAsCSV
 } from './subscription/subscription.private-queries'
-import {getSubscriptions} from './subscription/subscription.queries'
 import {GraphQLToken} from './token'
 import {getTokens} from './token/token.private-queries'
 import {GraphQLUser, GraphQLUserConnection, GraphQLUserFilter, GraphQLUserSort} from './user'
 import {getAdminUserRoles, getUserRoleById} from './user-role/user-role.private-queries'
 import {getAdminUsers, getMe, getUserById} from './user/user.private-queries'
-import {getUsers} from './user/user.queries'
 import {
   GraphQLPermission,
   GraphQLUserRole,
@@ -246,51 +243,8 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     subscriptionsAsCsv: {
       type: GraphQLString,
       args: {filter: {type: GraphQLSubscriptionFilter}},
-      async resolve(root, {filter}, {prisma: {subscription, user}, authenticate}) {
-        const {roles} = authenticate()
-        authorise(CanGetSubscriptions, roles)
-        authorise(CanGetUsers, roles)
-
-        const subscriptions: Subscription[] = []
-        const users: User[] = []
-
-        let hasMore = true
-        let afterCursor: string | null = null
-        while (hasMore) {
-          const listResult = (await getSubscriptions(
-            filter,
-            SubscriptionSort.ModifiedAt,
-            SortOrder.Descending,
-            afterCursor,
-            afterCursor ? 1 : 0,
-            100,
-            subscription
-          )) as ConnectionResult<Subscription> // SEE: https://github.com/microsoft/TypeScript/issues/36687
-          subscriptions.push(...listResult.nodes)
-          hasMore = listResult.pageInfo.hasNextPage
-          afterCursor = listResult.pageInfo.endCursor
-        }
-
-        hasMore = true
-        afterCursor = null
-
-        while (hasMore) {
-          const listResult = (await getUsers(
-            {},
-            UserSort.ModifiedAt,
-            SortOrder.Descending,
-            afterCursor,
-            afterCursor ? 1 : 0,
-            100,
-            user
-          )) as ConnectionResult<User> // SEE: https://github.com/microsoft/TypeScript/issues/36687
-          users.push(...listResult.nodes)
-          hasMore = listResult.pageInfo.hasNextPage
-          afterCursor = listResult.pageInfo.endCursor
-        }
-
-        return mapSubscriptionsAsCsv(users, subscriptions)
-      }
+      resolve: (root, {filter}, {prisma: {subscription, user}, authenticate}) =>
+        getSubscriptionsAsCSV(filter, authenticate, subscription, user)
     },
 
     // UserRole

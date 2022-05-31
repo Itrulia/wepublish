@@ -1,4 +1,4 @@
-import {ConnectionResult, InputCursor, Limit, SortOrder} from './common'
+import {InputCursor, Limit, SortOrder} from './common'
 
 export interface MailLogInput {
   readonly recipient: string

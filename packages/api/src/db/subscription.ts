@@ -1,11 +1,4 @@
-import {
-  ConnectionResult,
-  DateFilter,
-  InputCursor,
-  Limit,
-  MetadataProperty,
-  SortOrder
-} from './common'
+import {DateFilter, InputCursor, Limit, MetadataProperty, SortOrder} from './common'
 import {PaymentPeriodicity} from './memberPlan'
 import {GenericUserId} from './tempUser'
 

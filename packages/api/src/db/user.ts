@@ -1,4 +1,4 @@
-import {ConnectionResult, InputCursor, Limit, MetadataProperty, SortOrder} from './common'
+import {MetadataProperty} from './common'
 import {TempUser} from './tempUser'
 
 export interface CreateUserArgs {
@@ -127,14 +127,6 @@ export interface UpdatePaymentProviderCustomerArgs {
 }
 
 export type OptionalUser = User | null
-
-export interface GetUsersArgs {
-  readonly cursor: InputCursor
-  readonly limit: Limit
-  readonly filter?: UserFilter
-  readonly sort: UserSort
-  readonly order: SortOrder
-}
 
 export interface DBUserAdapter {
   createUser(args: CreateUserArgs): Promise<OptionalUser>

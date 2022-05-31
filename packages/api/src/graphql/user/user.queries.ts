@@ -2,6 +2,7 @@ import {Prisma, PrismaClient, User} from '@prisma/client'
 import {ConnectionResult} from '../../db/common'
 import {UserFilter, UserSort} from '../../db/user'
 import {getSortOrder, SortOrder} from '../queries/sort'
+import bcrypt from 'bcrypt'
 
 export const createUserOrder = (
   field: UserSort,
@@ -125,4 +126,28 @@ export const getUsers = async (
       endCursor: lastUser?.id
     }
   }
+}
+
+export const getUserForCredentials = async (
+  email: string,
+  password: string,
+  userClient: PrismaClient['user']
+) => {
+  const user = await userClient.findUnique({
+    where: {
+      email
+    }
+  })
+
+  if (!f) {
+    return null
+  }
+
+  const theSame = await bcrypt.compare(password, user.password)
+
+  if (!theSame) {
+    return null
+  }
+
+  return user
 }
