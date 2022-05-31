@@ -8,7 +8,7 @@ import {
   GraphQLString
 } from 'graphql'
 import {Context} from '../context'
-import {ArticleSort, PublicArticle} from '../db/article'
+import {ArticleSort} from '../db/article'
 import {AuthorSort} from '../db/author'
 import {SortOrder} from '../db/common'
 import {MemberPlanSort} from '../db/memberPlan'
@@ -23,7 +23,7 @@ import {
   GraphQLPublicArticleFilter,
   GraphQLPublicArticleSort
 } from './article'
-import {getPublishedArticles} from './article/article.public-queries'
+import {getPublishedArticleByIdOrSlug, getPublishedArticles} from './article/article.public-queries'
 import {GraphQLAuthProvider} from './auth'
 import {
   GraphQLAuthor,
@@ -137,41 +137,21 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
         token: {type: GraphQLString}
       },
       description: 'This query takes either the ID, slug or token and returns the article.',
-      async resolve(root, {id, slug, token}, {session, loaders, dbAdapter, verifyJWT}) {
-        let article = id ? await loaders.publicArticles.load(id) : null
-
-        if (!article && slug) {
-          article = await dbAdapter.article.getPublishedArticleBySlug(slug)
-        }
-
-        if (!article && token) {
-          try {
-            const articleId = verifyJWT(token)
-            const privateArticle = await loaders.articles.load(articleId)
-
-            article = privateArticle?.draft
-              ? ({
-                  id: privateArticle.id,
-                  shared: privateArticle.shared,
-                  ...privateArticle.draft,
-                  updatedAt: new Date(),
-                  publishedAt: new Date()
-                } as PublicArticle)
-              : null
-          } catch (error) {
-            logger('graphql-query').warn(
-              error as Error,
-              'Error while verifying token with article id.'
-            )
-          }
-        }
-
-        if (session?.type === SessionType.Token) {
-          return article?.shared ? article : null
-        }
-
-        return article
-      }
+      resolve: (
+        root,
+        {id, slug, token},
+        {session, loaders: {articles, publicArticles}, prisma: {article}, verifyJWT}
+      ) =>
+        getPublishedArticleByIdOrSlug(
+          id,
+          slug,
+          token,
+          session,
+          verifyJWT,
+          publicArticles,
+          articles,
+          article
+        )
     },
 
     articles: {

@@ -245,5 +245,7 @@ export type ArticleBlock =
 export type PageBlock = ArticleBlock
 export type Block = ArticleBlock | PageBlock
 
-export type BaseBlockMap = MapDiscriminatedUnion<Block, 'type'>
-export type BlockMap = {[K in Block['type']]?: Omit<BaseBlockMap[K], 'type'>}
+export type BaseBlockMap = MapDiscriminatedUnion<Exclude<Block, Prisma.JsonValue>, 'type'>
+export type BlockMap = {
+  [K in Exclude<Block, Prisma.JsonValue>['type']]?: Omit<BaseBlockMap[K], 'type'>
+}

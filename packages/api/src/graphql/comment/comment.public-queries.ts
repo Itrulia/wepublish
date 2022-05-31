@@ -2,12 +2,15 @@ import {CommentState, PrismaClient} from '@prisma/client'
 
 export const getPublicChildrenCommentsByParentId = (
   parentId: string,
-  userId: string,
+  userId: string | null,
   comment: PrismaClient['comment']
 ) =>
   comment.findMany({
     where: {
-      AND: [{parentID: parentId}, {OR: [{userID: userId}, {state: CommentState.approved}]}]
+      AND: [
+        {parentID: parentId},
+        {OR: [userId ? {userID: userId} : {}, {state: CommentState.approved}]}
+      ]
     },
     orderBy: {
       modifiedAt: 'desc'

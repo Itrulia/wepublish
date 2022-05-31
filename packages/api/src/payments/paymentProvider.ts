@@ -261,7 +261,10 @@ export function setupPaymentProvider(opts: WepublishServerOpts): Router {
             await paymentProvider.updatePaymentWithIntentState({
               intentState: paymentStatus,
               dbAdapter: context.dbAdapter,
-              loaders: context.loaders
+              paymentsByID: context.loaders.paymentsByID,
+              invoicesByID: context.loaders.invoicesByID,
+              subscriptionClient: context.prisma.subscription,
+              userClient: context.prisma.user
             })
           }
         } catch (error) {

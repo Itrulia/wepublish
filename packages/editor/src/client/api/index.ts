@@ -1452,10 +1452,8 @@ export type QuerySubscriptionArgs = {
 
 
 export type QuerySubscriptionsArgs = {
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   filter?: Maybe<SubscriptionFilter>;
   sort?: Maybe<SubscriptionSort>;
@@ -1552,14 +1550,10 @@ export type QueryPeerArticleArgs = {
 
 
 export type QueryPeerArticlesArgs = {
-  after?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  filter?: Maybe<ArticleFilter>;
+  cursors?: Maybe<Scalars['String']>;
   sort?: Maybe<ArticleSort>;
   order?: Maybe<SortOrder>;
   peerFilter?: Maybe<Scalars['String']>;
-  last?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
 };
 
 
@@ -2070,12 +2064,8 @@ export type ArticleListQuery = (
 );
 
 export type PeerArticleListQueryVariables = Exact<{
-  filter?: Maybe<ArticleFilter>;
-  after?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
+  cursors?: Maybe<Scalars['String']>;
   peerFilter?: Maybe<Scalars['String']>;
-  last?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
   order?: Maybe<SortOrder>;
   sort?: Maybe<ArticleSort>;
 }>;
@@ -3524,10 +3514,8 @@ export type DeactivationFragment = (
 
 export type SubscriptionListQueryVariables = Exact<{
   filter?: Maybe<SubscriptionFilter>;
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
+  cursor?: Maybe<Scalars['ID']>;
+  take?: Maybe<Scalars['Int']>;
   skip?: Maybe<Scalars['Int']>;
   order?: Maybe<SortOrder>;
   sort?: Maybe<SubscriptionSort>;
@@ -4506,8 +4494,8 @@ export type ArticleListQueryHookResult = ReturnType<typeof useArticleListQuery>;
 export type ArticleListLazyQueryHookResult = ReturnType<typeof useArticleListLazyQuery>;
 export type ArticleListQueryResult = Apollo.QueryResult<ArticleListQuery, ArticleListQueryVariables>;
 export const PeerArticleListDocument = gql`
-    query PeerArticleList($filter: ArticleFilter, $after: ID, $first: Int, $peerFilter: String, $last: Int, $skip: Int, $order: SortOrder, $sort: ArticleSort) {
-  peerArticles(first: $first, after: $after, filter: $filter, peerFilter: $peerFilter, last: $last, skip: $skip, order: $order, sort: $sort) {
+    query PeerArticleList($cursors: String, $peerFilter: String, $order: SortOrder, $sort: ArticleSort) {
+  peerArticles(cursors: $cursors, peerFilter: $peerFilter, order: $order, sort: $sort) {
     nodes {
       peer {
         ...PeerWithProfile
@@ -4539,12 +4527,8 @@ ${ArticleRefFragmentDoc}`;
  * @example
  * const { data, loading, error } = usePeerArticleListQuery({
  *   variables: {
- *      filter: // value for 'filter'
- *      after: // value for 'after'
- *      first: // value for 'first'
+ *      cursors: // value for 'cursors'
  *      peerFilter: // value for 'peerFilter'
- *      last: // value for 'last'
- *      skip: // value for 'skip'
  *      order: // value for 'order'
  *      sort: // value for 'sort'
  *   },
@@ -6726,8 +6710,8 @@ export type DeletePeerMutationHookResult = ReturnType<typeof useDeletePeerMutati
 export type DeletePeerMutationResult = Apollo.MutationResult<DeletePeerMutation>;
 export type DeletePeerMutationOptions = Apollo.BaseMutationOptions<DeletePeerMutation, DeletePeerMutationVariables>;
 export const SubscriptionListDocument = gql`
-    query SubscriptionList($filter: SubscriptionFilter, $after: ID, $before: ID, $first: Int, $last: Int, $skip: Int, $order: SortOrder, $sort: SubscriptionSort) {
-  subscriptions(filter: $filter, after: $after, before: $before, first: $first, last: $last, skip: $skip, order: $order, sort: $sort) {
+    query SubscriptionList($filter: SubscriptionFilter, $cursor: ID, $take: Int, $skip: Int, $order: SortOrder, $sort: SubscriptionSort) {
+  subscriptions(filter: $filter, cursor: $cursor, take: $take, skip: $skip, order: $order, sort: $sort) {
     nodes {
       ...FullSubscription
     }
@@ -6755,10 +6739,8 @@ export const SubscriptionListDocument = gql`
  * const { data, loading, error } = useSubscriptionListQuery({
  *   variables: {
  *      filter: // value for 'filter'
- *      after: // value for 'after'
- *      before: // value for 'before'
- *      first: // value for 'first'
- *      last: // value for 'last'
+ *      cursor: // value for 'cursor'
+ *      take: // value for 'take'
  *      skip: // value for 'skip'
  *      order: // value for 'order'
  *      sort: // value for 'sort'

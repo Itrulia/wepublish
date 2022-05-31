@@ -85,6 +85,8 @@ import {GraphQLCreatedToken, GraphQLTokenInput} from './token'
 import {GraphQLUser, GraphQLUserInput} from './user'
 import {getUserForCredentials} from './user/user.queries'
 import {GraphQLUserRole, GraphQLUserRoleInput} from './userRole'
+import {ArticleRevision} from '../db/article'
+import {PageRevision} from '../db/page'
 
 function mapTeaserUnionMap(value: any) {
   if (!value) return null
@@ -816,7 +818,8 @@ export const GraphQLAdminMutation = new GraphQLObjectType<undefined, Context>({
 
         if (!article) throw new NotFound('article', id)
 
-        const articleRevision = Object.assign(
+        const articleRevision: ArticleRevision = Object.assign(
+          {},
           article.draft ?? article.pending ?? article.published,
           {
             slug: '',
@@ -929,11 +932,15 @@ export const GraphQLAdminMutation = new GraphQLObjectType<undefined, Context>({
 
         if (!page) throw new NotFound('page', id)
 
-        const pageRevision = Object.assign(page.draft ?? page.pending ?? page.published, {
-          slug: '',
-          publishedAt: undefined,
-          updatedAt: undefined
-        })
+        const pageRevision: PageRevision = Object.assign(
+          {},
+          page.draft ?? page.pending ?? page.published,
+          {
+            slug: '',
+            publishedAt: undefined,
+            updatedAt: undefined
+          }
+        )
         const output = await dbAdapter.page.createPage({input: {...pageRevision}})
 
         return output

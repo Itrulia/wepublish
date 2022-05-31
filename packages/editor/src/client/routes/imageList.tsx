@@ -101,7 +101,7 @@ export function ImageList() {
 
   /* function loadMore() {
     fetchMore({
-      variables: {first: ImagesPerPage, after: data?.images.pageInfo.endCursor},
+      variables: {take: ImagesPerPage, skip: 1, cursor: data?.images.pageInfo.endCursor},
       updateQuery: (prev, {fetchMoreResult}) => {
         if (!fetchMoreResult) return prev
 

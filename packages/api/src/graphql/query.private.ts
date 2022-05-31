@@ -4,12 +4,10 @@ import {
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLString,
-  Kind
+  GraphQLString
 } from 'graphql'
-import {ExtractField, WrapQuery} from 'graphql-tools'
 import {Context} from '../context'
-import {ArticleSort, PeerArticle} from '../db/article'
+import {ArticleSort} from '../db/article'
 import {AuthorSort} from '../db/author'
 import {CommentSort} from '../db/comment'
 import {SortOrder} from '../db/common'
@@ -21,7 +19,7 @@ import {PaymentSort} from '../db/payment'
 import {SubscriptionSort} from '../db/subscription'
 import {UserSort} from '../db/user'
 import {UserRoleSort} from '../db/userRole'
-import {base64Decode, base64Encode, delegateToPeerSchema} from '../utility'
+import {delegateToPeerSchema} from '../utility'
 import {
   GraphQLArticle,
   GraphQLArticleConnection,
@@ -81,18 +79,14 @@ import {
 import {getAdminPayments, getPaymentById} from './payment/payment.private-queries'
 import {GraphQLPaymentMethod, GraphQLPaymentProvider} from './paymentMethod'
 import {GraphQLPeer, GraphQLPeerProfile} from './peer'
+import {getAdminPeerArticles} from './peer-article/peer-article.private-queries'
 import {
   getAdminPeerProfile,
   getRemotePeerProfile
 } from './peer-profile/peer-profile.private-queries'
 import {getPeerById, getPeers} from './peer/peer.private-queries'
 import {getPermissions} from './permission/permission.private-queries'
-import {
-  authorise,
-  CanGetPaymentProviders,
-  CanGetPeerArticle,
-  CanGetPeerArticles
-} from './permissions'
+import {authorise, CanGetPaymentProviders, CanGetPeerArticle} from './permissions'
 import {GraphQLSession} from './session'
 import {getSessionsForUser} from './session/session.private-queries'
 import {GraphQLSlug} from './slug'
@@ -425,198 +419,14 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     peerArticles: {
       type: GraphQLNonNull(GraphQLPeerArticleConnection),
       args: {
-        after: {type: GraphQLID},
+        cursors: {type: GraphQLString},
         sort: {type: GraphQLArticleSort, defaultValue: ArticleSort.ModifiedAt},
         order: {type: GraphQLSortOrder, defaultValue: SortOrder.Descending},
         peerFilter: {type: GraphQLString}
       },
 
-      async resolve(root, {sort, order, after, peerFilter}, context, info) {
-        const {authenticate, loaders, prisma} = context
-        const {roles} = authenticate()
-
-        authorise(CanGetPeerArticles, roles)
-
-        after = after ? JSON.parse(base64Decode(after)) : null
-
-        const peers = (
-          await prisma.peer.findMany({
-            orderBy: {
-              createdAt: 'desc'
-            }
-          })
-        ).filter(peer => (peerFilter ? peer.name === peerFilter : true))
-
-        for (const peer of peers) {
-          // Prime loader cache so we don't need to refetch inside `delegateToPeerSchema`.
-          loaders.peer.prime(peer.id, peer)
-        }
-
-        const articles = await Promise.all(
-          peers.map(peer => {
-            try {
-              if (after && after[peer.id] == null) return null
-
-              return delegateToPeerSchema(peer.id, true, context, {
-                info,
-                fieldName: 'articles',
-                args: {after: after ? after[peer.id] : undefined},
-                transforms: [
-                  new ExtractField({
-                    from: ['articles', 'nodes', 'article'],
-                    to: ['articles', 'nodes']
-                  }),
-                  new WrapQuery(
-                    ['articles', 'nodes', 'article'],
-                    subtree => ({
-                      kind: Kind.SELECTION_SET,
-                      selections: [
-                        ...subtree.selections,
-                        {
-                          kind: Kind.FIELD,
-                          name: {kind: Kind.NAME, value: 'id'}
-                        },
-                        {
-                          kind: Kind.FIELD,
-                          name: {kind: Kind.NAME, value: 'latest'},
-                          selectionSet: {
-                            kind: Kind.SELECTION_SET,
-                            selections: [
-                              {
-                                kind: Kind.FIELD,
-                                name: {kind: Kind.NAME, value: 'updatedAt'}
-                              },
-                              {
-                                kind: Kind.FIELD,
-                                name: {kind: Kind.NAME, value: 'publishAt'}
-                              },
-                              {
-                                kind: Kind.FIELD,
-                                name: {kind: Kind.NAME, value: 'publishedAt'}
-                              }
-                            ]
-                          }
-                        },
-                        {
-                          kind: Kind.FIELD,
-                          name: {kind: Kind.NAME, value: 'modifiedAt'}
-                        },
-                        {
-                          kind: Kind.FIELD,
-                          name: {kind: Kind.NAME, value: 'createdAt'}
-                        }
-                      ]
-                    }),
-                    result => result
-                  ),
-                  new WrapQuery(
-                    ['articles'],
-                    subtree => ({
-                      kind: Kind.SELECTION_SET,
-                      selections: [
-                        ...subtree.selections,
-                        {
-                          kind: Kind.FIELD,
-                          name: {kind: Kind.NAME, value: 'pageInfo'},
-                          selectionSet: {
-                            kind: Kind.SELECTION_SET,
-                            selections: [
-                              {
-                                kind: Kind.FIELD,
-                                name: {kind: Kind.NAME, value: 'endCursor'}
-                              },
-                              {
-                                kind: Kind.FIELD,
-                                name: {kind: Kind.NAME, value: 'hasNextPage'}
-                              }
-                            ]
-                          }
-                        },
-                        {
-                          kind: Kind.FIELD,
-                          name: {kind: Kind.NAME, value: 'totalCount'}
-                        }
-                      ]
-                    }),
-                    result => result
-                  )
-                ]
-              })
-            } catch (err) {
-              return null
-            }
-          })
-        )
-
-        const totalCount = articles.reduce((prev, result) => prev + (result?.totalCount ?? 0), 0)
-        const cursors = Object.fromEntries(
-          articles.map((result, index) => [peers[index].id, result?.pageInfo.endCursor ?? null])
-        )
-
-        const hasNextPage = articles.reduce(
-          (prev, result) => prev || (result?.pageInfo.hasNextPage ?? false),
-          false
-        )
-
-        const peerArticles = articles.flatMap<PeerArticle & {article: any}>((result, index) => {
-          const peer = peers[index]
-
-          return result?.nodes.map((article: any) => ({peerID: peer.id, article})) ?? []
-        })
-
-        switch (sort) {
-          case ArticleSort.CreatedAt:
-            peerArticles.sort(
-              (a, b) =>
-                new Date(b.article.createdAt).getTime() - new Date(a.article.createdAt).getTime()
-            )
-            break
-
-          case ArticleSort.ModifiedAt:
-            peerArticles.sort(
-              (a, b) =>
-                new Date(b.article.modifiedAt).getTime() - new Date(a.article.modifiedAt).getTime()
-            )
-            break
-
-          case ArticleSort.PublishAt:
-            peerArticles.sort(
-              (a, b) =>
-                new Date(b.article.latest.publishAt).getTime() -
-                new Date(a.article.latest.publishAt).getTime()
-            )
-            break
-
-          case ArticleSort.PublishedAt:
-            peerArticles.sort(
-              (a, b) =>
-                new Date(b.article.latest.publishedAt).getTime() -
-                new Date(a.article.latest.publishedAt).getTime()
-            )
-            break
-
-          case ArticleSort.UpdatedAt:
-            peerArticles.sort(
-              (a, b) =>
-                new Date(b.article.latest.updatedAt).getTime() -
-                new Date(a.article.latest.updatedAt).getTime()
-            )
-            break
-        }
-
-        if (order === SortOrder.Ascending) {
-          peerArticles.reverse()
-        }
-
-        return {
-          nodes: peerArticles,
-          totalCount: totalCount,
-          pageInfo: {
-            endCursor: base64Encode(JSON.stringify(cursors)),
-            hasNextPage: hasNextPage
-          }
-        }
-      }
+      resolve: (root, {sort, order, after, peerFilter}, context, info) =>
+        getAdminPeerArticles(sort, order, peerFilter, after, context, info)
     },
 
     articlePreviewLink: {

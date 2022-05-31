@@ -139,7 +139,7 @@ export const getUserForCredentials = async (
     }
   })
 
-  if (!f) {
+  if (!user) {
     return null
   }
 

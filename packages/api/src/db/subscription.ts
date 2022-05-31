@@ -3,9 +3,9 @@ import {PaymentPeriodicity} from './memberPlan'
 import {GenericUserId} from './tempUser'
 
 export enum SubscriptionDeactivationReason {
-  None,
-  UserSelfDeactivated,
-  InvoiceNotPaid
+  None = 'none',
+  UserSelfDeactivated = 'userSelfDeactivated',
+  InvoiceNotPaid = 'invoiceNotPaid'
 }
 
 export interface SubscriptionDeactivation {
