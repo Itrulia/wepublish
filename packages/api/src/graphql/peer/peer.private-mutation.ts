@@ -3,7 +3,7 @@ import {Context} from '../../context'
 import {authorise, CanCreatePeer, CanDeletePeer} from '../permissions'
 
 export const deletePeerById = (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   peer: PrismaClient['peer']
 ) => {
@@ -26,12 +26,12 @@ export const createPeer = (
   authorise(CanCreatePeer, roles)
 
   return peer.create({
-    data: {...input, modifiedAt: new Date()}
+    data: {...input}
   })
 }
 
 export const updatePeer = (
-  id: string,
+  id: number,
   input: Omit<Prisma.PeerUncheckedUpdateInput, 'modifiedAt' | 'createdAt'>,
   authenticate: Context['authenticate'],
   peer: PrismaClient['peer']

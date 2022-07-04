@@ -1,5 +1,6 @@
 import {
   Invoice,
+  InvoiceItem,
   MemberPlan,
   MetadataProperty,
   PaymentMethod,
@@ -12,12 +13,13 @@ import {
   User
 } from '@prisma/client'
 import {DataLoaderContext} from './context'
+import {InvoiceWithItems} from './db/invoice'
+import {MemberPlanWithPaymentMethods} from './db/memberPlan'
 import {unselectPassword} from './db/user'
 import {InternalError, NotFound, PaymentConfigurationNotAllowed, UserInputError} from './error'
 import {MailContext, SendMailType} from './mails/mailContext'
 import {PaymentProvider} from './payments/paymentProvider'
 import {logger} from './server'
-import nanoid from 'nanoid'
 import {
   ONE_DAY_IN_MILLISECONDS,
   ONE_HOUR_IN_MILLISECONDS,
@@ -39,13 +41,13 @@ export interface RenewSubscriptionForUsersProps {
 
 export interface ChargeInvoiceProps {
   user: User
-  invoice: Invoice
+  invoice: InvoiceWithItems
   paymentMethodID: string
   customer: PaymentProviderCustomer
 }
 
 export interface SendReminderForInvoiceProps {
-  invoice: Invoice
+  invoice: InvoiceWithItems
   replyToAddress: string
 }
 
@@ -58,7 +60,7 @@ export interface CheckOpenInvoiceProps {
 }
 
 export interface DeactivateSubscriptionForUserProps {
-  subscriptionID: string
+  subscriptionID: number
   deactivationDate?: Date
   deactivationReason?: SubscriptionDeactivationReason
 }
@@ -184,6 +186,9 @@ export class MemberContext implements MemberContext {
     const invoices = await this.prisma.invoice.findMany({
       where: {
         subscriptionID: subscription.id
+      },
+      include: {
+        items: true
       }
     })
 
@@ -243,6 +248,7 @@ export class MemberContext implements MemberContext {
         if (periodA.endsAt > periodB.endsAt) return 1
         return 0
       })
+
       if (
         periods.length > 0 &&
         ((paidUntil === null && periods.length > 0) ||
@@ -252,8 +258,12 @@ export class MemberContext implements MemberContext {
         const invoice = await this.prisma.invoice.findUnique({
           where: {
             id: period.invoiceID
+          },
+          include: {
+            items: true
           }
         })
+
         // only return the invoice if it hasn't been canceled. Otherwise
         // create a new period and a new invoice
         if (!invoice?.canceledAt) {
@@ -488,10 +498,11 @@ export class MemberContext implements MemberContext {
       .map(provider => provider.id)
   }
 
-  private async getAllOpenInvoices(): Promise<Invoice[]> {
+  private async getAllOpenInvoices(): Promise<InvoiceWithItems[]> {
     const openInvoices: Invoice[] = []
     let hasMore = true
-    let cursor: string | null = null
+    let cursor: number | null = null
+
     while (hasMore) {
       const invoices: Invoice[] = await this.prisma.invoice.findMany({
         where: {
@@ -507,7 +518,10 @@ export class MemberContext implements MemberContext {
           ? {
               id: cursor
             }
-          : undefined
+          : undefined,
+        include: {
+          items: true
+        }
       })
 
       hasMore = Boolean(invoices?.length)
@@ -529,6 +543,7 @@ export class MemberContext implements MemberContext {
           id: invoice.subscriptionID
         }
       })
+
       if (!subscription) {
         logger('memberContext').warn('subscription %s does not exist', invoice.subscriptionID)
         continue
@@ -545,13 +560,22 @@ export class MemberContext implements MemberContext {
         }
 
         if (deactivateSubscription < today) {
+          const {items, ...invoiceData} = invoice
+
           await this.prisma.invoice.update({
             where: {id: invoice.id},
             data: {
-              ...invoice,
+              ...invoiceData,
+              items: {
+                deleteMany: {
+                  invoiceId: invoiceData.id
+                },
+                create: items
+              },
               canceledAt: today
             }
           })
+
           await this.deactivateSubscriptionForUser({
             subscriptionID: subscription.id,
             deactivationDate: today,
@@ -696,10 +720,18 @@ export class MemberContext implements MemberContext {
         }
       })
 
+      const {items, ...invoiceData} = invoice
+
       await this.prisma.invoice.update({
         where: {id: invoice.id},
         data: {
-          ...invoice,
+          ...invoiceData,
+          items: {
+            deleteMany: {
+              invoiceId: invoiceData.id
+            },
+            create: items
+          },
           sentReminderAt: new Date()
         }
       })
@@ -736,10 +768,18 @@ export class MemberContext implements MemberContext {
         }
 
         if (deactivateSubscription < today) {
+          const {items, ...invoiceData} = invoice
+
           await this.prisma.invoice.update({
             where: {id: invoice.id},
             data: {
-              ...invoice,
+              ...invoiceData,
+              items: {
+                deleteMany: {
+                  invoiceId: invoiceData.id
+                },
+                create: items
+              },
               canceledAt: today
             }
           })
@@ -845,10 +885,18 @@ export class MemberContext implements MemberContext {
       }
     }
 
+    const {items, ...invoiceData} = invoice
+
     await this.prisma.invoice.update({
       where: {id: invoice.id},
       data: {
-        ...invoice,
+        ...invoiceData,
+        items: {
+          deleteMany: {
+            invoiceId: invoiceData.id
+          },
+          create: items
+        },
         sentReminderAt: today
       }
     })
@@ -889,9 +937,9 @@ export class MemberContext implements MemberContext {
    */
 
   async validateInputParamsCreateSubscription(
-    memberPlanID: string | null,
+    memberPlanID: number | null,
     memberPlanSlug: string | null,
-    paymentMethodID: string | null,
+    paymentMethodID: number | null,
     paymentMethodSlug: string | null
   ) {
     if (
@@ -912,7 +960,7 @@ export class MemberContext implements MemberContext {
   async getMemberPlanByIDOrSlug(
     loaders: DataLoaderContext,
     memberPlanSlug: string,
-    memberPlanID: string
+    memberPlanID: number
   ) {
     const memberPlan = memberPlanID
       ? await loaders.activeMemberPlansByID.load(memberPlanID)
@@ -924,7 +972,7 @@ export class MemberContext implements MemberContext {
   async getPaymentMethodByIDOrSlug(
     loaders: DataLoaderContext,
     paymentMethodSlug: string,
-    paymentMethodID: string
+    paymentMethodID: number
   ) {
     const paymentMethod = paymentMethodID
       ? await loaders.activePaymentMethodsByID.load(paymentMethodID)
@@ -934,7 +982,7 @@ export class MemberContext implements MemberContext {
   }
 
   async validateSubscriptionPaymentConfiguration(
-    memberPlan: MemberPlan,
+    memberPlan: MemberPlanWithPaymentMethods,
     autoRenew: boolean,
     paymentPeriodicity: PaymentPeriodicity,
     paymentMethod: PaymentMethod

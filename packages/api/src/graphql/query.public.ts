@@ -364,6 +364,9 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
         const invoice = await prisma.invoice.findUnique({
           where: {
             id
+          },
+          include: {
+            items: true
           }
         })
 
@@ -424,6 +427,9 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
         return await prisma.invoice.findUnique({
           where: {
             id
+          },
+          include: {
+            items: true
           }
         })
       }

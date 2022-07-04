@@ -9,7 +9,7 @@ export const getPublishedArticles = async (
   filter: Partial<ArticleFilter>,
   sortedField: ArticleSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   article: PrismaClient['article']
@@ -31,7 +31,7 @@ export const getPublishedArticles = async (
 }
 
 export const getPublishedArticleByIdOrSlug = async (
-  id: string | null,
+  id: number | null,
   slug: string | null,
   token: string | null,
   session: Context['session'],
@@ -61,6 +61,23 @@ export const getPublishedArticleByIdOrSlug = async (
             }
           }
         ]
+      },
+      include: {
+        draft: {
+          include: {
+            properties: true
+          }
+        },
+        pending: {
+          include: {
+            properties: true
+          }
+        },
+        published: {
+          include: {
+            properties: true
+          }
+        }
       }
     })
 
@@ -75,7 +92,7 @@ export const getPublishedArticleByIdOrSlug = async (
 
   if (!article && token) {
     try {
-      const articleId = verifyJWT(token)
+      const articleId = +verifyJWT(token)
       const privateArticle = await articles.load(articleId)
 
       article = privateArticle?.draft

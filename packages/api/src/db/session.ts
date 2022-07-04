@@ -7,7 +7,7 @@ export enum SessionType {
 
 export interface TokenSession {
   type: SessionType.Token
-  id: string
+  id: number
   name: string
   token: string
   roles: UserRole[]
@@ -15,7 +15,7 @@ export interface TokenSession {
 
 export interface UserSession {
   type: SessionType.User
-  id: string
+  id: number
   user: User
   roles: UserRole[]
   createdAt: Date

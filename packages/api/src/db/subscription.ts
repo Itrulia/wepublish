@@ -15,8 +15,8 @@ export interface SubscriptionFilter {
   readonly deactivationDateTo?: DateFilter
   readonly deactivationReason?: SubscriptionDeactivationReason
   readonly autoRenew?: boolean
-  readonly paymentMethodID?: string
-  readonly memberPlanID?: string
+  readonly paymentMethodID?: number
+  readonly memberPlanID?: number
   readonly paymentPeriodicity?: PaymentPeriodicity
   readonly userHasAddress?: boolean
 }

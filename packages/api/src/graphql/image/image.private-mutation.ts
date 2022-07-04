@@ -48,8 +48,8 @@ export const createImage = async (
       link,
       license,
 
-      focalPoint,
-      modifiedAt: new Date()
+      focalPointX: focalPoint.x,
+      focalPointY: focalPoint.y
     }
   })
 }

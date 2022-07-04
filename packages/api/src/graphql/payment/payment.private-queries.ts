@@ -19,7 +19,7 @@ export const getAdminPayments = async (
   filter: Partial<PaymentFilter>,
   sortedField: PaymentSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

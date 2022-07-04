@@ -1,4 +1,4 @@
-import {Article, Prisma, PrismaClient} from '@prisma/client'
+import {Article, ArticleRevision, Prisma, PrismaClient} from '@prisma/client'
 import {ArticleFilter, ArticleSort} from '../../db/article'
 import {ConnectionResult, MaxResultsPerPage} from '../../db/common'
 import {getSortOrder, SortOrder} from '../queries/sort'
@@ -130,14 +130,14 @@ const createTagsFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereIn
 
 const createAuthorFilter = (filter: Partial<ArticleFilter>): Prisma.ArticleWhereInput => {
   if (filter?.authors) {
-    const hasTags = {
+    const hasAuthors = {
       is: {
-        authorIDs: {hasSome: filter.tags}
+        authorIDs: {hasSome: filter.authors}
       }
     }
 
     return {
-      OR: [{draft: hasTags}, {pending: hasTags}, {published: hasTags}]
+      OR: [{draft: hasAuthors}, {pending: hasAuthors}, {published: hasAuthors}]
     }
   }
 
@@ -160,11 +160,19 @@ export const getArticles = async (
   filter: Partial<ArticleFilter>,
   sortedField: ArticleSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   article: PrismaClient['article']
-): Promise<ConnectionResult<Article>> => {
+): Promise<
+  ConnectionResult<
+    Article & {
+      draft: ArticleRevision | null
+      pending: ArticleRevision | null
+      published: ArticleRevision | null
+    }
+  >
+> => {
   const orderBy = createArticleOrder(sortedField, getSortOrder(order))
   const where = createArticleFilter(filter)
 
@@ -178,7 +186,24 @@ export const getArticles = async (
       skip: skip,
       take: Math.min(take, MaxResultsPerPage) + 1,
       orderBy: orderBy,
-      cursor: cursorId ? {id: cursorId} : undefined
+      cursor: cursorId ? {id: cursorId} : undefined,
+      include: {
+        draft: {
+          include: {
+            properties: true
+          }
+        },
+        pending: {
+          include: {
+            properties: true
+          }
+        },
+        published: {
+          include: {
+            properties: true
+          }
+        }
+      }
     })
   ])
 

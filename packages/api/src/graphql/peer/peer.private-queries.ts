@@ -4,7 +4,7 @@ import {PrismaClient} from '@prisma/client'
 import {DisabledPeerError} from '../../error'
 
 export const getPeerById = async (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   peerClient: Context['loaders']['peer']
 ) => {

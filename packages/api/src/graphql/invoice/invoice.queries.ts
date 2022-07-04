@@ -93,7 +93,7 @@ export const getInvoices = async (
   filter: Partial<InvoiceFilter>,
   sortedField: InvoiceSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   invoice: PrismaClient['invoice']
@@ -111,7 +111,10 @@ export const getInvoices = async (
       skip: skip,
       take: Math.min(take, MaxResultsPerPage) + 1,
       orderBy: orderBy,
-      cursor: cursorId ? {id: cursorId} : undefined
+      cursor: cursorId ? {id: cursorId} : undefined,
+      include: {
+        items: true
+      }
     })
   ])
 

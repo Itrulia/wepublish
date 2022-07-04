@@ -5,7 +5,7 @@ import {PrismaClient} from '@prisma/client'
 import {getInvoices} from './invoice.queries'
 
 export const getInvoiceById = (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   invoicesByID: Context['loaders']['invoicesByID']
 ) => {
@@ -19,7 +19,7 @@ export const getAdminInvoices = async (
   filter: Partial<InvoiceFilter>,
   sortedField: InvoiceSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

@@ -79,7 +79,7 @@ class ExampleURLAdapter implements URLAdapter {
 }
 
 async function asyncMain() {
-  if (!process.env.MONGO_URL) throw new Error('No MONGO_URL defined in environment.')
+  if (!process.env.DATABASE_URL) throw new Error('No DATABASE_URL defined in environment.')
   if (!process.env.HOST_URL) throw new Error('No HOST_URL defined in environment.')
 
   const hostURL = process.env.HOST_URL
@@ -107,14 +107,14 @@ async function asyncMain() {
   const prisma = new PrismaClient({
     datasources: {
       db: {
-        url: process.env.MONGO_URL!
+        url: process.env.DATABASE_URL!
       }
     }
   })
   await prisma.$connect()
 
   await MongoDBAdapter.initialize({
-    url: process.env.MONGO_URL!,
+    url: process.env.DATABASE_URL!,
     locale: process.env.MONGO_LOCALE ?? 'en',
     seed: async adapter => {
       const adminUserRoleId =
@@ -124,7 +124,7 @@ async function asyncMain() {
               name: 'Admin'
             }
           })
-        )?.id ?? 'fake'
+        )?.id ?? 1
       const editorUserRoleId =
         (
           await prisma.userRole.findUnique({
@@ -132,7 +132,7 @@ async function asyncMain() {
               name: 'Editor'
             }
           })
-        )?.id ?? 'fake'
+        )?.id ?? 1
 
       await prisma.user.create({
         data: {
@@ -140,10 +140,8 @@ async function asyncMain() {
           emailVerifiedAt: new Date(),
           name: 'Dev User',
           active: true,
-          properties: [],
           roleIDs: [adminUserRoleId],
-          password: await hashPassword('123'),
-          modifiedAt: new Date()
+          password: await hashPassword('123')
         }
       })
 
@@ -153,10 +151,8 @@ async function asyncMain() {
           emailVerifiedAt: new Date(),
           name: 'Editor User',
           active: true,
-          properties: [],
           roleIDs: [editorUserRoleId],
-          password: await hashPassword('123'),
-          modifiedAt: new Date()
+          password: await hashPassword('123')
         }
       })
     }

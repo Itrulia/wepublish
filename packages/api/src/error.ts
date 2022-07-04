@@ -73,7 +73,7 @@ export class NotActiveError extends ApolloError {
 }
 
 export class NotFound extends ApolloError {
-  constructor(model: string, id: string) {
+  constructor(model: string, id: string | number) {
     super(`${model} with ID or Slug: '${id}' not found`, ErrorCode.NotFound)
   }
 }
@@ -121,7 +121,7 @@ export class DuplicatePageSlugError extends ApolloError {
 }
 
 export class DuplicateArticleSlugError extends ApolloError {
-  constructor(publishedArticleID: string, slug: string) {
+  constructor(publishedArticleID: number, slug: string) {
     super(
       `Article with ID ${publishedArticleID} already uses the slug "${slug}"`,
       ErrorCode.DuplicatePageSlug

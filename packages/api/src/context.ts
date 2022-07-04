@@ -1,11 +1,9 @@
 import {
   Article,
+  ArticleRevision,
   Author,
   Image,
-  Invoice,
   MailLog,
-  MemberPlan,
-  Navigation,
   Page,
   Payment,
   PaymentMethod,
@@ -35,6 +33,9 @@ import url from 'url'
 import {ChallengeProvider} from './challenges/challengeProvider'
 import {PublicArticle} from './db/article'
 import {DefaultBcryptHashCostFactor, DefaultSessionTTL} from './db/common'
+import {InvoiceWithItems} from './db/invoice'
+import {MemberPlanWithPaymentMethods} from './db/memberPlan'
+import {NavigationWithLinks} from './db/navigation'
 import {PublicPage} from './db/page'
 import {Session, SessionType, TokenSession, UserSession} from './db/session'
 import {unselectPassword} from './db/user'
@@ -68,40 +69,48 @@ fetcherCache.on('expired', async function (key: string, value: PeerCacheValue) {
 })
 
 export interface DataLoaderContext {
-  readonly navigationByID: DataLoader<string, Navigation | null>
-  readonly navigationByKey: DataLoader<string, Navigation | null>
+  readonly navigationByID: DataLoader<number, NavigationWithLinks | null>
+  readonly navigationByKey: DataLoader<string, NavigationWithLinks | null>
 
-  readonly authorsByID: DataLoader<string, Author | null>
+  readonly authorsByID: DataLoader<number, Author | null>
   readonly authorsBySlug: DataLoader<string, Author | null>
 
   readonly images: DataLoader<string, Image | null>
 
-  readonly articles: DataLoader<string, Article | null>
-  readonly publicArticles: DataLoader<string, PublicArticle | null>
+  readonly articles: DataLoader<
+    number,
+    | (Article & {
+        draft: ArticleRevision | null
+        pending: ArticleRevision | null
+        published: ArticleRevision | null
+      })
+    | null
+  >
+  readonly publicArticles: DataLoader<number, PublicArticle | null>
 
-  readonly pages: DataLoader<string, Page | null>
-  readonly publicPagesByID: DataLoader<string, PublicPage | null>
+  readonly pages: DataLoader<number, Page | null>
+  readonly publicPagesByID: DataLoader<number, PublicPage | null>
   readonly publicPagesBySlug: DataLoader<string, PublicPage | null>
 
-  readonly userRolesByID: DataLoader<string, UserRole | null>
+  readonly userRolesByID: DataLoader<number, UserRole | null>
 
-  readonly mailLogsByID: DataLoader<string, MailLog | null>
+  readonly mailLogsByID: DataLoader<number, MailLog | null>
 
-  readonly peer: DataLoader<string, Peer | null>
+  readonly peer: DataLoader<number, Peer | null>
   readonly peerBySlug: DataLoader<string, Peer | null>
 
-  readonly peerSchema: DataLoader<string, GraphQLSchema | null>
-  readonly peerAdminSchema: DataLoader<string, GraphQLSchema | null>
+  readonly peerSchema: DataLoader<number, GraphQLSchema | null>
+  readonly peerAdminSchema: DataLoader<number, GraphQLSchema | null>
 
-  readonly memberPlansByID: DataLoader<string, MemberPlan | null>
-  readonly memberPlansBySlug: DataLoader<string, MemberPlan | null>
-  readonly activeMemberPlansByID: DataLoader<string, MemberPlan | null>
-  readonly activeMemberPlansBySlug: DataLoader<string, MemberPlan | null>
-  readonly paymentMethodsByID: DataLoader<string, PaymentMethod | null>
-  readonly activePaymentMethodsByID: DataLoader<string, PaymentMethod | null>
+  readonly memberPlansByID: DataLoader<number, MemberPlanWithPaymentMethods | null>
+  readonly memberPlansBySlug: DataLoader<string, MemberPlanWithPaymentMethods | null>
+  readonly activeMemberPlansByID: DataLoader<number, MemberPlanWithPaymentMethods | null>
+  readonly activeMemberPlansBySlug: DataLoader<string, MemberPlanWithPaymentMethods | null>
+  readonly paymentMethodsByID: DataLoader<number, PaymentMethod | null>
+  readonly activePaymentMethodsByID: DataLoader<number, PaymentMethod | null>
   readonly activePaymentMethodsBySlug: DataLoader<string, PaymentMethod | null>
-  readonly invoicesByID: DataLoader<string, Invoice | null>
-  readonly paymentsByID: DataLoader<string, Payment | null>
+  readonly invoicesByID: DataLoader<number, InvoiceWithItems | null>
+  readonly paymentsByID: DataLoader<number, Payment | null>
 }
 
 export interface OAuth2Clients {
@@ -194,15 +203,15 @@ export interface SendMailFromProviderProps {
 }
 
 export interface CreatePaymentWithProvider {
-  paymentMethodID: string
-  invoice: Invoice
+  paymentMethodID: number
+  invoice: InvoiceWithItems
   saveCustomer: boolean
   successURL?: string
   failureURL?: string
 }
 
 export interface GenerateJWTProps {
-  id: string
+  id: number
   audience?: string
   expiresInMinutes?: number
 }
@@ -311,11 +320,11 @@ export async function contextFromRequest(
 
   const peerDataLoader = new DataLoader(async ids =>
     createOptionalsArray(
-      ids as string[],
+      ids as number[],
       await prisma.peer.findMany({
         where: {
           id: {
-            in: ids as string[]
+            in: ids as number[]
           }
         }
       }),
@@ -326,12 +335,15 @@ export async function contextFromRequest(
   const loaders: DataLoaderContext = {
     navigationByID: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         await prisma.navigation.findMany({
           where: {
             id: {
-              in: ids as string[]
+              in: ids as number[]
             }
+          },
+          include: {
+            links: true
           }
         }),
         'id'
@@ -345,6 +357,9 @@ export async function contextFromRequest(
             key: {
               in: keys as string[]
             }
+          },
+          include: {
+            links: true
           }
         }),
         'key'
@@ -353,12 +368,15 @@ export async function contextFromRequest(
 
     authorsByID: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         await prisma.author.findMany({
           where: {
             id: {
-              in: ids as string[]
+              in: ids as number[]
             }
+          },
+          include: {
+            links: true
           }
         }),
         'id'
@@ -372,6 +390,9 @@ export async function contextFromRequest(
             slug: {
               in: slugs as string[]
             }
+          },
+          include: {
+            links: true
           }
         }),
         'slug'
@@ -394,11 +415,28 @@ export async function contextFromRequest(
 
     articles: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         await prisma.article.findMany({
           where: {
             id: {
-              in: ids as string[]
+              in: ids as number[]
+            }
+          },
+          include: {
+            draft: {
+              include: {
+                properties: true
+              }
+            },
+            pending: {
+              include: {
+                properties: true
+              }
+            },
+            published: {
+              include: {
+                properties: true
+              }
             }
           }
         }),
@@ -407,12 +445,12 @@ export async function contextFromRequest(
     ),
     publicArticles: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         (
           await prisma.article.findMany({
             where: {
               id: {
-                in: ids as string[]
+                in: ids as number[]
               },
               OR: [
                 {
@@ -426,20 +464,32 @@ export async function contextFromRequest(
                   }
                 }
               ]
+            },
+            include: {
+              published: {
+                include: {
+                  properties: true
+                }
+              },
+              pending: {
+                include: {
+                  properties: true
+                }
+              }
             }
           })
-        ).map(({id, shared, published, pending}) => ({id, shared, ...(published || pending!)})),
+        ).map(({id, shared, published, pending}) => ({shared, ...(published || pending!), id})),
         'id'
       )
     ),
 
     pages: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         await prisma.page.findMany({
           where: {
             id: {
-              in: ids as string[]
+              in: ids as number[]
             }
           }
         }),
@@ -448,12 +498,12 @@ export async function contextFromRequest(
     ),
     publicPagesByID: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         (
           await prisma.page.findMany({
             where: {
               id: {
-                in: ids as string[]
+                in: ids as number[]
               },
               OR: [
                 {
@@ -467,9 +517,21 @@ export async function contextFromRequest(
                   }
                 }
               ]
+            },
+            include: {
+              published: {
+                include: {
+                  properties: true
+                }
+              },
+              pending: {
+                include: {
+                  properties: true
+                }
+              }
             }
           })
-        ).map(({id, published, pending}) => ({id, ...(published || pending!)})),
+        ).map(({id, published, pending}) => ({...(published || pending!), id})),
         'id'
       )
     ),
@@ -499,20 +561,32 @@ export async function contextFromRequest(
                   }
                 }
               ]
+            },
+            include: {
+              published: {
+                include: {
+                  properties: true
+                }
+              },
+              pending: {
+                include: {
+                  properties: true
+                }
+              }
             }
           })
-        ).map(({id, published, pending}) => ({id, ...(published || pending!)})),
+        ).map(({id, published, pending}) => ({...(published || pending!), id})),
         'slug'
       )
     ),
 
     userRolesByID: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         await prisma.userRole.findMany({
           where: {
             id: {
-              in: ids as string[]
+              in: ids as number[]
             }
           }
         }),
@@ -522,11 +596,11 @@ export async function contextFromRequest(
 
     mailLogsByID: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         await prisma.mailLog.findMany({
           where: {
             id: {
-              in: ids as string[]
+              in: ids as number[]
             }
           }
         }),
@@ -605,12 +679,15 @@ export async function contextFromRequest(
 
     memberPlansByID: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         await prisma.memberPlan.findMany({
           where: {
             id: {
-              in: ids as string[]
+              in: ids as number[]
             }
+          },
+          include: {
+            availablePaymentMethods: true
           }
         }),
         'id'
@@ -624,6 +701,9 @@ export async function contextFromRequest(
             slug: {
               in: slugs as string[]
             }
+          },
+          include: {
+            availablePaymentMethods: true
           }
         }),
         'slug'
@@ -631,13 +711,16 @@ export async function contextFromRequest(
     ),
     activeMemberPlansByID: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         await prisma.memberPlan.findMany({
           where: {
             id: {
-              in: ids as string[]
+              in: ids as number[]
             },
             active: true
+          },
+          include: {
+            availablePaymentMethods: true
           }
         }),
         'id'
@@ -652,6 +735,9 @@ export async function contextFromRequest(
               in: slugs as string[]
             },
             active: true
+          },
+          include: {
+            availablePaymentMethods: true
           }
         }),
         'slug'
@@ -659,11 +745,11 @@ export async function contextFromRequest(
     ),
     paymentMethodsByID: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         await prisma.paymentMethod.findMany({
           where: {
             id: {
-              in: ids as string[]
+              in: ids as number[]
             }
           }
         }),
@@ -672,11 +758,11 @@ export async function contextFromRequest(
     ),
     activePaymentMethodsByID: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         await prisma.paymentMethod.findMany({
           where: {
             id: {
-              in: ids as string[]
+              in: ids as number[]
             },
             active: true
           }
@@ -700,12 +786,15 @@ export async function contextFromRequest(
     ),
     invoicesByID: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         await prisma.invoice.findMany({
           where: {
             id: {
-              in: ids as string[]
+              in: ids as number[]
             }
+          },
+          include: {
+            items: true
           }
         }),
         'id'
@@ -713,11 +802,11 @@ export async function contextFromRequest(
     ),
     paymentsByID: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as string[],
+        ids as number[],
         await prisma.payment.findMany({
           where: {
             id: {
-              in: ids as string[]
+              in: ids as number[]
             }
           }
         }),

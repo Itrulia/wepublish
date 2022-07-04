@@ -63,22 +63,22 @@ class ExampleURLAdapter implements URLAdapter {
 }
 
 export async function createGraphQLTestClientWithMongoDB(): Promise<TestClient> {
-  if (!process.env.TEST_MONGO_URL) {
-    throw new Error('TEST_MONGO_URL not defined')
+  if (!process.env.TEST_DATABASE_URL) {
+    throw new Error('TEST_DATABASE_URL not defined')
   }
   let adminUser
 
   const prisma = new PrismaClient({
     datasources: {
       db: {
-        url: process.env.TEST_MONGO_URL!
+        url: process.env.TEST_DATABASE_URL!
       }
     }
   })
   await prisma.$connect()
 
   await MongoDBAdapter.initialize({
-    url: process.env.TEST_MONGO_URL!,
+    url: process.env.TEST_DATABASE_URL!,
     locale: 'en',
     seed: async () => {
       const adminUserRoleId =
@@ -88,7 +88,7 @@ export async function createGraphQLTestClientWithMongoDB(): Promise<TestClient> 
               name: 'Admin'
             }
           })
-        )?.id ?? 'fake'
+        )?.id ?? 1
 
       adminUser = await prisma.user.create({
         data: {
@@ -97,9 +97,7 @@ export async function createGraphQLTestClientWithMongoDB(): Promise<TestClient> 
           name: 'Dev User',
           roleIDs: [adminUserRoleId],
           active: true,
-          properties: [],
-          password: await hashPassword('123'),
-          modifiedAt: new Date()
+          password: await hashPassword('123')
         }
       })
     }

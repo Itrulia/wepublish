@@ -3,6 +3,7 @@ import bodyParser from 'body-parser'
 import {NextHandleFunction} from 'connect'
 import express, {Router} from 'express'
 import {Context, contextFromRequest} from '../context'
+import {InvoiceWithItems} from '../db/invoice'
 import {logger, WepublishServerOpts} from '../server'
 
 export const PAYMENT_WEBHOOK_PATH_PREFIX = 'payment-webhooks'
@@ -12,7 +13,7 @@ export interface WebhookForPaymentIntentProps {
 }
 
 export interface IntentState {
-  paymentID: string
+  paymentID: number
   state: PaymentState
   paidAt?: Date
   paymentData?: string
@@ -20,8 +21,8 @@ export interface IntentState {
 }
 
 export interface CreatePaymentIntentProps {
-  paymentID: string
-  invoice: Invoice
+  paymentID: number
+  invoice: InvoiceWithItems
   saveCustomer: boolean
   customerID?: string
   successURL?: string
@@ -221,7 +222,10 @@ export function setupPaymentProvider(opts: WepublishServerOpts): Router {
 
     if (model.state === PaymentState.paid) {
       const invoice = await prisma.invoice.findUnique({
-        where: {id: model.invoiceID}
+        where: {id: model.invoiceID},
+        include: {
+          items: true
+        }
       })
 
       if (!invoice) {
@@ -229,10 +233,18 @@ export function setupPaymentProvider(opts: WepublishServerOpts): Router {
         return
       }
 
+      const {items, ...invoiceData} = invoice
+
       await prisma.invoice.update({
         where: {id: invoice.id},
         data: {
-          ...invoice,
+          ...invoiceData,
+          items: {
+            deleteMany: {
+              invoiceId: invoiceData.id
+            },
+            create: items
+          },
           paidAt: new Date(),
           canceledAt: null
         }

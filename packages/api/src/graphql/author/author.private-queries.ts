@@ -6,7 +6,7 @@ import {AuthorFilter, AuthorSort} from '../../db/author'
 import {getAuthors} from './author.queries'
 
 export const getAuthorByIdOrSlug = (
-  id: string | null,
+  id: number | null,
   slug: string | null,
   authenticate: Context['authenticate'],
   authorsByID: Context['loaders']['authorsByID'],
@@ -26,7 +26,7 @@ export const getAdminAuthors = async (
   filter: Partial<AuthorFilter>,
   sortedField: AuthorSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

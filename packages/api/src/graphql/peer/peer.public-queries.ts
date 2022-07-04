@@ -2,7 +2,7 @@ import {UserInputError} from '../../error'
 import {Context} from '../../context'
 
 export const getPeerByIdOrSlug = (
-  id: string | null,
+  id: number | null,
   slug: string | null,
   peer: Context['loaders']['peer'],
   peerBySlug: Context['loaders']['peerBySlug']

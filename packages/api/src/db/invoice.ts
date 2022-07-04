@@ -1,3 +1,4 @@
+import {Invoice, InvoiceItem} from '@prisma/client'
 import {DateFilter} from './common'
 
 export enum InvoiceSort {
@@ -10,6 +11,10 @@ export interface InvoiceFilter {
   mail?: string
   paidAt?: DateFilter
   canceledAt?: DateFilter
-  userID?: string
-  subscriptionID?: string
+  userID?: number
+  subscriptionID?: number
+}
+
+export type InvoiceWithItems = Invoice & {
+  items: InvoiceItem[]
 }

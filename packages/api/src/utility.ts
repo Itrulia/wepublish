@@ -203,7 +203,7 @@ class ResetGraphQLEnums implements Transform {
 }
 
 export async function delegateToPeerSchema(
-  peerID: string,
+  peerID: number,
   fetchAdminEndpoint: boolean,
   context: Context,
   opts: Omit<IDelegateToSchemaOptions, 'schema'>

@@ -6,7 +6,7 @@ export const getPublicAuthors = async (
   filter: Partial<AuthorFilter>,
   sortedField: AuthorSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   author: PrismaClient['author']

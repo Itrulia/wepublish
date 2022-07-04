@@ -14,7 +14,7 @@ import {
 import {getArticles} from './article.queries'
 
 export const getArticleById = async (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   articleLoader: Context['loaders']['articles']
 ) => {
@@ -37,7 +37,7 @@ export const getArticleById = async (
 }
 
 export const getArticlePreviewLink = async (
-  id: string,
+  id: number,
   hours: number,
   authenticate: Context['authenticate'],
   generateJWT: Context['generateJWT'],
@@ -65,7 +65,7 @@ export const getAdminArticles = async (
   filter: Partial<ArticleFilter>,
   sortedField: ArticleSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

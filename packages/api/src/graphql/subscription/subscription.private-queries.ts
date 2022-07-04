@@ -27,7 +27,7 @@ export const getAdminSubscriptions = (
   filter: Partial<SubscriptionFilter>,
   sortedField: SubscriptionSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

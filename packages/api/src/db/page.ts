@@ -45,7 +45,7 @@ export interface PageRevision extends PageData {
 }
 
 export interface PublicPage extends PageData {
-  readonly id: string
+  readonly id: number
 
   readonly updatedAt?: Date | null
   readonly publishedAt?: Date | null

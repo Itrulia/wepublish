@@ -7,15 +7,15 @@ import {
 import {RichTextNode} from '../graphql/richText'
 
 export interface CommentData {
-  readonly id: string
-  readonly userID?: string | null
+  readonly id: number
+  readonly userID?: number | null
 
   readonly authorType: CommentAuthorType
 
-  readonly itemID: string
+  readonly itemID: number
   readonly itemType: CommentItemType
 
-  readonly parentID?: string | null
+  readonly parentID?: number | null
 
   readonly createdAt: Date
   readonly modifiedAt: Date
