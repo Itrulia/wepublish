@@ -9,7 +9,7 @@ import {getUsers} from '../user/user.queries'
 import {mapSubscriptionsAsCsv} from '../../utility'
 
 export const getSubscriptionById = (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   subscription: PrismaClient['subscription']
 ) => {
@@ -19,6 +19,11 @@ export const getSubscriptionById = (
   return subscription.findUnique({
     where: {
       id
+    },
+    include: {
+      deactivation: true,
+      periods: true,
+      properties: true
     }
   })
 }
@@ -27,7 +32,7 @@ export const getAdminSubscriptions = (
   filter: Partial<SubscriptionFilter>,
   sortedField: SubscriptionSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],
@@ -53,7 +58,7 @@ export const getSubscriptionsAsCSV = async (
   const users: User[] = []
 
   let hasMore = true
-  let afterCursor: string | null = null
+  let afterCursor: number | null = null
   while (hasMore) {
     const listResult = (await getSubscriptions(
       filter,
@@ -66,7 +71,7 @@ export const getSubscriptionsAsCSV = async (
     )) as ConnectionResult<Subscription> // SEE: https://github.com/microsoft/TypeScript/issues/36687
     subscriptions.push(...listResult.nodes)
     hasMore = listResult.pageInfo.hasNextPage
-    afterCursor = listResult.pageInfo.endCursor
+    afterCursor = listResult.pageInfo.endCursor as number
   }
 
   hasMore = true
@@ -84,7 +89,7 @@ export const getSubscriptionsAsCSV = async (
     )) as ConnectionResult<User> // SEE: https://github.com/microsoft/TypeScript/issues/36687
     users.push(...listResult.nodes)
     hasMore = listResult.pageInfo.hasNextPage
-    afterCursor = listResult.pageInfo.endCursor
+    afterCursor = listResult.pageInfo.endCursor as number
   }
 
   return mapSubscriptionsAsCsv(users, subscriptions)

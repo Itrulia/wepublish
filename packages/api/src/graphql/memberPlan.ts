@@ -93,7 +93,7 @@ export const GraphQLPublicAvailablePaymentMethod = new GraphQLObjectType<
 export const GraphQLMemberPlan = new GraphQLObjectType<MemberPlan, Context>({
   name: 'MemberPlan',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
 
     createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
     modifiedAt: {type: GraphQLNonNull(GraphQLDateTime)},
@@ -119,7 +119,7 @@ export const GraphQLMemberPlan = new GraphQLObjectType<MemberPlan, Context>({
 export const GraphQLPublicMemberPlan = new GraphQLObjectType<MemberPlan, Context>({
   name: 'MemberPlan',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
 
     name: {type: GraphQLNonNull(GraphQLString)},
     slug: {type: GraphQLNonNull(GraphQLString)},

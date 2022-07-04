@@ -4,7 +4,7 @@ import {authorise, CanGetNavigation, CanGetNavigations} from '../permissions'
 import {PrismaClient} from '@prisma/client'
 
 export const getNavigationByIdOrKey = (
-  id: string | null,
+  id: number | null,
   key: string | null,
   authenticate: Context['authenticate'],
   navigationByID: Context['loaders']['navigationByID'],
@@ -30,6 +30,9 @@ export const getNavigations = (
   return navigation.findMany({
     orderBy: {
       createdAt: 'desc'
+    },
+    include: {
+      links: true
     }
   })
 }

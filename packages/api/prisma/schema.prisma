@@ -3,17 +3,35 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = "mongodb://localhost:27017/wepublish"
+  provider = "postgres"
+  url      = env("DATABASE_URL")
 }
 
-type MetadataProperty {
-  key    String
-  value  String
-  public Boolean
+model MetadataProperty {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+  key        String
+  value      String
+  public     Boolean
+
+  ArticleRevision   ArticleRevision? @relation(fields: [articleRevisionId], references: [id], onDelete: Cascade)
+  articleRevisionId Int?
+
+  PageRevision   PageRevision? @relation(fields: [pageRevisionId], references: [id], onDelete: Cascade)
+  pageRevisionId Int?
+
+  Subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  subscriptionId Int?
+
+  User   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  @@map("properties")
 }
 
-type ArticleRevision {
+model ArticleRevision {
+  id                     Int                @id @default(autoincrement())
   preTitle               String?
   title                  String?
   lead                   String?
@@ -23,90 +41,100 @@ type ArticleRevision {
   canonicalUrl           String?
   properties             MetadataProperty[]
   imageID                String?
-  authorIDs              String[]
+  authorIDs              Int[]
   breaking               Boolean
   blocks                 Json[]
   hideAuthor             Boolean
   socialMediaTitle       String?
   socialMediaDescription String?
-  socialMediaAuthorIDs   String[]
+  socialMediaAuthorIDs   Int[]
   socialMediaImageID     String?
 
   revision    Int
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @db.Date //@updatedAt
-  publishAt   DateTime? @db.Date
-  publishedAt DateTime? @db.Date
+  updatedAt   DateTime? @updatedAt
+  publishAt   DateTime?
+  publishedAt DateTime?
+
+  PublishedArticle Article[] @relation("publishedArticleRevision")
+  PendingArticle   Article[] @relation("pendingArticleRevision")
+  DraftArticle     Article[] @relation("draftArticleRevision")
+
+  @@index([publishAt])
+  @@index([publishedAt])
+  @@index([updatedAt])
+  @@index([tags])
+  @@map("articles.revisions")
 }
 
 model Article {
-  id         String           @id @default(cuid()) @map("_id")
-  createdAt  DateTime         @default(now())
-  modifiedAt DateTime         @db.Date //@updatedAt
-  published  ArticleRevision?
-  pending    ArticleRevision?
-  draft      ArticleRevision?
-  shared     Boolean
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
 
-  @@index([createdAt], map: "createdAt_-1")
-  @@index([modifiedAt], map: "modifiedAt_-1")
-  @@index([published.publishedAt], map: "published.publishedAt_-1")
-  @@index([published.updatedAt], map: "published.updatedAt_-1")
-  @@index([pending.publishAt], map: "pending.publishAt_-1")
-  @@index([draft.tags], map: "draft.tags_1")
-  @@index([pending.tags], map: "pending.tags_1")
-  @@index([published.tags], map: "published.tags_1")
+  publishedId Int?             @unique
+  published   ArticleRevision? @relation("publishedArticleRevision", fields: [publishedId], references: [id], onDelete: SetNull)
+
+  pendingId Int?             @unique
+  pending   ArticleRevision? @relation("pendingArticleRevision", fields: [pendingId], references: [id], onDelete: SetNull)
+
+  draftId Int?             @unique
+  draft   ArticleRevision? @relation("draftArticleRevision", fields: [draftId], references: [id], onDelete: SetNull)
+
+  shared Boolean
+
+  @@index([createdAt])
+  @@index([modifiedAt])
   @@map("articles")
 }
 
-model ArticleHistory {
-  id        String            @id @default(cuid()) @map("_id")
-  revisions ArticleRevision[]
+model AuthorsLinks {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
 
-  @@map("articles.history")
-}
-
-type AuthorsLinks {
   title String
   url   String
+
+  Author   Author? @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId Int?
+
+  @@map("authors.links")
 }
 
 model Author {
-  id         String         @id @default(cuid()) @map("_id")
+  id         Int            @id @default(autoincrement())
   createdAt  DateTime       @default(now())
-  modifiedAt DateTime       @db.Date //@updatedAt
+  modifiedAt DateTime       @updatedAt
   name       String
-  slug       String         @unique(map: "slug_1")
+  slug       String         @unique
   jobTitle   String?
-  imageID    String?
   links      AuthorsLinks[]
   bio        Json[]
 
-  image Image? @relation(fields: [imageID], references: [id])
-  @@index([createdAt], map: "createdAt_-1")
-  @@index([modifiedAt], map: "modifiedAt_-1")
-  @@index([name], map: "name_1")
+  imageID String?
+  image   Image?  @relation(fields: [imageID], references: [id])
+
+  @@index([createdAt])
+  @@index([modifiedAt])
+  @@index([name])
   @@map("authors")
 }
 
-type ImagesFocalPoint {
-  x Float
-  y Float
-}
-
 model Image {
-  id          String            @id @default(cuid()) @map("_id")
-  createdAt   DateTime          @default(now())
+  id          String   @id
+  createdAt   DateTime @default(now())
   description String?
   extension   String
   fileSize    Int
   filename    String?
-  focalPoint  ImagesFocalPoint?
+  focalPointX Float?
+  focalPointY Float?
   format      String
   license     String?
   link        String
   mimeType    String
-  modifiedAt  DateTime          @db.Date //@updatedAt
+  modifiedAt  DateTime @updatedAt
   source      String?
   tags        String[]
   title       String?
@@ -117,10 +145,11 @@ model Image {
   MemberPlan  MemberPlan[]
   PeerProfile PeerProfile[]
 
-  @@index([createdAt], map: "createdAt_-1")
-  @@index([modifiedAt], map: "modifiedAt_-1")
-  @@index([title], map: "title_1")
-  @@index([tags], map: "tags_1")
+  @@index([createdAt])
+  @@index([modifiedAt])
+  @@index([title])
+  @@index([tags])
+  @@map("images")
 }
 
 enum CommentItemType {
@@ -133,9 +162,16 @@ enum CommentRejectionReason {
   spam        @map("spam")
 }
 
-type CommentsRevisions {
-  text      Json
+model CommentsRevisions {
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
+  text      Json
+
+  Comment   Comment? @relation(fields: [commentId], references: [id])
+  commentId Int?
+
+  @@index([createdAt])
+  @@map("comments.revisions")
 }
 
 enum CommentState {
@@ -153,53 +189,66 @@ enum CommentAuthorType {
 }
 
 model Comment {
-  id              String                  @id @default(cuid()) @map("_id")
-  createdAt       DateTime                @default(now())
-  modifiedAt      DateTime                @db.Date // @updatedAt
-  userID          String?
-  itemID          String
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
+  userID          Int?
+  itemID          Int
   itemType        CommentItemType
-  parentID        String?                 @unique
+  parentID        Int?
   revisions       CommentsRevisions[]
   rejectionReason CommentRejectionReason?
   state           CommentState
   authorType      CommentAuthorType
   guestUsername   String?
 
-  user   User?    @relation(fields: [userID], references: [id])
-  parent Comment? @relation("CommentRelation", fields: [parentID], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  child  Comment? @relation("CommentRelation")
-  @@index([createdAt], map: "createdAt_-1")
-  @@index([revisions.createdAt], map: "revisions.createdAt_-1")
+  user User? @relation(fields: [userID], references: [id])
+
+
+  @@index([createdAt])
   @@map("comments")
 }
 
-type InvoiceItem {
-  createdAt   DateTime @default(now())
-  modifiedAt  DateTime @db.Date // @updatedAt
+model InvoiceItem {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
   name        String
   description String?
   quantity    Int
   amount      Int
+
+  Invoice   Invoice? @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  invoiceId Int?
+
+  @@map("invoices.items")
 }
 
 model Invoice {
-  id                        String        @id @default(cuid()) @map("_id")
-  createdAt                 DateTime      @default(now())
-  modifiedAt                DateTime      @db.Date // @updatedAt
-  mail                      String
-  dueAt                     DateTime      @db.Date
-  subscriptionID            String
-  description               String?
-  paidAt                    DateTime?     @db.Date
-  canceledAt                DateTime?     @db.Date
-  sentReminderAt            DateTime?     @db.Date
-  items                     InvoiceItem[]
-  userID                    String?
-  manuallySetAsPaidByUserId String?
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
 
-  subscription Subscription @relation(fields: [subscriptionID], references: [id])
-  user         User?        @relation(fields: [userID], references: [id])
+  mail                      String
+  dueAt                     DateTime
+  description               String?
+  paidAt                    DateTime?
+  canceledAt                DateTime?
+  sentReminderAt            DateTime?
+  items                     InvoiceItem[]
+  manuallySetAsPaidByUserId Int?
+
+  subscriptionID Int
+  subscription   Subscription @relation(fields: [subscriptionID], references: [id])
+
+  userID Int?
+  user   User? @relation(fields: [userID], references: [id])
+
+  SubscriptionPeriod SubscriptionPeriod[]
+
+  @@index([mail])
   @@map("invoices")
 }
 
@@ -213,16 +262,17 @@ enum MailLogState {
 }
 
 model MailLog {
-  id             String       @id @default(cuid()) @map("_id")
-  createdAt      DateTime     @default(now())
-  modifiedAt     DateTime     @db.Date // @updatedAt
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
   recipient      String
   subject        String
   state          MailLogState
   mailData       String?
   mailProviderID String
 
-  @@index([subject], map: "subject_1")
+  @@index([subject])
   @@map("mail.log")
 }
 
@@ -233,67 +283,82 @@ enum PaymentPeriodicity {
   yearly     @map("yearly")
 }
 
-type AvailablePaymentMethod {
-  paymentMethodIDs     String[]
+model AvailablePaymentMethod {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
+  paymentMethodIDs     Int[]
   paymentPeriodicities PaymentPeriodicity[]
   forceAutoRenewal     Boolean
+
+  MemberPlan   MemberPlan? @relation(fields: [memberPlanId], references: [id], onDelete: Cascade)
+  memberPlanId Int?
+
+  @@map("member.plans.payment-methods")
 }
 
 model MemberPlan {
-  id                      String                   @id @default(cuid()) @map("_id")
-  createdAt               DateTime                 @default(now())
-  modifiedAt              DateTime                 @db.Date // @updatedAt
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
   name                    String
-  slug                    String
+  slug                    String                   @unique
   tags                    String[]
-  imageID                 String?
   description             Json[]
   active                  Boolean
   amountPerMonthMin       Float
   availablePaymentMethods AvailablePaymentMethod[]
 
-  image        Image?         @relation(fields: [imageID], references: [id])
+  imageID String?
+  image   Image?  @relation(fields: [imageID], references: [id])
+
   Subscription Subscription[]
-  @@index([name], map: "name_1")
+
+  @@index([name])
   @@map("member.plans")
 }
 
-model Migration {
-  id        String   @id @default(cuid()) @map("_id")
-  createdAt DateTime @default(now())
-  version   Int      @unique(map: "version_1")
+model NavigationLink {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
 
-  @@map("migrations")
-}
-
-type NavigationLink {
   label     String
   type      String
   url       String?
-  pageID    String?
-  articleID String?
+  pageID    Int?
+  articleID Int?
+
+  Navigation   Navigation? @relation(fields: [navigationId], references: [id], onDelete: Cascade)
+  navigationId Int?
+
+  @@map("navigations.links")
 }
 
 model Navigation {
-  id         String           @id @default(cuid()) @map("_id")
-  createdAt  DateTime         @default(now())
-  modifiedAt DateTime         @db.Date //@updatedAt
-  key        String           @unique(map: "key_1")
-  links      NavigationLink[]
-  name       String
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
 
-  @@index([createdAt], map: "createdAt_-1")
-  @@index([modifiedAt], map: "modifiedAt_-1")
-  @@index([name], map: "name_1")
+  key   String           @unique
+  links NavigationLink[]
+  name  String
+
+  @@index([createdAt])
+  @@index([modifiedAt])
+  @@index([name])
   @@map("navigations")
 }
 
-type PageRevision {
+model PageRevision {
+  id                     Int                @id @default(autoincrement())
   revision               Int
   createdAt              DateTime           @default(now())
-  updatedAt              DateTime?          @db.Date //@updatedAt
-  publishedAt            DateTime?          @db.Date
-  publishAt              DateTime?          @db.Date
+  updatedAt              DateTime?          @updatedAt
+  publishedAt            DateTime?
+  publishAt              DateTime?
   slug                   String
   title                  String
   description            String?
@@ -304,31 +369,40 @@ type PageRevision {
   socialMediaDescription String?
   socialMediaImageID     String?
   blocks                 Json[]
+  PublishedPage          Page[]             @relation("publishedPageRevision")
+  PendingPage            Page[]             @relation("pendingPageRevision")
+  DraftPage              Page[]             @relation("draftPageRevision")
+
+  @@index([publishAt])
+  @@index([publishedAt])
+  @@index([updatedAt])
+  @@index([tags])
+  @@map("pages.revision")
 }
 
 model Page {
-  id         String        @id @default(cuid()) @map("_id")
-  createdAt  DateTime      @default(now())
-  modifiedAt DateTime      @db.Date //@updatedAt
-  published  PageRevision?
-  pending    PageRevision?
-  draft      PageRevision?
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
 
-  @@index([createdAt], map: "createdAt_-1")
-  @@index([modifiedAt], map: "modifiedAt_-1")
-  @@index([published.publishedAt], map: "published.publishedAt_-1")
-  @@index([published.updatedAt], map: "published.updatedAt_-1")
-  @@index([pending.publishAt], map: "pending.publishAt_-1")
-  @@index([draft.tags], map: "draft.tags_1")
-  @@index([pending.tags], map: "pending.tags_1")
-  @@index([published.tags], map: "published.tags_1")
+  publishedId Int?          @unique
+  published   PageRevision? @relation("publishedPageRevision", fields: [publishedId], references: [id], onDelete: SetNull)
+
+  pendingId Int?          @unique
+  pending   PageRevision? @relation("pendingPageRevision", fields: [pendingId], references: [id], onDelete: SetNull)
+
+  draftId Int?          @unique
+  draft   PageRevision? @relation("draftPageRevision", fields: [draftId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([modifiedAt])
   @@map("pages")
 }
 
 model PaymentMethod {
-  id                String   @id @default(cuid()) @map("_id")
+  id                Int      @id @default(autoincrement())
   createdAt         DateTime @default(now())
-  modifiedAt        DateTime @db.Date //@updatedAt
+  modifiedAt        DateTime @updatedAt
   name              String
   slug              String
   description       String
@@ -337,7 +411,7 @@ model PaymentMethod {
 
   Subscription Subscription[]
   Payment      Payment[]
-  @@index([name], map: "name_1")
+
   @@map("payment.methods")
 }
 
@@ -352,43 +426,46 @@ enum PaymentState {
 }
 
 model Payment {
-  id              String       @id @default(cuid()) @map("_id")
-  createdAt       DateTime     @default(now())
-  modifiedAt      DateTime     @db.Date //@updatedAt
-  invoiceID       String
-  state           PaymentState
-  paymentMethodID String
-  intentID        String?
-  intentSecret    String?
-  intentData      String?
-  paymentData     String?
+  id           Int          @id @default(autoincrement())
+  createdAt    DateTime     @default(now())
+  modifiedAt   DateTime     @updatedAt
+  invoiceID    Int
+  state        PaymentState
+  intentID     String?
+  intentSecret String?
+  intentData   String?
+  paymentData  String?
 
-  paymentMethod PaymentMethod @relation(fields: [paymentMethodID], references: [id])
-  @@index([intentID], map: "intentID_1")
+  paymentMethodID Int
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodID], references: [id])
+
+  @@index([intentID])
   @@map("payments")
 }
 
 model PeerProfile {
-  id                   String  @id @default(cuid()) @map("_id")
+  id                   Int     @id @default(autoincrement())
   name                 String
-  logoID               String?
   themeColor           String
   themeFontColor       String
   callToActionURL      String
   callToActionText     Json[]
   callToActionImageURL String?
-  callToActionImageID  String?
+  callToActionImageID  Int?
 
-  logo Image? @relation(fields: [logoID], references: [id])
+  logoID String?
+  logo   Image?  @relation(fields: [logoID], references: [id])
+
   @@map("peerProfiles")
 }
 
 model Peer {
-  id         String   @id @default(cuid()) @map("_id")
+  id         Int      @id @default(autoincrement())
   createdAt  DateTime @default(now())
-  modifiedAt DateTime @db.Date //@updatedAt
+  modifiedAt DateTime @updatedAt
+
   name       String
-  slug       String   @unique(map: "slug_1")
+  slug       String   @unique
   hostURL    String
   token      String
   isDisabled Boolean?
@@ -397,37 +474,49 @@ model Peer {
 }
 
 model Token {
-  id         String   @id @default(cuid()) @map("_id")
+  id         Int      @id @default(autoincrement())
   createdAt  DateTime @default(now())
-  modifiedAt DateTime @db.Date //@updatedAt
-  name       String   @unique(map: "name_1")
-  token      String
-  roleIDs    String[]
+  modifiedAt DateTime @updatedAt
+
+  name    String @unique
+  token   String
+  roleIDs String[]
 
   @@map("tokens")
 }
 
 model Session {
-  id        String   @id @default(cuid()) @map("_id")
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  expiresAt DateTime @db.Date
-  token     String   @unique(map: "token_1")
-  userID    String
+  expiresAt DateTime
+  token     String   @unique
 
-  user User @relation(fields: [userID], references: [id])
-  @@index([userID], map: "userID_1")
-  @@index([expiresAt], map: "expiresAt_1")
+  userID Int
+  user   User @relation(fields: [userID], references: [id])
+
+  @@index([userID])
+  @@index([token])
+  @@index([expiresAt])
   @@map("sessions")
 }
 
-type SubscriptionPeriod {
-  id                 String
-  createdAt          DateTime           @default(now())
-  startsAt           DateTime           @db.Date
-  endsAt             DateTime           @db.Date
+model SubscriptionPeriod {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
+  startsAt           DateTime
+  endsAt             DateTime
   paymentPeriodicity PaymentPeriodicity
   amount             Float
-  invoiceID          String
+
+  invoiceID Int?
+  Invoice   Invoice? @relation(fields: [invoiceID], references: [id])
+
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  subscriptionId Int?
+
+  @@map("subscriptions.periods")
 }
 
 enum SubscriptionDeactivationReason {
@@ -436,44 +525,70 @@ enum SubscriptionDeactivationReason {
   invoiceNotPaid       @map("invoiceNotPaid")
 }
 
-type SubscriptionDeactivation {
-  date   DateTime                       @db.Date
+model SubscriptionDeactivation {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
+  date   DateTime
   reason SubscriptionDeactivationReason
+
+  subscriptionID Int          @unique
+  subscription   Subscription @relation(fields: [subscriptionID], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions.deactivation-reasons")
 }
 
 model Subscription {
-  id                 String                    @id @default(cuid()) @map("_id")
+  id                 Int                       @id @default(autoincrement())
   createdAt          DateTime                  @default(now())
-  modifiedAt         DateTime                  @db.Date //@updatedAt
-  userID             String
-  memberPlanID       String
+  modifiedAt         DateTime                  @updatedAt
   paymentPeriodicity PaymentPeriodicity
   monthlyAmount      Float
   autoRenew          Boolean
-  startsAt           DateTime                  @db.Date
-  paidUntil          DateTime?                 @db.Date
+  startsAt           DateTime
+  paidUntil          DateTime?
   periods            SubscriptionPeriod[]
-  paymentMethodID    String
   properties         MetadataProperty[]
   deactivation       SubscriptionDeactivation?
 
-  paymentMethod PaymentMethod @relation(fields: [paymentMethodID], references: [id])
-  memberPlan    MemberPlan    @relation(fields: [memberPlanID], references: [id])
-  user          User          @relation(fields: [userID], references: [id])
-  Invoice       Invoice[]
+  paymentMethodID Int
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodID], references: [id])
+
+  memberPlanID Int
+  memberPlan   MemberPlan @relation(fields: [memberPlanID], references: [id])
+
+  userID Int
+  user   User @relation(fields: [userID], references: [id])
+
+  Invoice Invoice[]
+
   @@map("subscriptions")
 }
 
-type UserAddress {
+model UserAddress {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
   company        String?
   streetAddress  String
   streetAddress2 String?
   zipCode        String
   city           String
   country        String
+
+  userId Int?  @unique
+  User   User? @relation(fields: [userId], references: [id])
+
+  @@map("users.addresses")
 }
 
-type UserOAuth2Account {
+model UserOAuth2Account {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
   type              String
   provider          String
   providerAccountId String
@@ -486,45 +601,62 @@ type UserOAuth2Account {
   oauthTokenSecret  String?
   oauthToken        String?
   sessionState      String?
+
+  userId Int?
+  User   User? @relation(fields: [userId], references: [id])
+
+  @@map("users.oauth2-accounts")
 }
 
-type PaymentProviderCustomer {
+model PaymentProviderCustomer {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
   paymentProviderID String
   customerID        String
+
+  User   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  @@map("users.payment-providers")
 }
 
 model User {
-  id                       String                    @id @default(cuid()) @map("_id")
-  createdAt                DateTime                  @default(now())
-  modifiedAt               DateTime                  @db.Date //@updatedAt
-  email                    String                    @unique(map: "email_1")
-  emailVerifiedAt          DateTime?                 @db.Date
-  name                     String
-  firstName                String?
-  preferredName            String?
+  id              Int       @id @default(autoincrement())
+  createdAt       DateTime  @default(now())
+  modifiedAt      DateTime  @updatedAt
+  email           String    @unique
+  emailVerifiedAt DateTime?
+  name            String
+  firstName       String?
+  preferredName   String?
+  password        String
+  active          Boolean
+  lastLogin       DateTime?
+  roleIDs         String[]
+
   address                  UserAddress?
-  password                 String
-  oauth2Accounts           UserOAuth2Account[]
-  active                   Boolean
-  lastLogin                DateTime?                 @db.Date
   properties               MetadataProperty[]
-  roleIDs                  String[]
+  oauth2Accounts           UserOAuth2Account[]
   paymentProviderCustomers PaymentProviderCustomer[]
 
   Comment      Comment[]
   Session      Session[]
   Subscription Subscription[]
   Invoice      Invoice[]
+
   @@map("users")
 }
 
 model UserRole {
-  id            String   @id @map("_id")
-  createdAt     DateTime @default(now())
-  modifiedAt    DateTime @db.Date //@updatedAt
+  id         String      @id
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
   description   String?
-  name          String   @unique(map: "name_1")
-  permissionIDs String[]
+  name          String  @unique
+  permissionIDs Int[]
   systemRole    Boolean
 
   @@map("users.roles")

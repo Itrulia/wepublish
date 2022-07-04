@@ -12,7 +12,7 @@ export interface WebhookForSendMailProps {
 }
 
 export interface SendMailProps {
-  mailLogID: string
+  mailLogID: number
   recipient: string
   replyToAddress: string
   subject: string
@@ -23,7 +23,7 @@ export interface SendMailProps {
 }
 
 export interface MailLogStatus {
-  mailLogID: string
+  mailLogID: number
   state: MailLogState
   mailData?: string
 }

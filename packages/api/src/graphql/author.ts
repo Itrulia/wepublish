@@ -30,7 +30,7 @@ export const GraphQLAuthorLink = new GraphQLObjectType<Author, Context>({
 export const GraphQLAuthor = new GraphQLObjectType<Author, Context>({
   name: 'Author',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
 
     createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
     modifiedAt: {type: GraphQLNonNull(GraphQLDateTime)},

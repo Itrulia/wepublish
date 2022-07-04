@@ -3,13 +3,42 @@ import {Context} from '../../context'
 import {DuplicateArticleSlugError, NotFound} from '../../error'
 import {authorise, CanCreateArticle, CanDeleteArticle, CanPublishArticle} from '../permissions'
 
-export const deleteArticleById = (
-  id: string,
+export const deleteArticleById = async (
+  id: number,
   authenticate: Context['authenticate'],
-  article: PrismaClient['article']
+  article: PrismaClient['article'],
+  articleRevision: PrismaClient['articleRevision']
 ) => {
   const {roles} = authenticate()
   authorise(CanDeleteArticle, roles)
+
+  await articleRevision.deleteMany({
+    where: {
+      OR: [
+        {
+          DraftArticle: {
+            every: {
+              id
+            }
+          }
+        },
+        {
+          PendingArticle: {
+            every: {
+              id
+            }
+          }
+        },
+        {
+          PublishedArticle: {
+            every: {
+              id
+            }
+          }
+        }
+      ]
+    }
+  })
 
   return article.delete({
     where: {
@@ -32,17 +61,34 @@ export const createArticle = (
     data: {
       shared,
       draft: {
-        ...data,
-        revision: 0,
-        updatedAt: new Date()
+        create: {
+          ...data,
+          revision: 0
+        }
+      }
+    },
+    include: {
+      draft: {
+        include: {
+          properties: true
+        }
       },
-      modifiedAt: new Date()
+      pending: {
+        include: {
+          properties: true
+        }
+      },
+      published: {
+        include: {
+          properties: true
+        }
+      }
     }
   })
 }
 
 export const duplicateArticle = async (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   articles: Context['loaders']['articles'],
   articleClient: PrismaClient['article']
@@ -55,7 +101,7 @@ export const duplicateArticle = async (
     throw new NotFound('article', id)
   }
 
-  const articleRevision = (article.draft ?? article.pending ?? article.published)!
+  const {id: _, ...articleRevision} = (article.draft ?? article.pending ?? article.published)!
 
   const input: Prisma.ArticleRevisionCreateInput = {
     ...articleRevision,
@@ -70,43 +116,113 @@ export const duplicateArticle = async (
   return articleClient.create({
     data: {
       shared: article.shared,
-      draft: input,
-      modifiedAt: new Date()
+      draft: {
+        create: input
+      }
+    },
+    include: {
+      draft: {
+        include: {
+          properties: true
+        }
+      },
+      pending: {
+        include: {
+          properties: true
+        }
+      },
+      published: {
+        include: {
+          properties: true
+        }
+      }
     }
   })
 }
 
 export const unpublishArticle = async (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   articleClient: PrismaClient['article']
 ) => {
   const {roles} = authenticate()
   authorise(CanPublishArticle, roles)
 
-  const article = await articleClient.findUnique({where: {id}})
+  const article = await articleClient.findUnique({
+    where: {id},
+    include: {
+      draft: {
+        include: {
+          properties: true
+        }
+      },
+      pending: {
+        include: {
+          properties: true
+        }
+      },
+      published: {
+        include: {
+          properties: true
+        }
+      }
+    }
+  })
 
   if (!article) {
     throw new NotFound('article', id)
   }
 
+  const {id: _, ...revision} = (article.pending ?? article.published)!
+
   return articleClient.update({
     where: {id},
     data: {
       draft: {
-        ...(article.pending ?? article.published)!,
-        publishAt: null,
-        publishedAt: null,
-        updatedAt: null
+        upsert: {
+          create: {
+            ...revision,
+            publishAt: null,
+            publishedAt: null,
+            updatedAt: null
+          },
+          update: {
+            ...revision,
+            publishAt: null,
+            publishedAt: null,
+            updatedAt: null
+          }
+        }
       },
-      pending: null,
-      published: null
+      pending: {
+        delete: true
+      },
+      published: {
+        delete: true
+      }
+    },
+    include: {
+      draft: {
+        include: {
+          properties: true
+        }
+      },
+      pending: {
+        include: {
+          properties: true
+        }
+      },
+      published: {
+        include: {
+          properties: true
+        }
+      }
     }
   })
 }
 
 export const publishArticle = async (
-  id: string,
+  id: number,
   input: Pick<Prisma.ArticleRevisionCreateInput, 'publishAt' | 'publishedAt' | 'updatedAt'>,
   authenticate: Context['authenticate'],
   articleClient: PrismaClient['article']
@@ -118,10 +234,31 @@ export const publishArticle = async (
   const publishedAt = input.publishedAt
   const updatedAt = input.updatedAt
 
-  const article = await articleClient.findUnique({where: {id}})
+  const article = await articleClient.findUnique({
+    where: {id},
+    include: {
+      draft: {
+        include: {
+          properties: true
+        }
+      },
+      pending: {
+        include: {
+          properties: true
+        }
+      },
+      published: {
+        include: {
+          properties: true
+        }
+      }
+    }
+  })
 
   if (!article) throw new NotFound('article', id)
   if (!article.draft) return null
+
+  const {id: _, ...revision} = article.draft
 
   const publishedArticle = await articleClient.findFirst({
     where: {
@@ -129,18 +266,35 @@ export const publishArticle = async (
         {
           published: {
             is: {
-              slug: article.draft.slug
+              slug: revision.slug
             }
           }
         },
         {
           pending: {
             is: {
-              slug: article.draft.slug
+              slug: revision.slug
             }
           }
         }
       ]
+    },
+    include: {
+      draft: {
+        include: {
+          properties: true
+        }
+      },
+      pending: {
+        include: {
+          properties: true
+        }
+      },
+      published: {
+        include: {
+          properties: true
+        }
+      }
     }
   })
 
@@ -157,12 +311,41 @@ export const publishArticle = async (
       where: {id},
       data: {
         pending: {
-          ...article.draft,
-          publishAt: publishAt,
-          publishedAt: publishedAt ?? article?.published?.publishedAt ?? publishAt,
-          updatedAt: updatedAt ?? publishAt
+          upsert: {
+            create: {
+              ...revision,
+              publishAt: publishAt,
+              publishedAt: publishedAt ?? article?.published?.publishedAt ?? publishAt,
+              updatedAt: updatedAt ?? publishAt
+            },
+            update: {
+              ...revision,
+              publishAt: publishAt,
+              publishedAt: publishedAt ?? article?.published?.publishedAt ?? publishAt,
+              updatedAt: updatedAt ?? publishAt
+            }
+          }
         },
-        draft: null
+        draft: {
+          delete: true
+        }
+      },
+      include: {
+        draft: {
+          include: {
+            properties: true
+          }
+        },
+        pending: {
+          include: {
+            properties: true
+          }
+        },
+        published: {
+          include: {
+            properties: true
+          }
+        }
       }
     })
   }
@@ -171,30 +354,84 @@ export const publishArticle = async (
     where: {id},
     data: {
       published: {
-        ...article.draft,
-        publishedAt: publishedAt ?? article.published?.publishAt ?? publishAt,
-        updatedAt: updatedAt ?? publishAt,
-        publishAt: null
+        upsert: {
+          create: {
+            ...revision,
+            publishedAt: publishedAt ?? article.published?.publishAt ?? publishAt,
+            updatedAt: updatedAt ?? publishAt,
+            publishAt: null
+          },
+          update: {
+            ...revision,
+            publishedAt: publishedAt ?? article.published?.publishAt ?? publishAt,
+            updatedAt: updatedAt ?? publishAt,
+            publishAt: null
+          }
+        }
       },
-      pending: null,
-      draft: null
+      pending: {
+        delete: true
+      },
+      draft: {
+        delete: true
+      }
+    },
+    include: {
+      draft: {
+        include: {
+          properties: true
+        }
+      },
+      pending: {
+        include: {
+          properties: true
+        }
+      },
+      published: {
+        include: {
+          properties: true
+        }
+      }
     }
   })
 }
 
+type UpdateArticleInput = Omit<
+  Prisma.ArticleRevisionCreateInput,
+  'revision' | 'properties' | 'createdAt' | 'updatedAt' | 'publishAt' | 'publishedAt'
+> & {
+  properties: Prisma.MetadataPropertyUncheckedCreateWithoutArticleRevisionInput[]
+}
+
 export const updateArticle = async (
-  id: string,
-  input: Omit<
-    Prisma.ArticleRevisionCreateInput,
-    'revision' | 'createdAt' | 'updatedAt' | 'publishAt' | 'publishedAt'
-  >,
+  id: number,
+  {properties, ...input}: UpdateArticleInput,
   authenticate: Context['authenticate'],
   articleClient: PrismaClient['article']
 ) => {
   const {roles} = authenticate()
   authorise(CanCreateArticle, roles)
 
-  const article = await articleClient.findUnique({where: {id}})
+  const article = await articleClient.findUnique({
+    where: {id},
+    include: {
+      draft: {
+        include: {
+          properties: true
+        }
+      },
+      pending: {
+        include: {
+          properties: true
+        }
+      },
+      published: {
+        include: {
+          properties: true
+        }
+      }
+    }
+  })
 
   if (!article) {
     throw new NotFound('article', id)
@@ -204,14 +441,58 @@ export const updateArticle = async (
     where: {id},
     data: {
       draft: {
-        ...input,
-        revision: article.pending
-          ? article.pending.revision + 1
-          : article.published
-          ? article.published.revision + 1
-          : 0,
-        updatedAt: new Date(),
-        createdAt: article.draft?.createdAt ?? new Date()
+        upsert: {
+          update: {
+            ...input,
+            revision: article.pending
+              ? article.pending.revision + 1
+              : article.published
+              ? article.published.revision + 1
+              : 0,
+            updatedAt: new Date(),
+            createdAt: article.draft?.createdAt ?? new Date(),
+            properties: {
+              deleteMany: {
+                articleRevisionId: article.draft?.id ?? 0
+              },
+              createMany: {
+                data: properties
+              }
+            }
+          },
+          create: {
+            ...input,
+            revision: article.pending
+              ? article.pending.revision + 1
+              : article.published
+              ? article.published.revision + 1
+              : 0,
+            updatedAt: new Date(),
+            createdAt: article.draft?.createdAt ?? new Date(),
+            properties: {
+              createMany: {
+                data: properties
+              }
+            }
+          }
+        }
+      }
+    },
+    include: {
+      draft: {
+        include: {
+          properties: true
+        }
+      },
+      pending: {
+        include: {
+          properties: true
+        }
+      },
+      published: {
+        include: {
+          properties: true
+        }
       }
     }
   })

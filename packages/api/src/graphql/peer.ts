@@ -4,7 +4,8 @@ import {
   GraphQLString,
   GraphQLInputObjectType,
   GraphQLID,
-  GraphQLBoolean
+  GraphQLBoolean,
+  GraphQLInt
 } from 'graphql'
 
 import {PeerProfile} from '../db/peer'
@@ -87,7 +88,7 @@ export const GraphQLUpdatePeerInput = new GraphQLInputObjectType({
 export const GraphQLPeer = new GraphQLObjectType<Peer, Context>({
   name: 'Peer',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
 
     createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
     modifiedAt: {type: GraphQLNonNull(GraphQLDateTime)},

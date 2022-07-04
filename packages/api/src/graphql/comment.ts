@@ -5,18 +5,17 @@ import {
   CommentState
 } from '@prisma/client'
 import {
-  GraphQLObjectType,
-  GraphQLNonNull,
-  GraphQLID,
   GraphQLEnumType,
   GraphQLInputObjectType,
-  GraphQLList,
   GraphQLInt,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
   GraphQLString
 } from 'graphql'
 import {GraphQLDateTime} from 'graphql-iso-date'
 import {Context} from '../context'
-import {CommentRevision, PublicComment, Comment, CommentSort} from '../db/comment'
+import {Comment, CommentRevision, CommentSort, PublicComment} from '../db/comment'
 import {unselectPassword} from '../db/user'
 import {createProxyingResolver} from '../utility'
 import {getPublicChildrenCommentsByParentId} from './comment/comment.public-queries'
@@ -85,7 +84,7 @@ export const GraphQLCommentRevision = new GraphQLObjectType<CommentRevision, Con
 export const GraphQLPublicCommentUpdateInput = new GraphQLInputObjectType({
   name: 'CommentUpdateInput',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
     text: {
       type: new GraphQLNonNull(GraphQLRichText)
     }
@@ -107,12 +106,12 @@ export const GraphQLChallengeInput = new GraphQLInputObjectType({
 export const GraphQLPublicCommentInput = new GraphQLInputObjectType({
   name: 'CommentInput',
   fields: {
-    parentID: {type: GraphQLID},
+    parentID: {type: GraphQLInt},
     guestUsername: {type: GraphQLString},
     challenge: {
       type: GraphQLChallengeInput
     },
-    itemID: {type: GraphQLNonNull(GraphQLID)},
+    itemID: {type: GraphQLNonNull(GraphQLInt)},
     itemType: {
       type: GraphQLNonNull(GraphQLCommentItemType)
     },
@@ -135,7 +134,7 @@ export const GraphQLComment: GraphQLObjectType<Comment, Context> = new GraphQLOb
 >({
   name: 'Comment',
   fields: () => ({
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
     guestUsername: {type: GraphQLString},
     user: {
       type: GraphQLUser,
@@ -151,7 +150,7 @@ export const GraphQLComment: GraphQLObjectType<Comment, Context> = new GraphQLOb
       )
     },
     authorType: {type: GraphQLNonNull(GraphQLCommentAuthorType)},
-    itemID: {type: GraphQLNonNull(GraphQLID)},
+    itemID: {type: GraphQLNonNull(GraphQLInt)},
     itemType: {
       type: GraphQLNonNull(GraphQLCommentItemType)
     },
@@ -183,8 +182,8 @@ export const GraphQLPublicComment: GraphQLObjectType<
 > = new GraphQLObjectType<PublicComment, Context>({
   name: 'Comment',
   fields: () => ({
-    id: {type: GraphQLNonNull(GraphQLID)},
-    parentID: {type: GraphQLID},
+    id: {type: GraphQLNonNull(GraphQLInt)},
+    parentID: {type: GraphQLInt},
     guestUsername: {type: GraphQLString},
     user: {
       type: GraphQLPublicUser,
@@ -201,7 +200,7 @@ export const GraphQLPublicComment: GraphQLObjectType<
     },
     authorType: {type: GraphQLNonNull(GraphQLCommentAuthorType)},
 
-    itemID: {type: GraphQLNonNull(GraphQLID)},
+    itemID: {type: GraphQLNonNull(GraphQLInt)},
     itemType: {
       type: GraphQLNonNull(GraphQLCommentItemType)
     },

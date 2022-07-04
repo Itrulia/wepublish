@@ -1,8 +1,8 @@
 import {CommentState, PrismaClient} from '@prisma/client'
 
 export const getPublicChildrenCommentsByParentId = (
-  parentId: string,
-  userId: string | null,
+  parentId: number,
+  userId: number | null,
   comment: PrismaClient['comment']
 ) =>
   comment.findMany({
@@ -18,8 +18,8 @@ export const getPublicChildrenCommentsByParentId = (
   })
 
 export const getPublicCommentsForItemById = async (
-  itemId: string,
-  userId: string | null,
+  itemId: number,
+  userId: number | null,
   comment: PrismaClient['comment']
 ) => {
   const comments = await comment.findMany({
@@ -28,6 +28,9 @@ export const getPublicCommentsForItemById = async (
         {itemID: itemId, state: CommentState.approved, parentID: null},
         userId ? {itemID: itemId, userID: userId, parentID: null} : {}
       ]
+    },
+    include: {
+      revisions: true
     }
   })
 

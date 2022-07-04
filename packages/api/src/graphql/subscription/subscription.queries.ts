@@ -235,7 +235,7 @@ export const getSubscriptions = async (
   filter: Partial<SubscriptionFilter>,
   sortedField: SubscriptionSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   subscription: PrismaClient['subscription']
@@ -253,7 +253,12 @@ export const getSubscriptions = async (
       skip: skip,
       take: Math.min(take, MaxResultsPerPage) + 1,
       orderBy: orderBy,
-      cursor: cursorId ? {id: cursorId} : undefined
+      cursor: cursorId ? {id: cursorId} : undefined,
+      include: {
+        deactivation: true,
+        periods: true,
+        properties: true
+      }
     })
   ])
 

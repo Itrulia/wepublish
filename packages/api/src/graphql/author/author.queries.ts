@@ -43,7 +43,7 @@ export const getAuthors = async (
   filter: Partial<AuthorFilter>,
   sortedField: AuthorSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   author: PrismaClient['author']
@@ -61,7 +61,10 @@ export const getAuthors = async (
       skip: skip,
       take: Math.min(take, MaxResultsPerPage) + 1,
       orderBy: orderBy,
-      cursor: cursorId ? {id: cursorId} : undefined
+      cursor: cursorId ? {id: cursorId} : undefined,
+      include: {
+        links: true
+      }
     })
   ])
 

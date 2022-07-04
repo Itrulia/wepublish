@@ -253,7 +253,7 @@ const PeerArticleQuery = gql`
 `
 
 export interface PeerArticleTemplateContainerProps {
-  peerID: string
+  peerID: number
   id: string
   slug?: string
 }

@@ -624,7 +624,7 @@ async function  applyApiServer() {
                 //   )
                 // },
                 {
-                  name: 'MONGO_URL',
+                  name: 'DATABASE_URL',
                   value: databaseURL
                 },
                 {
@@ -1156,7 +1156,7 @@ async function applyOAuth2() {
                   value: `production`
                 },
                 {
-                  name: 'MONGO_URL',
+                  name: 'DATABASE_URL',
                   value: databaseURL
                 },
                 {

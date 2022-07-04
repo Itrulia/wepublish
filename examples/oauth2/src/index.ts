@@ -11,8 +11,8 @@ async function asyncMain() {
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 4200
   const address = process.env.ADDRESS || 'localhost'
 
-  if (!process.env.MONGO_URL) {
-    throw new Error('No MONGO_URL defined in ENV')
+  if (!process.env.DATABASE_URL) {
+    throw new Error('No DATABASE_URL defined in ENV')
   }
 
   if (!process.env.JWKS_KEYS) {

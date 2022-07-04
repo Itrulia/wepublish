@@ -1,10 +1,10 @@
 import {
-  GraphQLID,
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLString
+  GraphQLString,
+  GraphQLID
 } from 'graphql'
 import {Context} from '../context'
 import {ArticleSort} from '../db/article'
@@ -106,6 +106,7 @@ import {getTokens} from './token/token.private-queries'
 import {GraphQLUser, GraphQLUserConnection, GraphQLUserFilter, GraphQLUserSort} from './user'
 import {getAdminUserRoles, getUserRoleById} from './user-role/user-role.private-queries'
 import {getAdminUsers, getMe, getUserById} from './user/user.private-queries'
+
 import {
   GraphQLPermission,
   GraphQLUserRole,
@@ -143,7 +144,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     peer: {
       type: GraphQLPeer,
-      args: {id: {type: GraphQLNonNull(GraphQLID)}},
+      args: {id: {type: GraphQLNonNull(GraphQLInt)}},
       resolve: (root, {id}, {authenticate, loaders: {peer}}) => getPeerById(id, authenticate, peer)
     },
 
@@ -189,14 +190,14 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     // ==========
     user: {
       type: GraphQLUser,
-      args: {id: {type: GraphQLID}},
+      args: {id: {type: GraphQLInt}},
       resolve: (root, {id}, {authenticate, prisma: {user}}) => getUserById(id, authenticate, user)
     },
 
     users: {
       type: GraphQLNonNull(GraphQLUserConnection),
       args: {
-        cursor: {type: GraphQLID},
+        cursor: {type: GraphQLInt},
         take: {type: GraphQLInt, defaultValue: 10},
         skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLUserFilter},
@@ -211,7 +212,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     // ==========
     subscription: {
       type: GraphQLSubscription,
-      args: {id: {type: GraphQLNonNull(GraphQLID)}},
+      args: {id: {type: GraphQLNonNull(GraphQLInt)}},
       resolve: (root, {id}, {authenticate, prisma: {subscription}}) =>
         getSubscriptionById(id, authenticate, subscription)
     },
@@ -219,7 +220,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     subscriptions: {
       type: GraphQLNonNull(GraphQLSubscriptionConnection),
       args: {
-        cursor: {type: GraphQLID},
+        cursor: {type: GraphQLInt},
         take: {type: GraphQLInt, defaultValue: 10},
         skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLSubscriptionFilter},
@@ -246,7 +247,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     userRole: {
       type: GraphQLUserRole,
-      args: {id: {type: GraphQLID}},
+      args: {id: {type: GraphQLInt}},
       resolve: (root, {id}, {authenticate, loaders}) =>
         getUserRoleById(id, authenticate, loaders.userRolesByID)
     },
@@ -254,7 +255,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     userRoles: {
       type: GraphQLNonNull(GraphQLUserRoleConnection),
       args: {
-        cursor: {type: GraphQLID},
+        cursor: {type: GraphQLInt},
         take: {type: GraphQLInt, defaultValue: 10},
         skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLUserRoleFilter},
@@ -291,7 +292,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     navigation: {
       type: GraphQLNavigation,
-      args: {id: {type: GraphQLID}, key: {type: GraphQLID}},
+      args: {id: {type: GraphQLInt}, key: {type: GraphQLInt}},
       resolve: (root, {id, key}, {authenticate, loaders: {navigationByID, navigationByKey}}) =>
         getNavigationByIdOrKey(id, key, authenticate, navigationByID, navigationByKey)
     },
@@ -307,7 +308,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     author: {
       type: GraphQLAuthor,
-      args: {id: {type: GraphQLID}, slug: {type: GraphQLSlug}},
+      args: {id: {type: GraphQLInt}, slug: {type: GraphQLSlug}},
       resolve: (root, {id, slug}, {authenticate, loaders: {authorsByID, authorsBySlug}}) =>
         getAuthorByIdOrSlug(id, slug, authenticate, authorsByID, authorsBySlug)
     },
@@ -315,7 +316,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     authors: {
       type: GraphQLNonNull(GraphQLAuthorConnection),
       args: {
-        cursor: {type: GraphQLID},
+        cursor: {type: GraphQLInt},
         take: {type: GraphQLInt, defaultValue: 10},
         skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLAuthorFilter},
@@ -359,7 +360,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     comments: {
       type: GraphQLNonNull(GraphQLCommentConnection),
       args: {
-        cursor: {type: GraphQLID},
+        cursor: {type: GraphQLInt},
         take: {type: GraphQLInt, defaultValue: 10},
         skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLCommentFilter},
@@ -378,7 +379,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     article: {
       type: GraphQLArticle,
-      args: {id: {type: GraphQLNonNull(GraphQLID)}},
+      args: {id: {type: GraphQLNonNull(GraphQLInt)}},
       resolve: (root, {id}, {authenticate, loaders}) =>
         getArticleById(id, authenticate, loaders.articles)
     },
@@ -386,7 +387,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     articles: {
       type: GraphQLNonNull(GraphQLArticleConnection),
       args: {
-        cursor: {type: GraphQLID},
+        cursor: {type: GraphQLInt},
         take: {type: GraphQLInt, defaultValue: 10},
         skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLArticleFilter},
@@ -405,7 +406,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     peerArticle: {
       type: GraphQLArticle,
-      args: {peerID: {type: GraphQLNonNull(GraphQLID)}, id: {type: GraphQLNonNull(GraphQLID)}},
+      args: {peerID: {type: GraphQLNonNull(GraphQLInt)}, id: {type: GraphQLNonNull(GraphQLInt)}},
       resolve(root, {peerID, id}, context, info) {
         const {authenticate} = context
         const {roles} = authenticate()
@@ -430,7 +431,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     articlePreviewLink: {
       type: GraphQLString,
-      args: {id: {type: GraphQLNonNull(GraphQLID)}, hours: {type: GraphQLNonNull(GraphQLInt)}},
+      args: {id: {type: GraphQLNonNull(GraphQLInt)}, hours: {type: GraphQLNonNull(GraphQLInt)}},
       resolve: async (
         root,
         {id, hours},
@@ -443,7 +444,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     page: {
       type: GraphQLPage,
-      args: {id: {type: GraphQLID}},
+      args: {id: {type: GraphQLInt}},
       resolve: (root, {id}, {authenticate, loaders: {pages}}) =>
         getPageById(id, authenticate, pages)
     },
@@ -451,7 +452,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     pages: {
       type: GraphQLNonNull(GraphQLPageConnection),
       args: {
-        cursor: {type: GraphQLID},
+        cursor: {type: GraphQLInt},
         take: {type: GraphQLInt, defaultValue: 10},
         skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLArticleFilter},
@@ -464,7 +465,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     pagePreviewLink: {
       type: GraphQLString,
-      args: {id: {type: GraphQLNonNull(GraphQLID)}, hours: {type: GraphQLNonNull(GraphQLInt)}},
+      args: {id: {type: GraphQLNonNull(GraphQLInt)}, hours: {type: GraphQLNonNull(GraphQLInt)}},
       resolve: (root, {id, hours}, {authenticate, loaders: {pages}, urlAdapter, generateJWT}) =>
         getPagePreviewLink(id, hours, authenticate, generateJWT, urlAdapter, pages)
     },
@@ -474,7 +475,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     memberPlan: {
       type: GraphQLMemberPlan,
-      args: {id: {type: GraphQLID}, slug: {type: GraphQLSlug}},
+      args: {id: {type: GraphQLInt}, slug: {type: GraphQLSlug}},
       resolve: (root, {id, slug}, {authenticate, loaders: {memberPlansByID, memberPlansBySlug}}) =>
         getMemberPlanByIdOrSlug(id, slug, authenticate, memberPlansByID, memberPlansBySlug)
     },
@@ -482,7 +483,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     memberPlans: {
       type: GraphQLNonNull(GraphQLMemberPlanConnection),
       args: {
-        cursor: {type: GraphQLID},
+        cursor: {type: GraphQLInt},
         take: {type: GraphQLInt, defaultValue: 10},
         skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLMemberPlanFilter},
@@ -501,7 +502,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     paymentMethod: {
       type: GraphQLPaymentMethod,
-      args: {id: {type: GraphQLID}},
+      args: {id: {type: GraphQLInt}},
       resolve: (root, {id}, {authenticate, loaders: {paymentMethodsByID}}) =>
         getPaymentMethodById(id, authenticate, paymentMethodsByID)
     },
@@ -530,7 +531,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     invoice: {
       type: GraphQLInvoice,
-      args: {id: {type: GraphQLID}},
+      args: {id: {type: GraphQLInt}},
       resolve: (root, {id}, {authenticate, loaders: {invoicesByID}}) =>
         getInvoiceById(id, authenticate, invoicesByID)
     },
@@ -538,7 +539,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     invoices: {
       type: GraphQLNonNull(GraphQLInvoiceConnection),
       args: {
-        cursor: {type: GraphQLID},
+        cursor: {type: GraphQLInt},
         take: {type: GraphQLInt, defaultValue: 10},
         skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLinvoiceFilter},
@@ -557,7 +558,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
 
     payment: {
       type: GraphQLPayment,
-      args: {id: {type: GraphQLID}},
+      args: {id: {type: GraphQLInt}},
       resolve: (root, {id}, {authenticate, loaders: {paymentsByID}}) =>
         getPaymentById(id, authenticate, paymentsByID)
     },
@@ -565,7 +566,7 @@ export const GraphQLQuery = new GraphQLObjectType<undefined, Context>({
     payments: {
       type: GraphQLNonNull(GraphQLPaymentConnection),
       args: {
-        cursor: {type: GraphQLID},
+        cursor: {type: GraphQLInt},
         take: {type: GraphQLInt, defaultValue: 10},
         skip: {type: GraphQLInt, defaultValue: 0},
         filter: {type: GraphQLPaymentFilter},

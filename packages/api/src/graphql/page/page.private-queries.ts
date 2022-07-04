@@ -7,7 +7,7 @@ import {authorise, CanGetPage, CanGetPagePreviewLink, CanGetPages} from '../perm
 import {getPages} from './page.queries'
 
 export const getPageById = (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   pages: Context['loaders']['pages']
 ) => {
@@ -18,7 +18,7 @@ export const getPageById = (
 }
 
 export const getPagePreviewLink = async (
-  id: string,
+  id: number,
   hours: number,
   authenticate: Context['authenticate'],
   generateJWT: Context['generateJWT'],
@@ -46,7 +46,7 @@ export const getAdminPages = (
   filter: Partial<PageFilter>,
   sortedField: PageSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

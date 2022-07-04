@@ -9,7 +9,7 @@ export const getPublishedArticles = async (
   filter: Partial<ArticleFilter>,
   sortedField: ArticleSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   article: PrismaClient['article']
@@ -26,12 +26,12 @@ export const getPublishedArticles = async (
 
   return {
     ...data,
-    nodes: data.nodes.map(({id, shared, published}) => ({id, shared, ...published}))
+    nodes: data.nodes.map(({id, shared, published}) => ({shared, ...published, id}))
   }
 }
 
 export const getPublishedArticleByIdOrSlug = async (
-  id: string | null,
+  id: number | null,
   slug: string | null,
   token: string | null,
   session: Context['session'],
@@ -61,28 +61,45 @@ export const getPublishedArticleByIdOrSlug = async (
             }
           }
         ]
+      },
+      include: {
+        draft: {
+          include: {
+            properties: true
+          }
+        },
+        pending: {
+          include: {
+            properties: true
+          }
+        },
+        published: {
+          include: {
+            properties: true
+          }
+        }
       }
     })
 
     article = fullArticle
       ? ({
+          ...(fullArticle?.published ?? fullArticle.pending),
           id: fullArticle.id,
-          shared: fullArticle?.shared,
-          ...(fullArticle?.published ?? fullArticle.pending)
+          shared: fullArticle?.shared
         } as PublicArticle)
       : null
   }
 
   if (!article && token) {
     try {
-      const articleId = verifyJWT(token)
+      const articleId = +verifyJWT(token)
       const privateArticle = await articles.load(articleId)
 
       article = privateArticle?.draft
         ? ({
+            ...privateArticle.draft,
             id: privateArticle.id,
             shared: privateArticle.shared,
-            ...privateArticle.draft,
             updatedAt: new Date(),
             publishedAt: new Date()
           } as PublicArticle)

@@ -103,6 +103,7 @@ export class StripePaymentProvider extends BasePaymentProvider {
     paymentID
   }: CreatePaymentIntentProps): Promise<Intent> {
     let paymentMethodID: string | null = null
+
     if (customerID) {
       // For an off_session payment the default_payment_method or the default_source of the customer will be used.
       // If both are available the default_payment_method will be used.

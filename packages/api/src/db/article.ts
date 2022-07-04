@@ -1,4 +1,8 @@
-import {MetadataProperty} from '@prisma/client'
+import {
+  MetadataProperty,
+  Article as PrismaArticle,
+  ArticleRevision as PrismaArticleRevision
+} from '@prisma/client'
 import {ArticleBlock} from './block'
 
 export interface ArticleData {
@@ -14,7 +18,7 @@ export interface ArticleData {
   readonly properties: MetadataProperty[]
 
   readonly imageID?: string | null
-  readonly authorIDs: string[]
+  readonly authorIDs: number[]
 
   readonly breaking: boolean
   readonly blocks: ArticleBlock[]
@@ -23,14 +27,14 @@ export interface ArticleData {
 
   readonly socialMediaTitle?: string | null
   readonly socialMediaDescription?: string | null
-  readonly socialMediaAuthorIDs: string[]
+  readonly socialMediaAuthorIDs: number[]
   readonly socialMediaImageID?: string | null
 }
 
 // Article State Flow:
 // Draft -> Pending (Optional) -> Published
 export interface Article {
-  readonly id: string
+  readonly id: number
 
   readonly shared: boolean
   readonly createdAt: Date
@@ -42,7 +46,7 @@ export interface Article {
 }
 
 export interface PeerArticle {
-  peerID: string
+  peerID: number
   article: any
 }
 
@@ -56,7 +60,7 @@ export interface ArticleRevision extends ArticleData {
 }
 
 export interface PublicArticle extends ArticleData {
-  readonly id: string
+  readonly id: number
 
   readonly shared: boolean
   readonly updatedAt?: Date | null
@@ -71,12 +75,12 @@ export interface ArticleFilter {
   readonly published?: boolean
   readonly pending?: boolean
   readonly shared?: boolean
-  readonly authors?: string[]
+  readonly authors?: number[]
   readonly tags?: string[]
 }
 
 export interface PublicArticleFilter {
-  readonly authors?: string[]
+  readonly authors?: number[]
   readonly tags?: string[]
 }
 
@@ -86,4 +90,14 @@ export enum ArticleSort {
   PublishedAt = 'publishedAt',
   UpdatedAt = 'updatedAt',
   PublishAt = 'publishAt'
+}
+
+export type ArticleRevisionWithProperties = PrismaArticleRevision & {
+  properties: MetadataProperty[]
+}
+
+export type ArticleWithRevisions = PrismaArticle & {
+  draft: ArticleRevisionWithProperties | null
+  pending: ArticleRevisionWithProperties | null
+  published: ArticleRevisionWithProperties | null
 }

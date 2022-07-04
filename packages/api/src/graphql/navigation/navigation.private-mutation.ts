@@ -2,8 +2,8 @@ import {Context} from '../../context'
 import {authorise, CanCreateNavigation, CanDeleteNavigation} from '../permissions'
 import {PrismaClient, Prisma} from '@prisma/client'
 
-export const deleteNavigationById = (
-  id: string,
+export const deleteNavigationById = async (
+  id: number,
   authenticate: Context['authenticate'],
   navigation: PrismaClient['navigation']
 ) => {
@@ -17,8 +17,12 @@ export const deleteNavigationById = (
   })
 }
 
+type CreateNavigationInput = Omit<Prisma.NavigationUncheckedCreateInput, 'links' | 'modifiedAt'> & {
+  links: Prisma.NavigationLinkUncheckedCreateWithoutNavigationInput[]
+}
+
 export const createNavigation = (
-  input: Omit<Prisma.NavigationUncheckedCreateInput, 'modifiedAt'>,
+  {links, ...input}: CreateNavigationInput,
   authenticate: Context['authenticate'],
   navigation: PrismaClient['navigation']
 ) => {
@@ -26,13 +30,29 @@ export const createNavigation = (
   authorise(CanCreateNavigation, roles)
 
   return navigation.create({
-    data: {...input, modifiedAt: new Date()}
+    data: {
+      ...input,
+      modifiedAt: new Date(),
+      links: {
+        create: links
+      }
+    },
+    include: {
+      links: true
+    }
   })
 }
 
-export const updateNavigation = (
-  id: string,
-  input: Omit<Prisma.NavigationUncheckedUpdateInput, 'modifiedAt' | 'createdAt'>,
+type UpdateNavigationInput = Omit<
+  Prisma.NavigationUncheckedUpdateInput,
+  'links' | 'modifiedAt' | 'createdAt'
+> & {
+  links: Prisma.NavigationLinkUncheckedCreateWithoutNavigationInput[]
+}
+
+export const updateNavigation = async (
+  id: number,
+  {links, ...input}: UpdateNavigationInput,
   authenticate: Context['authenticate'],
   navigation: PrismaClient['navigation']
 ) => {
@@ -41,6 +61,19 @@ export const updateNavigation = (
 
   return navigation.update({
     where: {id},
-    data: input
+    data: {
+      ...input,
+      links: {
+        deleteMany: {
+          navigationId: {
+            equals: id
+          }
+        },
+        create: links
+      }
+    },
+    include: {
+      links: true
+    }
   })
 }

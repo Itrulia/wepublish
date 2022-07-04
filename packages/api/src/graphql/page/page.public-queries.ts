@@ -6,7 +6,7 @@ export const getPublishedPages = async (
   filter: Partial<PageFilter>,
   sortedField: PageSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   page: PrismaClient['page']
@@ -23,6 +23,6 @@ export const getPublishedPages = async (
 
   return {
     ...data,
-    nodes: data.nodes.map(({id, published}) => ({id, ...published}))
+    nodes: data.nodes.map(({id, published}) => ({...published, id}))
   }
 }

@@ -3,7 +3,7 @@ import {authorise, CanGetPaymentMethod, CanGetPaymentMethods} from '../permissio
 import {PrismaClient} from '@prisma/client'
 
 export const getPaymentMethodById = (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   paymentMethodsByID: Context['loaders']['paymentMethodsByID']
 ) => {

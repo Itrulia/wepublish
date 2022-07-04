@@ -4,7 +4,8 @@ import {
   GraphQLObjectType,
   GraphQLString,
   GraphQLBoolean,
-  GraphQLInputObjectType
+  GraphQLInputObjectType,
+  GraphQLInt
 } from 'graphql'
 import {Context} from '../context'
 import {GraphQLDateTime} from 'graphql-iso-date'
@@ -24,7 +25,7 @@ export const GraphQLPaymentProvider = new GraphQLObjectType<PaymentProvider, Con
 export const GraphQLPaymentMethod = new GraphQLObjectType<PaymentMethod, Context>({
   name: 'PaymentMethod',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
 
     createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
     modifiedAt: {type: GraphQLNonNull(GraphQLDateTime)},
@@ -45,7 +46,7 @@ export const GraphQLPaymentMethod = new GraphQLObjectType<PaymentMethod, Context
 export const GraphQLPublicPaymentMethod = new GraphQLObjectType<PaymentMethod, Context>({
   name: 'PaymentMethod',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
     paymentProviderID: {type: GraphQLNonNull(GraphQLString)},
     name: {type: GraphQLNonNull(GraphQLString)},
     slug: {type: GraphQLNonNull(GraphQLSlug)},

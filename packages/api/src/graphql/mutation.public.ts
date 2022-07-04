@@ -2,7 +2,6 @@ import {Invoice, Subscription, SubscriptionDeactivationReason} from '@prisma/cli
 import * as crypto from 'crypto'
 import {
   GraphQLBoolean,
-  GraphQLID,
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
@@ -10,6 +9,7 @@ import {
   GraphQLString
 } from 'graphql'
 import {Context} from '../context'
+import {unselectPassword} from '../db/user'
 import {
   CommentAuthenticationError,
   EmailAlreadyInUseError,
@@ -163,8 +163,10 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
         const userExists = await prisma.user.findUnique({
           where: {
             email
-          }
+          },
+          select: unselectPassword
         })
+
         if (userExists) throw new EmailAlreadyInUseError()
 
         if (!password) password = crypto.randomBytes(48).toString('base64')
@@ -178,9 +180,7 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
             address,
             emailVerifiedAt: null,
             active: true,
-            properties: [],
             roleIDs: [],
-            paymentProviderCustomers: [],
             password
           },
           hashCostFactor,
@@ -210,12 +210,12 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
         email: {type: GraphQLNonNull(GraphQLString)},
         address: {type: GraphQLUserAddressInput},
         password: {type: GraphQLString},
-        memberPlanID: {type: GraphQLID},
+        memberPlanID: {type: GraphQLInt},
         memberPlanSlug: {type: GraphQLSlug},
         autoRenew: {type: GraphQLNonNull(GraphQLBoolean)},
         paymentPeriodicity: {type: GraphQLNonNull(GraphQLPaymentPeriodicity)},
         monthlyAmount: {type: GraphQLNonNull(GraphQLInt)},
-        paymentMethodID: {type: GraphQLID},
+        paymentMethodID: {type: GraphQLInt},
         paymentMethodSlug: {type: GraphQLSlug},
         subscriptionProperties: {
           type: GraphQLList(GraphQLNonNull(GraphQLMetadataPropertyPublicInput))
@@ -298,8 +298,10 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
         const userExists = await prisma.user.findUnique({
           where: {
             email: email
-          }
+          },
+          select: unselectPassword
         })
+
         if (userExists) throw new EmailAlreadyInUseError()
 
         if (!password) password = crypto.randomBytes(48).toString('base64')
@@ -313,9 +315,7 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
             address,
             emailVerifiedAt: null,
             active: true,
-            properties: [],
             roleIDs: [],
-            paymentProviderCustomers: [],
             password
           },
           hashCostFactor,
@@ -343,7 +343,7 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
 
         // Create Periods, Invoices and Payment
         const invoice = await memberContext.renewSubscriptionForUser({
-          subscription: subscription as Subscription
+          subscription
         })
 
         if (!invoice) {
@@ -356,7 +356,7 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
 
         return {
           payment: await createPaymentWithProvider({
-            invoice: invoice as Invoice,
+            invoice,
             saveCustomer: true,
             paymentMethodID: paymentMethod.id,
             successURL,
@@ -371,12 +371,12 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
     createSubscription: {
       type: GraphQLNonNull(GraphQLPublicPayment),
       args: {
-        memberPlanID: {type: GraphQLID},
+        memberPlanID: {type: GraphQLInt},
         memberPlanSlug: {type: GraphQLSlug},
         autoRenew: {type: GraphQLNonNull(GraphQLBoolean)},
         paymentPeriodicity: {type: GraphQLNonNull(GraphQLPaymentPeriodicity)},
         monthlyAmount: {type: GraphQLNonNull(GraphQLInt)},
-        paymentMethodID: {type: GraphQLID},
+        paymentMethodID: {type: GraphQLInt},
         paymentMethodSlug: {type: GraphQLSlug},
         subscriptionProperties: {
           type: GraphQLList(GraphQLNonNull(GraphQLMetadataPropertyPublicInput))
@@ -446,7 +446,7 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
 
         // Create Periods, Invoices and Payment
         const invoice = await memberContext.renewSubscriptionForUser({
-          subscription: subscription as Subscription
+          subscription
         })
 
         if (!invoice) {
@@ -458,7 +458,7 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
         }
 
         return await createPaymentWithProvider({
-          invoice: invoice as Invoice,
+          invoice,
           saveCustomer: true,
           paymentMethodID: paymentMethod.id,
           successURL,
@@ -476,8 +476,10 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
         'This mutation sends a login link to the email if the user exists. Method will always return email address',
       async resolve(root, {email}, {prisma, generateJWT, mailContext, urlAdapter}) {
         const user = await prisma.user.findUnique({
-          where: {email}
+          where: {email},
+          select: unselectPassword
         })
+
         if (!user) return email
 
         const lastSendTimeStamp = user.properties.find(
@@ -560,7 +562,7 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
     updateUserSubscription: {
       type: GraphQLPublicSubscription,
       args: {
-        id: {type: GraphQLNonNull(GraphQLID)},
+        id: {type: GraphQLNonNull(GraphQLInt)},
         input: {type: GraphQLNonNull(GraphQLPublicSubscriptionInput)}
       },
       description:
@@ -584,7 +586,7 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
     cancelUserSubscription: {
       type: GraphQLPublicSubscription,
       args: {
-        id: {type: GraphQLNonNull(GraphQLID)}
+        id: {type: GraphQLNonNull(GraphQLInt)}
       },
       description:
         'This mutation allows to cancel the users subscriptions. The deactivation date will be either paidUntil or now',
@@ -593,12 +595,17 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
         if (!user) throw new NotAuthenticatedError()
 
         const subscription = await prisma.subscription.findUnique({
-          where: {id}
+          where: {id},
+          include: {
+            deactivation: true,
+            periods: true,
+            properties: true
+          }
         })
 
         if (!subscription) throw new NotFound('subscription', id)
 
-        if (subscription.deactivation !== null)
+        if (subscription.deactivation)
           throw new UserSubscriptionAlreadyDeactivated(subscription.deactivation.date)
 
         const now = new Date()
@@ -614,8 +621,14 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
         })
 
         const updatedSubscription = await prisma.subscription.findUnique({
-          where: {id}
+          where: {id},
+          include: {
+            deactivation: true,
+            periods: true,
+            properties: true
+          }
         })
+
         if (!updatedSubscription) throw new NotFound('subscription', id)
 
         return updatedSubscription
@@ -661,14 +674,25 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
           throw new NotFound('PaymentMethod', paymentMethodID || paymentMethodSlug)
 
         const invoice = await prisma.invoice.findUnique({
-          where: {id: invoiceID}
+          where: {id: invoiceID},
+          include: {
+            items: true
+          }
         })
+
         if (!invoice) throw new NotFound('Invoice', invoiceID)
+
         const subscription = await prisma.subscription.findUnique({
           where: {
             id: invoice.subscriptionID
+          },
+          include: {
+            deactivation: true,
+            periods: true,
+            properties: true
           }
         })
+
         if (!subscription || subscription.userID !== user.id)
           throw new NotFound('Invoice', invoiceID)
 

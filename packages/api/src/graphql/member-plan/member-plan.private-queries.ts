@@ -6,7 +6,7 @@ import {authorise, CanGetMemberPlan, CanGetMemberPlans} from '../permissions'
 import {getMemberPlans} from './member-plan.queries'
 
 export const getMemberPlanByIdOrSlug = (
-  id: string | null,
+  id: number | null,
   slug: string | null,
   authenticate: Context['authenticate'],
   memberPlansByID: Context['loaders']['memberPlansByID'],
@@ -26,7 +26,7 @@ export const getAdminMemberPlans = async (
   filter: Partial<MemberPlanFilter>,
   sortedField: MemberPlanSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

@@ -62,7 +62,7 @@ export const getMemberPlans = async (
   filter: Partial<MemberPlanFilter>,
   sortedField: MemberPlanSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   memberPlan: PrismaClient['memberPlan']
@@ -80,7 +80,10 @@ export const getMemberPlans = async (
       skip: skip,
       take: Math.min(take, MaxResultsPerPage) + 1,
       orderBy: orderBy,
-      cursor: cursorId ? {id: cursorId} : undefined
+      cursor: cursorId ? {id: cursorId} : undefined,
+      include: {
+        availablePaymentMethods: true
+      }
     })
   ])
 

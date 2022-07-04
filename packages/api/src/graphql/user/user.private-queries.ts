@@ -13,7 +13,7 @@ export const getMe = (authenticate: Context['authenticate']) => {
 }
 
 export const getUserById = (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   user: PrismaClient['user']
 ) => {
@@ -36,7 +36,7 @@ export const getAdminUsers = async (
   filter: Partial<UserFilter>,
   sortedField: UserSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

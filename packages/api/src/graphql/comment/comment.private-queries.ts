@@ -8,7 +8,7 @@ export const getAdminComments = async (
   filter: Partial<CommentFilter>,
   sortedField: CommentSort,
   order: 1 | -1,
-  cursorId: string | null,
+  cursorId: number | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

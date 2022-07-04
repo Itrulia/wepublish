@@ -1,25 +1,25 @@
 import {
+  GraphQLInputObjectType,
+  GraphQLInt,
   GraphQLInterfaceType,
   GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLString,
-  GraphQLUnionType,
-  GraphQLID,
-  GraphQLInputObjectType
+  GraphQLUnionType
 } from 'graphql'
 
 import {Context} from '../context'
 
 import {
   ArticleNavigationLink,
+  ExternalNavigationLink,
   NavigationLinkType,
-  PageNavigationLink,
-  ExternalNavigationLink
+  PageNavigationLink
 } from '../db/navigation'
+import {createProxyingIsTypeOf, createProxyingResolver} from '../utility'
 import {GraphQLArticle, GraphQLPublicArticle} from './article'
 import {GraphQLPage, GraphQLPublicPage} from './page'
-import {createProxyingResolver, createProxyingIsTypeOf} from '../utility'
 
 export const GraphQLBaseNavigationLink = new GraphQLInterfaceType({
   name: 'BaseNavigationLink',
@@ -84,7 +84,7 @@ export const GraphQLNavigationLink = new GraphQLUnionType({
 export const GraphQLNavigation = new GraphQLObjectType({
   name: 'Navigation',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
     key: {type: GraphQLNonNull(GraphQLString)},
     name: {type: GraphQLNonNull(GraphQLString)},
     links: {type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLNavigationLink)))}
@@ -140,7 +140,7 @@ export const GraphQLPublicNavigationLink = new GraphQLUnionType({
 export const GraphQLPublicNavigation = new GraphQLObjectType({
   name: 'Navigation',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
     key: {type: GraphQLNonNull(GraphQLString)},
     name: {type: GraphQLNonNull(GraphQLString)},
     links: {type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLPublicNavigationLink)))}
@@ -151,7 +151,7 @@ export const GraphQLArticleNavigationLinkInput = new GraphQLInputObjectType({
   name: 'ArticleNavigationLinkInput',
   fields: {
     label: {type: GraphQLNonNull(GraphQLString)},
-    articleID: {type: GraphQLNonNull(GraphQLID)}
+    articleID: {type: GraphQLNonNull(GraphQLInt)}
   }
 })
 
@@ -159,7 +159,7 @@ export const GraphQLPageNavigationLinkInput = new GraphQLInputObjectType({
   name: 'PageNavigationLinkInput',
   fields: {
     label: {type: GraphQLNonNull(GraphQLString)},
-    pageID: {type: GraphQLNonNull(GraphQLID)}
+    pageID: {type: GraphQLNonNull(GraphQLInt)}
   }
 })
 
