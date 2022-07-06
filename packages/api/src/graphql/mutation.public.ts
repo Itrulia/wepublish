@@ -1,4 +1,4 @@
-import {Invoice, Subscription, SubscriptionDeactivationReason} from '@prisma/client'
+import {SubscriptionDeactivationReason} from '@prisma/client'
 import * as crypto from 'crypto'
 import {
   GraphQLBoolean,
@@ -510,25 +510,26 @@ export const GraphQLPublicMutation = new GraphQLObjectType<undefined, Context>({
           }
         })
 
-        const properties = user.properties.filter(
-          property => property?.key !== USER_PROPERTY_LAST_LOGIN_LINK_SEND
-        )
-        properties.push({
-          key: USER_PROPERTY_LAST_LOGIN_LINK_SEND,
-          public: false,
-          value: `${Date.now()}`
-        })
-
         try {
           await prisma.user.update({
             where: {id: user.id},
             data: {
-              properties
+              properties: {
+                deleteMany: {
+                  key: USER_PROPERTY_LAST_LOGIN_LINK_SEND
+                },
+                create: {
+                  key: USER_PROPERTY_LAST_LOGIN_LINK_SEND,
+                  public: false,
+                  value: `${Date.now()}`
+                }
+              }
             }
           })
         } catch (error) {
           logger('mutation.public').warn(error as Error, 'Updating User with ID %s failed', user.id)
         }
+
         return email
       }
     },

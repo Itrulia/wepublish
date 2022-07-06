@@ -2,7 +2,7 @@ import {PrismaClient} from '@prisma/client'
 import {Context} from '../../context'
 
 export const revokeSessionById = (
-  id: string,
+  id: number,
   authenticateUser: Context['authenticateUser'],
   session: PrismaClient['session']
 ) => {

@@ -1,4 +1,4 @@
-import {Invoice, InvoiceItem} from '@prisma/client'
+import {InvoiceItem} from '@prisma/client'
 import {
   GraphQLEnumType,
   GraphQLInputObjectType,
@@ -10,7 +10,7 @@ import {
 } from 'graphql'
 import {GraphQLDate, GraphQLDateTime} from 'graphql-iso-date'
 import {Context} from '../context'
-import {InvoiceSort} from '../db/invoice'
+import {InvoiceSort, InvoiceWithItems} from '../db/invoice'
 import {createProxyingResolver} from '../utility'
 import {GraphQLPageInfo} from './common'
 
@@ -32,7 +32,7 @@ export const GraphQLInvoiceItem = new GraphQLObjectType<InvoiceItem, Context>({
   }
 })
 
-export const GraphQLInvoice = new GraphQLObjectType<Invoice, Context>({
+export const GraphQLInvoice = new GraphQLObjectType<InvoiceWithItems, Context>({
   name: 'Invoice',
   fields: {
     id: {type: GraphQLNonNull(GraphQLInt)},
@@ -56,7 +56,7 @@ export const GraphQLInvoice = new GraphQLObjectType<Invoice, Context>({
   }
 })
 
-export const GraphQLPublicInvoice = new GraphQLObjectType<Invoice, Context>({
+export const GraphQLPublicInvoice = new GraphQLObjectType<InvoiceWithItems, Context>({
   name: 'Invoice',
   fields: {
     id: {type: GraphQLNonNull(GraphQLInt)},

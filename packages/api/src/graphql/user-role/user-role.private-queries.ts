@@ -6,7 +6,7 @@ import {CanGetUserRole, CanGetUserRoles, authorise} from '../permissions'
 import {getUserRoles} from './user-role.queries'
 
 export const getUserRoleById = (
-  id: number,
+  id: string,
   authenticate: Context['authenticate'],
   userRoleLoader: Context['loaders']['userRolesByID']
 ) => {
@@ -24,7 +24,7 @@ export const getAdminUserRoles = async (
   filter: Partial<UserRoleFilter>,
   sortedField: UserRoleSort,
   order: 1 | -1,
-  cursorId: number | null,
+  cursorId: string | null,
   skip: number,
   take: number,
   authenticate: Context['authenticate'],

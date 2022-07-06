@@ -1,5 +1,6 @@
-import {Prisma, PrismaClient} from '@prisma/client'
+import {Article, Prisma, PrismaClient} from '@prisma/client'
 import {Context} from '../../context'
+import {ArticleWithRevisions} from '../../db/article'
 import {DuplicateArticleSlugError, NotFound} from '../../error'
 import {authorise, CanCreateArticle, CanDeleteArticle, CanPublishArticle} from '../permissions'
 
@@ -8,7 +9,7 @@ export const deleteArticleById = async (
   authenticate: Context['authenticate'],
   article: PrismaClient['article'],
   articleRevision: PrismaClient['articleRevision']
-) => {
+): Promise<Article> => {
   const {roles} = authenticate()
   authorise(CanDeleteArticle, roles)
 
@@ -52,7 +53,7 @@ export const createArticle = (
     Omit<Prisma.ArticleRevisionCreateInput, 'updatedAt' | 'revision'>,
   authenticate: Context['authenticate'],
   article: PrismaClient['article']
-) => {
+): Promise<ArticleWithRevisions> => {
   const {roles} = authenticate()
   authorise(CanCreateArticle, roles)
   const {shared, ...data} = input
@@ -92,7 +93,7 @@ export const duplicateArticle = async (
   authenticate: Context['authenticate'],
   articles: Context['loaders']['articles'],
   articleClient: PrismaClient['article']
-) => {
+): Promise<ArticleWithRevisions> => {
   const {roles} = authenticate()
   authorise(CanCreateArticle, roles)
 
@@ -101,16 +102,29 @@ export const duplicateArticle = async (
     throw new NotFound('article', id)
   }
 
-  const {id: _, ...articleRevision} = (article.draft ?? article.pending ?? article.published)!
+  const {
+    id: _id,
+    updatedAt: _updatedAt,
+    createdAt: _createdAt,
+    publishedAt: _publishedAt,
+    slug: _slug,
+    properties,
+    ...articleRevision
+  } = (article.draft ?? article.pending ?? article.published)!
+
+  const duplicatedProperties = properties.map(property => ({
+    key: property.key,
+    value: property.value,
+    public: property.public
+  }))
 
   const input: Prisma.ArticleRevisionCreateInput = {
     ...articleRevision,
-    blocks: articleRevision.blocks as Prisma.JsonValue[],
-    slug: '',
-    revision: 0,
-    publishedAt: null,
-    updatedAt: new Date(),
-    createdAt: new Date()
+    properties: {
+      createMany: {
+        data: duplicatedProperties
+      }
+    }
   }
 
   return articleClient.create({
@@ -144,7 +158,7 @@ export const unpublishArticle = async (
   id: number,
   authenticate: Context['authenticate'],
   articleClient: PrismaClient['article']
-) => {
+): Promise<ArticleWithRevisions> => {
   const {roles} = authenticate()
   authorise(CanPublishArticle, roles)
 
@@ -226,7 +240,7 @@ export const publishArticle = async (
   input: Pick<Prisma.ArticleRevisionCreateInput, 'publishAt' | 'publishedAt' | 'updatedAt'>,
   authenticate: Context['authenticate'],
   articleClient: PrismaClient['article']
-) => {
+): Promise<ArticleWithRevisions | null> => {
   const {roles} = authenticate()
   authorise(CanPublishArticle, roles)
 

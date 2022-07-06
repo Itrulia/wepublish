@@ -6,7 +6,7 @@ import {authorise, CanCreateUser, CanDeleteUser, CanResetUserPassword} from '../
 import {createUser} from './user.mutation'
 
 export const deleteUserById = (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   user: PrismaClient['user']
 ) => {
@@ -33,7 +33,7 @@ export const createAdminUser = (
 }
 
 export const updateAdminUser = (
-  id: string,
+  id: number,
   input: Pick<
     Prisma.UserUncheckedUpdateInput,
     | 'name'
@@ -54,12 +54,13 @@ export const updateAdminUser = (
 
   return user.update({
     where: {id},
-    data: input
+    data: input,
+    select: unselectPassword
   })
 }
 
 export const resetUserPassword = async (
-  id: string,
+  id: number,
   password: string,
   sendMail: boolean,
   hashCostFactor: number,

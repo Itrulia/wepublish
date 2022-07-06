@@ -14,6 +14,9 @@ export const getPublicChildrenCommentsByParentId = (
     },
     orderBy: {
       modifiedAt: 'desc'
+    },
+    include: {
+      revisions: true
     }
   })
 

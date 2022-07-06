@@ -1,4 +1,9 @@
 version: '3.7'
+
+networks:
+  app-tier:
+    driver: bridge
+
 services:
   website:
     build: .
@@ -55,7 +60,7 @@ services:
     command: ['node','./examples/oauth2/dist/index.js']
     environment:
       DATABASE_URL: postgresql://postgres@database:5432/wepublish?schema=public
-      OAUTH_MONGODB_URI: postgresql://postgres@localhost:5432/wepublish-oauth2?schema=public
+      OAUTH_DATABASE_URI: postgresql://postgres@localhost:5432/wepublish-oauth2?schema=public
       OAUTH_CLIENT_ID: wepublish
       OAUTH_CLIENT_SECRET: secret
       OAUTH_GRANT_TYPES: refresh_token,authorization_code
@@ -65,6 +70,7 @@ services:
 
   database:
     image: bitnami/postgresql:latest
+    platform: linux/amd64
     ports:
       - '5432:5432'
     volumes:
@@ -77,6 +83,7 @@ services:
 
   phppgadmin:
     image: bitnami/phppgadmin:latest
+    platform: linux/amd64
     environment:
       - DATABASE_HOST=database
     ports:

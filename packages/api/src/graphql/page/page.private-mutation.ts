@@ -98,16 +98,29 @@ export const duplicatePage = async (
     throw new NotFound('page', id)
   }
 
-  const {id: _, ...pageRevision} = (page.draft ?? page.pending ?? page.published)!
+  const {
+    id: _id,
+    updatedAt: _updatedAt,
+    createdAt: _createdAt,
+    publishedAt: _publishedAt,
+    slug: _slug,
+    properties,
+    ...pageRevision
+  } = (page.draft ?? page.pending ?? page.published)!
+
+  const duplicatedProperties = properties.map(property => ({
+    key: property.key,
+    value: property.value,
+    public: property.public
+  }))
 
   const input: Prisma.PageRevisionCreateInput = {
     ...pageRevision,
-    blocks: pageRevision.blocks as Prisma.JsonValue[],
-    slug: '',
-    revision: 0,
-    publishedAt: null,
-    updatedAt: new Date(),
-    createdAt: new Date()
+    properties: {
+      createMany: {
+        data: duplicatedProperties
+      }
+    }
   }
 
   return pageClient.create({

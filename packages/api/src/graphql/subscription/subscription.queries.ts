@@ -202,8 +202,8 @@ const createHasAddressFilter = (
   if (filter?.userHasAddress) {
     return {
       user: {
-        address: {
-          isSet: true
+        isNot: {
+          address: null
         }
       }
     }

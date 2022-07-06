@@ -63,7 +63,7 @@ export const getImages = async (
   filter: Partial<ImageFilter>,
   sortedField: ImageSort,
   order: 1 | -1,
-  cursorId: number | null,
+  cursorId: string | null,
   skip: number,
   take: number,
   image: PrismaClient['image']

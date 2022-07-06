@@ -666,12 +666,8 @@ export const GraphQLAdminMutation = new GraphQLObjectType<undefined, Context>({
         updatedAt: {type: GraphQLDateTime},
         publishedAt: {type: GraphQLDateTime}
       },
-      resolve: (
-        root,
-        {id, publishAt, updatedAt, publishedAt},
-        {authenticate, prisma: {page}, loaders: {publicPagesBySlug}}
-      ) =>
-        publishPage(id, {publishAt, updatedAt, publishedAt}, authenticate, publicPagesBySlug, page)
+      resolve: (root, {id, publishAt, updatedAt, publishedAt}, {authenticate, prisma: {page}}) =>
+        publishPage(id, {publishAt, updatedAt, publishedAt}, authenticate, page)
     },
 
     unpublishPage: {

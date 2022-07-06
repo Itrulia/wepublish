@@ -91,7 +91,7 @@ export const createJWTSession = async (
   userClient: PrismaClient['user'],
   userRoleClient: PrismaClient['userRole']
 ) => {
-  const userID = verifyJWT(jwt)
+  const userID = +verifyJWT(jwt)
 
   const user = await userClient.findUnique({
     where: {id: userID},

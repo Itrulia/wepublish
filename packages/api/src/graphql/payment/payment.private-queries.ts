@@ -5,7 +5,7 @@ import {PrismaClient} from '@prisma/client'
 import {getPayments} from './payment.queries'
 
 export const getPaymentById = (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   paymentsByID: Context['loaders']['paymentsByID']
 ) => {

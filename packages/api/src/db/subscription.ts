@@ -1,12 +1,12 @@
 import {DateFilter} from './common'
 import {
+  MetadataProperty,
   PaymentPeriodicity,
   Subscription,
   SubscriptionDeactivation,
   SubscriptionDeactivationReason,
   SubscriptionPeriod
 } from '@prisma/client'
-import {MetadataProperty} from '../../../../examples/website/src/shared/types'
 
 export enum SubscriptionSort {
   CreatedAt = 'createdAt',

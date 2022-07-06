@@ -22,8 +22,13 @@ export const deleteImageById = (
   ])
 }
 
+type CreateImageInput = {
+  file: Promise<FileUpload>
+  focalPoint: Prisma.FocalPointUncheckedCreateWithoutImageInput
+} & Omit<Prisma.ImageUncheckedCreateInput, 'modifiedAt' | 'focalPoint'>
+
 export const createImage = async (
-  input: {file: Promise<FileUpload>} & Omit<Prisma.ImageUncheckedCreateInput, 'modifiedAt'>,
+  input: CreateImageInput,
   authenticate: Context['authenticate'],
   mediaAdapter: Context['mediaAdapter'],
   imageClient: PrismaClient['image']
@@ -48,8 +53,9 @@ export const createImage = async (
       link,
       license,
 
-      focalPointX: focalPoint.x,
-      focalPointY: focalPoint.y
+      focalPoint: {
+        create: focalPoint
+      }
     }
   })
 }

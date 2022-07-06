@@ -42,7 +42,7 @@ export interface RenewSubscriptionForUsersProps {
 export interface ChargeInvoiceProps {
   user: User
   invoice: InvoiceWithItems
-  paymentMethodID: string
+  paymentMethodID: number
   customer: PaymentProviderCustomer
 }
 
@@ -202,14 +202,14 @@ export class MemberContext implements MemberContext {
       )
 
       if (periodToDelete) {
-        const updatedPeriods = subscription.periods.filter(
-          period => period.id !== periodToDelete.id
-        )
-
         await this.prisma.subscription.update({
           where: {id: subscription.id},
           data: {
-            periods: updatedPeriods
+            periods: {
+              delete: {
+                id: periodToDelete.id
+              }
+            }
           }
         })
       }
@@ -315,10 +315,10 @@ export class MemberContext implements MemberContext {
               amount,
               quantity: 1
             }
-          },
-          paidAt: null,
-          canceledAt: null,
-          modifiedAt: new Date()
+          }
+        },
+        include: {
+          items: true
         }
       })
 
@@ -338,6 +338,7 @@ export class MemberContext implements MemberContext {
       })
 
       logger('memberContext').info('Renewed subscription with id %s', subscription.id)
+
       return newInvoice
     } catch (error) {
       logger('memberContext').error(
@@ -698,8 +699,7 @@ export class MemberContext implements MemberContext {
       data: {
         paymentMethodID,
         invoiceID: invoice.id,
-        state: PaymentState.created,
-        modifiedAt: new Date()
+        state: PaymentState.created
       }
     })
 
@@ -954,8 +954,16 @@ export class MemberContext implements MemberContext {
       data: {
         paymentPeriodicity: subscription.paymentPeriodicity as PaymentPeriodicity,
         deactivation: {
-          date: deactivationDate ?? subscription.paidUntil ?? new Date(),
-          reason: deactivationReason ?? SubscriptionDeactivationReason.none
+          upsert: {
+            create: {
+              date: deactivationDate ?? subscription.paidUntil ?? new Date(),
+              reason: deactivationReason ?? SubscriptionDeactivationReason.none
+            },
+            update: {
+              date: deactivationDate ?? subscription.paidUntil ?? new Date(),
+              reason: deactivationReason ?? SubscriptionDeactivationReason.none
+            }
+          }
         }
       }
     })

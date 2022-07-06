@@ -11,7 +11,7 @@ export const createUser = async (
   const hashedPassword = await hashPassword(password, hashCostFactor)
 
   return user.create({
-    data: {...data, password: hashedPassword, modifiedAt: new Date()},
+    data: {...data, password: hashedPassword},
     select: unselectPassword
   })
 }

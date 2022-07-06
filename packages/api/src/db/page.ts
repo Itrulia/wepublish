@@ -9,7 +9,7 @@ export interface PageData {
   readonly updatedAt?: Date | null
   readonly publishedAt?: Date | null
 
-  readonly slug: string
+  readonly slug?: string | null
 
   readonly title: string
   readonly description?: string | null

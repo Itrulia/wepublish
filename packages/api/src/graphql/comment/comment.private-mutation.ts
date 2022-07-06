@@ -3,7 +3,7 @@ import {Context} from '../../context'
 import {authorise, CanTakeActionOnComment} from '../permissions'
 
 export const takeActionOnComment = (
-  id: string,
+  id: number,
   input: Pick<Prisma.CommentUncheckedUpdateInput, 'state' | 'rejectionReason'>,
   authenticate: Context['authenticate'],
   comment: PrismaClient['comment']
@@ -13,6 +13,9 @@ export const takeActionOnComment = (
 
   return comment.update({
     where: {id},
-    data: input
+    data: input,
+    include: {
+      revisions: true
+    }
   })
 }

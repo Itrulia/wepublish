@@ -1,12 +1,13 @@
 import {Context} from '../../context'
 import {authorise, CanCreateInvoice, CanDeleteInvoice} from '../permissions'
-import {PrismaClient, Prisma} from '@prisma/client'
+import {PrismaClient, Prisma, Invoice} from '@prisma/client'
+import {InvoiceWithItems} from '../../db/invoice'
 
 export const deleteInvoiceById = async (
   id: number,
   authenticate: Context['authenticate'],
   invoice: PrismaClient['invoice']
-) => {
+): Promise<Invoice> => {
   const {roles} = authenticate()
   authorise(CanDeleteInvoice, roles)
 
@@ -25,14 +26,13 @@ export const createInvoice = (
   {items, ...input}: CreateInvoiceInput,
   authenticate: Context['authenticate'],
   invoice: PrismaClient['invoice']
-) => {
+): Promise<InvoiceWithItems> => {
   const {roles} = authenticate()
   authorise(CanCreateInvoice, roles)
 
   return invoice.create({
     data: {
       ...input,
-      modifiedAt: new Date(),
       items: {
         create: items
       }
@@ -55,7 +55,7 @@ export const updateInvoice = async (
   {items, ...input}: UpdateInvoiceInput,
   authenticate: Context['authenticate'],
   invoice: PrismaClient['invoice']
-) => {
+): Promise<InvoiceWithItems> => {
   const {roles} = authenticate()
   authorise(CanCreateInvoice, roles)
 

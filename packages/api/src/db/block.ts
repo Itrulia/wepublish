@@ -163,7 +163,7 @@ export enum TeaserStyle {
 export interface ArticleTeaser {
   type: TeaserType.Article
   style: TeaserStyle
-  articleID: string
+  articleID: number
 
   imageID?: string
   title?: string
@@ -174,7 +174,7 @@ export interface PeerArticleTeaser {
   type: TeaserType.PeerArticle
   style: TeaserStyle
   peerID: number
-  articleID: string
+  articleID: number
 
   imageID?: string
   preTitle?: string
@@ -185,7 +185,7 @@ export interface PeerArticleTeaser {
 export interface PageTeaser {
   type: TeaserType.Page
   style: TeaserStyle
-  pageID: string
+  pageID: number
 
   imageID?: string
   preTitle?: string

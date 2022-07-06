@@ -77,6 +77,7 @@ export class StripePaymentProvider extends BasePaymentProvider {
     const state = mapStripeEventToPaymentStatue(intent.status)
     if (state !== null && intent.metadata.paymentID !== undefined) {
       let customerID
+
       if (
         intent.setup_future_usage === 'off_session' &&
         intent.customer === null &&
@@ -86,8 +87,9 @@ export class StripePaymentProvider extends BasePaymentProvider {
       } else {
         customerID = intent.customer as string
       }
+
       intentStates.push({
-        paymentID: intent.metadata.paymentID,
+        paymentID: +intent.metadata.paymentID,
         paymentData: JSON.stringify(intent),
         state,
         customerID
@@ -224,7 +226,7 @@ export class StripePaymentProvider extends BasePaymentProvider {
 
     return {
       state,
-      paymentID: intent.metadata.paymentID,
+      paymentID: +intent.metadata.paymentID,
       paymentData: JSON.stringify(intent),
       customerID
     }

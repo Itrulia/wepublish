@@ -1,4 +1,4 @@
-import {Invoice, Payment, PaymentState, PrismaClient, Subscription} from '@prisma/client'
+import {Payment, PaymentState, PrismaClient, Subscription} from '@prisma/client'
 import bodyParser from 'body-parser'
 import {NextHandleFunction} from 'connect'
 import express, {Router} from 'express'
@@ -13,7 +13,7 @@ export interface WebhookForPaymentIntentProps {
 }
 
 export interface IntentState {
-  paymentID: string
+  paymentID: number
   state: PaymentState
   paidAt?: Date
   paymentData?: string
@@ -21,7 +21,7 @@ export interface IntentState {
 }
 
 export interface CreatePaymentIntentProps {
-  paymentID: string
+  paymentID: number
   invoice: InvoiceWithItems
   saveCustomer: boolean
   customerID?: string
@@ -213,13 +213,11 @@ export function setupPaymentProvider(opts: WepublishServerOpts): Router {
 
   prisma.$use(async (params, next) => {
     if (params.model !== 'Payment') {
-      next(params)
-      return
+      return next(params)
     }
 
     if (params.action !== 'update') {
-      next(params)
-      return
+      return next(params)
     }
 
     const model: Payment = await next(params)
@@ -254,6 +252,8 @@ export function setupPaymentProvider(opts: WepublishServerOpts): Router {
         }
       })
     }
+
+    return model
   })
 
   // setup webhook routes for each payment provider

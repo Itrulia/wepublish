@@ -959,8 +959,7 @@ export async function contextFromRequest(
         data: {
           paymentMethodID,
           invoiceID: invoice.id,
-          state: PaymentState.created,
-          modifiedAt: new Date()
+          state: PaymentState.created
         }
       })
 

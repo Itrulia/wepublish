@@ -40,7 +40,7 @@ export const getUserRoles = async (
   filter: Partial<UserRoleFilter>,
   sortedField: UserRoleSort,
   order: 1 | -1,
-  cursorId: number | null,
+  cursorId: string | null,
   skip: number,
   take: number,
   userRole: PrismaClient['userRole']

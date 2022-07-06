@@ -3,7 +3,7 @@ import {authorise, CanCreateUserRole, CanDeleteUserRole} from '../permissions'
 import {Prisma, PrismaClient} from '@prisma/client'
 
 export const deleteUserRoleById = async (
-  id: number,
+  id: string,
   authenticate: Context['authenticate'],
   userRole: PrismaClient['userRole']
 ) => {
@@ -39,7 +39,7 @@ export const createUserRole = (
 }
 
 export const updateUserRole = async (
-  id: number,
+  id: string,
   input: Omit<Prisma.UserRoleUncheckedUpdateInput, 'modifiedAt' | 'systemRole'>,
   authenticate: Context['authenticate'],
   userRole: PrismaClient['userRole']

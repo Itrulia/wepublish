@@ -1,6 +1,12 @@
-import {PaymentProviderCustomer, Prisma, User, UserAddress, UserOAuth2Account} from '@prisma/client'
+import {
+  PaymentProviderCustomer,
+  Prisma,
+  User,
+  UserAddress,
+  UserOAuth2Account,
+  MetadataProperty
+} from '@prisma/client'
 import bcrypt from 'bcrypt'
-import {MetadataProperty} from '../../../../examples/website/src/shared/types'
 import {DefaultBcryptHashCostFactor} from './common'
 
 export const hashPassword = async (

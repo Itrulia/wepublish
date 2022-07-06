@@ -63,7 +63,7 @@ export class StripeCheckoutPaymentProvider extends BasePaymentProvider {
         const state = mapStripeCheckoutEventToPaymentStatue(intent.status)
         if (state !== null && session.client_reference_id !== null) {
           intentStates.push({
-            paymentID: session.client_reference_id,
+            paymentID: +session.client_reference_id,
             paymentData: JSON.stringify(intent),
             state
           })
@@ -91,7 +91,7 @@ export class StripeCheckoutPaymentProvider extends BasePaymentProvider {
       mode: 'payment',
       success_url: props.successURL,
       cancel_url: props.failureURL,
-      client_reference_id: props.paymentID,
+      client_reference_id: `${props.paymentID}`,
       customer_email: props.invoice.mail
     })
 
@@ -132,7 +132,7 @@ export class StripeCheckoutPaymentProvider extends BasePaymentProvider {
 
     return {
       state,
-      paymentID: session.client_reference_id,
+      paymentID: +session.client_reference_id,
       paymentData: JSON.stringify(session)
     }
   }

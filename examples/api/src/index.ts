@@ -102,14 +102,13 @@ async function asyncMain() {
       : undefined
   )
 
-  const prisma = new PrismaClient({
-    datasources: {
-      db: {
-        url: process.env.DATABASE_URL!
-      }
-    }
-  })
+  const prisma = new PrismaClient()
   await prisma.$connect()
+
+  console.log(await prisma.user.findMany({}))
+  setInterval(async () => {
+    console.log(await prisma.user.findMany({}))
+  }, 2000)
 
   const oauth2Providers: Oauth2Provider[] = []
   if (

@@ -35,7 +35,6 @@ export const createMemberPlan = (
   return memberPlan.create({
     data: {
       ...input,
-      modifiedAt: new Date(),
       availablePaymentMethods: {
         create: availablePaymentMethods
       }

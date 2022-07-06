@@ -12,12 +12,12 @@ export interface BaseNavigationLink {
 
 export interface ArticleNavigationLink extends BaseNavigationLink {
   type: NavigationLinkType.Article
-  articleID: string
+  articleID: number
 }
 
 export interface PageNavigationLink extends BaseNavigationLink {
   type: NavigationLinkType.Page
-  pageID: string
+  pageID: number
 }
 
 export interface ExternalNavigationLink extends BaseNavigationLink {

@@ -32,7 +32,6 @@ export const createNavigation = (
   return navigation.create({
     data: {
       ...input,
-      modifiedAt: new Date(),
       links: {
         create: links
       }
