@@ -13,7 +13,7 @@ export interface WebhookForPaymentIntentProps {
 }
 
 export interface IntentState {
-  paymentID: number
+  paymentID: string
   state: PaymentState
   paidAt?: Date
   paymentData?: string
@@ -21,7 +21,7 @@ export interface IntentState {
 }
 
 export interface CreatePaymentIntentProps {
-  paymentID: number
+  paymentID: string
   invoice: InvoiceWithItems
   saveCustomer: boolean
   customerID?: string
@@ -162,6 +162,7 @@ export abstract class BasePaymentProvider implements PaymentProvider {
 
   /**
    * adding or updating paymentProvider customer ID for user
+   *
    * @param userClient
    * @param subscription
    * @param customerID
@@ -179,25 +180,28 @@ export abstract class BasePaymentProvider implements PaymentProvider {
     const user = await userClient.findUnique({
       where: {
         id: subscription.userID
+      },
+      include: {
+        paymentProviderCustomers: true
       }
     })
+
     if (!user) throw new Error(`User with ID ${subscription.userID} does not exist`)
-
-    const paymentProviderCustomers = user.paymentProviderCustomers.filter(
-      ({paymentProviderID}) => paymentProviderID !== this.id
-    )
-
-    paymentProviderCustomers.push({
-      paymentProviderID: this.id,
-      customerID
-    })
 
     await userClient.update({
       where: {
         id: user.id
       },
       data: {
-        paymentProviderCustomers
+        paymentProviderCustomers: {
+          deleteMany: {
+            paymentProviderID: this.id
+          },
+          create: {
+            paymentProviderID: this.id,
+            customerID
+          }
+        }
       }
     })
   }

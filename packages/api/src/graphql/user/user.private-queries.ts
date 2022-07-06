@@ -13,7 +13,7 @@ export const getMe = (authenticate: Context['authenticate']) => {
 }
 
 export const getUserById = (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   user: PrismaClient['user']
 ) => {

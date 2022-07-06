@@ -1,5 +1,5 @@
-import {Article, ArticleRevision, Prisma, PrismaClient} from '@prisma/client'
-import {ArticleFilter, ArticleSort} from '../../db/article'
+import {Prisma, PrismaClient} from '@prisma/client'
+import {ArticleFilter, ArticleSort, ArticleWithRevisions} from '../../db/article'
 import {ConnectionResult, MaxResultsPerPage} from '../../db/common'
 import {getSortOrder, SortOrder} from '../queries/sort'
 
@@ -164,15 +164,7 @@ export const getArticles = async (
   skip: number,
   take: number,
   article: PrismaClient['article']
-): Promise<
-  ConnectionResult<
-    Article & {
-      draft: ArticleRevision | null
-      pending: ArticleRevision | null
-      published: ArticleRevision | null
-    }
-  >
-> => {
+): Promise<ConnectionResult<ArticleWithRevisions>> => {
   const orderBy = createArticleOrder(sortedField, getSortOrder(order))
   const where = createArticleFilter(filter)
 

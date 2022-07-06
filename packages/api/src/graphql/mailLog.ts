@@ -1,20 +1,19 @@
 import {
-  GraphQLNonNull,
-  GraphQLID,
-  GraphQLString,
-  GraphQLObjectType,
-  GraphQLList,
-  GraphQLInt,
+  GraphQLEnumType,
   GraphQLInputObjectType,
-  GraphQLEnumType
+  GraphQLInt,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLString
 } from 'graphql'
 
 import {Context} from '../context'
 
-import {GraphQLPageInfo} from './common'
+import {MailLog, MailLogState} from '@prisma/client'
 import {GraphQLDateTime} from 'graphql-iso-date'
 import {MailLogSort} from '../db/mailLog'
-import {MailLog, MailLogState} from '@prisma/client'
+import {GraphQLPageInfo} from './common'
 
 export const GraphQLMailLogState = new GraphQLEnumType({
   name: 'MailLogState',
@@ -31,7 +30,7 @@ export const GraphQLMailLogState = new GraphQLEnumType({
 export const GraphQLMailLog = new GraphQLObjectType<MailLog, Context>({
   name: 'MailLog',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
 
     createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
     modifiedAt: {type: GraphQLNonNull(GraphQLDateTime)},

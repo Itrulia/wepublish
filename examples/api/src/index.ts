@@ -1,9 +1,8 @@
 #!/usr/bin/env node
-import {PrismaClient, CommentItemType, Peer} from '@prisma/client'
+import {CommentItemType, Peer, PrismaClient} from '@prisma/client'
 import {
   AlgebraicCaptchaChallenge,
   Author,
-  hashPassword,
   JobType,
   MailgunMailProvider,
   Oauth2Provider,
@@ -17,7 +16,6 @@ import {
   URLAdapter,
   WepublishServer
 } from '@wepublish/api'
-import {MongoDBAdapter} from '@wepublish/api-db-mongodb'
 import {KarmaMediaAdapter} from '@wepublish/api-media-karma'
 import bodyParser from 'body-parser'
 import path from 'path'
@@ -112,51 +110,6 @@ async function asyncMain() {
     }
   })
   await prisma.$connect()
-
-  await MongoDBAdapter.initialize({
-    url: process.env.DATABASE_URL!,
-    locale: process.env.MONGO_LOCALE ?? 'en',
-    seed: async adapter => {
-      const adminUserRoleId =
-        (
-          await prisma.userRole.findUnique({
-            where: {
-              name: 'Admin'
-            }
-          })
-        )?.id ?? 1
-      const editorUserRoleId =
-        (
-          await prisma.userRole.findUnique({
-            where: {
-              name: 'Editor'
-            }
-          })
-        )?.id ?? 1
-
-      await prisma.user.create({
-        data: {
-          email: 'dev@wepublish.ch',
-          emailVerifiedAt: new Date(),
-          name: 'Dev User',
-          active: true,
-          roleIDs: [adminUserRoleId],
-          password: await hashPassword('123')
-        }
-      })
-
-      await prisma.user.create({
-        data: {
-          email: 'editor@wepublish.ch',
-          emailVerifiedAt: new Date(),
-          name: 'Editor User',
-          active: true,
-          roleIDs: [editorUserRoleId],
-          password: await hashPassword('123')
-        }
-      })
-    }
-  })
 
   const oauth2Providers: Oauth2Provider[] = []
   if (

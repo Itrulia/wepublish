@@ -112,7 +112,7 @@ export class DisabledPeerError extends ApolloError {
 }
 
 export class DuplicatePageSlugError extends ApolloError {
-  constructor(publishedPageID: string, slug: string) {
+  constructor(publishedPageID: number, slug: string) {
     super(
       `Page with ID ${publishedPageID} already uses the slug "${slug}"`,
       ErrorCode.DuplicatePageSlug

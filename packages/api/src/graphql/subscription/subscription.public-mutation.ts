@@ -63,6 +63,11 @@ export const updatePublicSubscription = async (
       deactivation: {
         delete: true
       }
+    },
+    include: {
+      deactivation: true,
+      periods: true,
+      properties: true
     }
   })
 

@@ -5,7 +5,7 @@ import {unselectPassword} from '../../db/user'
 import {NotFound} from '../../error'
 
 export const deleteSubscriptionById = (
-  id: string,
+  id: number,
   authenticate: Context['authenticate'],
   subscription: PrismaClient['subscription']
 ) => {
@@ -29,16 +29,21 @@ export const createSubscription = async (
   authorise(CanCreateSubscription, roles)
 
   const subscription = await subscriptionClient.create({
-    data: {...input, modifiedAt: new Date()}
+    data: {...input},
+    include: {
+      deactivation: true,
+      periods: true,
+      properties: true
+    }
   })
 
-  await memberContext.renewSubscriptionForUser({subscription: subscription})
+  await memberContext.renewSubscriptionForUser({subscription})
 
   return subscription
 }
 
 export const updateAdminSubscription = async (
-  id: string,
+  id: number,
   input: Omit<Prisma.SubscriptionUncheckedUpdateInput, 'createdAt' | 'modifiedAt'>,
   authenticate: Context['authenticate'],
   memberContext: Context['memberContext'],
@@ -50,13 +55,22 @@ export const updateAdminSubscription = async (
 
   const user = await userClient.findUnique({
     where: {
-      id: input.userID as string
+      id: input.userID as number
     },
     select: unselectPassword
   })
   if (!user) throw new Error('Can not update subscription without user')
 
-  const updatedSubscription = await subscriptionClient.update({where: {id}, data: input})
+  const updatedSubscription = await subscriptionClient.update({
+    where: {id},
+    data: input,
+    include: {
+      deactivation: true,
+      periods: true,
+      properties: true
+    }
+  })
+
   if (!updatedSubscription) throw new NotFound('subscription', id)
 
   return await memberContext.handleSubscriptionChange({

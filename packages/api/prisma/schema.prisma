@@ -270,7 +270,7 @@ model MailLog {
   subject        String
   state          MailLogState
   mailData       String?
-  mailProviderID Int
+  mailProviderID String
 
   @@index([subject])
   @@map("mail.log")
@@ -367,7 +367,7 @@ model PageRevision {
   imageID                String?
   socialMediaTitle       String?
   socialMediaDescription String?
-  socialMediaImageID     Int?
+  socialMediaImageID     String?
   blocks                 Json[]
   PublishedPage          Page[]             @relation("publishedPageRevision")
   PendingPage            Page[]             @relation("pendingPageRevision")
@@ -480,7 +480,7 @@ model Token {
 
   name    String @unique
   token   String
-  roleIDs Int[]
+  roleIDs String[]
 
   @@map("tokens")
 }
@@ -510,7 +510,7 @@ model SubscriptionPeriod {
   paymentPeriodicity PaymentPeriodicity
   amount             Float
 
-  invoiceID Int
+  invoiceID Int?
   Invoice   Invoice? @relation(fields: [invoiceID], references: [id])
 
   subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
@@ -534,7 +534,7 @@ model SubscriptionDeactivation {
   reason SubscriptionDeactivationReason
 
   subscriptionID Int          @unique
-  subscription   Subscription @relation(fields: [subscriptionID], references: [id])
+  subscription   Subscription @relation(fields: [subscriptionID], references: [id], onDelete: Cascade)
 
   @@map("subscriptions.deactivation-reasons")
 }
@@ -634,7 +634,7 @@ model User {
   password        String
   active          Boolean
   lastLogin       DateTime?
-  roleIDs         Int[]
+  roleIDs         String[]
 
   address                  UserAddress?
   properties               MetadataProperty[]
@@ -646,12 +646,11 @@ model User {
   Subscription Subscription[]
   Invoice      Invoice[]
 
-  userAddressId Int? @unique
   @@map("users")
 }
 
 model UserRole {
-  id         Int      @id @default(autoincrement())
+  id         String      @id
   createdAt  DateTime @default(now())
   modifiedAt DateTime @updatedAt
 

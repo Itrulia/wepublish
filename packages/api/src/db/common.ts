@@ -4,8 +4,8 @@ export enum SortOrder {
 }
 
 export interface PageInfo {
-  startCursor: number | null
-  endCursor: number | null
+  startCursor: number | string | null
+  endCursor: number | string | null
   hasNextPage: boolean
   hasPreviousPage: boolean
 }

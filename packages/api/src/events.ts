@@ -116,6 +116,11 @@ export const onInvoiceUpdate = (context: Context): Prisma.Middleware => async (p
   let subscription = await context.prisma.subscription.findUnique({
     where: {
       id: model.subscriptionID
+    },
+    include: {
+      deactivation: true,
+      periods: true,
+      properties: true
     }
   })
 
@@ -156,7 +161,8 @@ export const onInvoiceUpdate = (context: Context): Prisma.Middleware => async (p
     const user = await context.prisma.user.findUnique({
       where: {
         id: subscription.userID
-      }
+      },
+      select: unselectPassword
     })
 
     if (!user) {

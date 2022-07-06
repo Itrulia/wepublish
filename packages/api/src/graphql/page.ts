@@ -144,7 +144,7 @@ export const GraphQLPageRevision = new GraphQLObjectType<PageRevision, Context>(
 export const GraphQLPage = new GraphQLObjectType<Page, Context>({
   name: 'Page',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
     shared: {type: GraphQLNonNull(GraphQLBoolean)},
 
     createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
@@ -185,7 +185,7 @@ export const GraphQLPageConnection = new GraphQLObjectType({
 export const GraphQLPublicPage = new GraphQLObjectType<PublicPage, Context>({
   name: 'Page',
   fields: () => ({
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
 
     updatedAt: {type: GraphQLNonNull(GraphQLDateTime)},
     publishedAt: {type: GraphQLNonNull(GraphQLDateTime)},

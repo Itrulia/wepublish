@@ -173,7 +173,7 @@ export interface ArticleTeaser {
 export interface PeerArticleTeaser {
   type: TeaserType.PeerArticle
   style: TeaserStyle
-  peerID: string
+  peerID: number
   articleID: string
 
   imageID?: string

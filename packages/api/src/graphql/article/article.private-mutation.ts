@@ -118,8 +118,7 @@ export const duplicateArticle = async (
       shared: article.shared,
       draft: {
         create: input
-      },
-      modifiedAt: new Date()
+      }
     },
     include: {
       draft: {
@@ -401,7 +400,7 @@ type UpdateArticleInput = Omit<
   Prisma.ArticleRevisionCreateInput,
   'revision' | 'properties' | 'createdAt' | 'updatedAt' | 'publishAt' | 'publishedAt'
 > & {
-  properties: Prisma.MetadataPropertyUncheckedCreateWithoutArticleRevisionInput
+  properties: Prisma.MetadataPropertyUncheckedCreateWithoutArticleRevisionInput[]
 }
 
 export const updateArticle = async (
@@ -456,7 +455,9 @@ export const updateArticle = async (
               deleteMany: {
                 articleRevisionId: article.draft?.id ?? 0
               },
-              create: properties
+              createMany: {
+                data: properties
+              }
             }
           },
           create: {
@@ -469,7 +470,9 @@ export const updateArticle = async (
             updatedAt: new Date(),
             createdAt: article.draft?.createdAt ?? new Date(),
             properties: {
-              create: properties
+              createMany: {
+                data: properties
+              }
             }
           }
         }

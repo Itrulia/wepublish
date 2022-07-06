@@ -226,13 +226,13 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
 
         if (!page && token) {
           try {
-            const pageId = verifyJWT(token)
+            const pageId = +verifyJWT(token)
             const privatePage = await loaders.pages.load(pageId)
 
             page = privatePage?.draft
               ? ({
-                  id: privatePage.id,
                   ...privatePage.draft,
+                  id: privatePage.id,
                   updatedAt: new Date(),
                   publishedAt: new Date()
                 } as PublicPage)
@@ -315,6 +315,11 @@ export const GraphQLPublicQuery = new GraphQLObjectType<undefined, Context>({
         return await prisma.subscription.findMany({
           where: {
             userID: user.id
+          },
+          include: {
+            deactivation: true,
+            periods: true,
+            properties: true
           }
         })
       }

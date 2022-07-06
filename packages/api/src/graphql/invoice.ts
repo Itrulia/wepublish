@@ -1,19 +1,18 @@
-import {InvoiceSort} from '../db/invoice'
-import {Context} from '../context'
+import {Invoice, InvoiceItem} from '@prisma/client'
 import {
-  GraphQLID,
+  GraphQLEnumType,
+  GraphQLInputObjectType,
+  GraphQLInt,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLString,
-  GraphQLList,
-  GraphQLInt,
-  GraphQLInputObjectType,
-  GraphQLEnumType
+  GraphQLString
 } from 'graphql'
 import {GraphQLDate, GraphQLDateTime} from 'graphql-iso-date'
+import {Context} from '../context'
+import {InvoiceSort} from '../db/invoice'
 import {createProxyingResolver} from '../utility'
 import {GraphQLPageInfo} from './common'
-import {Invoice, InvoiceItem} from '@prisma/client'
 
 export const GraphQLInvoiceItem = new GraphQLObjectType<InvoiceItem, Context>({
   name: 'InvoiceItem',
@@ -36,7 +35,7 @@ export const GraphQLInvoiceItem = new GraphQLObjectType<InvoiceItem, Context>({
 export const GraphQLInvoice = new GraphQLObjectType<Invoice, Context>({
   name: 'Invoice',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
 
     createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
     modifiedAt: {type: GraphQLNonNull(GraphQLDateTime)},
@@ -44,7 +43,7 @@ export const GraphQLInvoice = new GraphQLObjectType<Invoice, Context>({
     mail: {type: GraphQLNonNull(GraphQLString)},
     description: {type: GraphQLString},
     paidAt: {type: GraphQLDateTime},
-    manuallySetAsPaidByUserId: {type: GraphQLID},
+    manuallySetAsPaidByUserId: {type: GraphQLInt},
     items: {type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLInvoiceItem)))},
     total: {
       type: GraphQLNonNull(GraphQLInt),
@@ -60,7 +59,7 @@ export const GraphQLInvoice = new GraphQLObjectType<Invoice, Context>({
 export const GraphQLPublicInvoice = new GraphQLObjectType<Invoice, Context>({
   name: 'Invoice',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
 
     createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
     modifiedAt: {type: GraphQLNonNull(GraphQLDateTime)},
@@ -71,7 +70,7 @@ export const GraphQLPublicInvoice = new GraphQLObjectType<Invoice, Context>({
     paidAt: {type: GraphQLDateTime},
     canceledAt: {type: GraphQLDateTime},
     items: {type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLInvoiceItem)))},
-    subscriptionID: {type: GraphQLNonNull(GraphQLID)},
+    subscriptionID: {type: GraphQLNonNull(GraphQLInt)},
     total: {
       type: GraphQLNonNull(GraphQLInt),
       resolve: createProxyingResolver(({items}) => {
@@ -89,8 +88,8 @@ export const GraphQLinvoiceFilter = new GraphQLInputObjectType({
     mail: {type: GraphQLString},
     paidAt: {type: GraphQLDate},
     canceledAt: {type: GraphQLDate},
-    userID: {type: GraphQLID},
-    subscriptionID: {type: GraphQLID}
+    userID: {type: GraphQLInt},
+    subscriptionID: {type: GraphQLInt}
   }
 })
 
@@ -131,8 +130,8 @@ export const GraphQLInvoiceInput = new GraphQLInputObjectType({
     mail: {type: GraphQLNonNull(GraphQLString)},
     description: {type: GraphQLString},
     paidAt: {type: GraphQLDateTime},
-    subscriptionID: {type: GraphQLID},
-    manuallySetAsPaidByUserId: {type: GraphQLID},
+    subscriptionID: {type: GraphQLInt},
+    manuallySetAsPaidByUserId: {type: GraphQLInt},
     items: {type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLInvoiceItemInput)))}
   }
 })

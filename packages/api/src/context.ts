@@ -1,10 +1,7 @@
 import {
-  Article,
-  ArticleRevision,
   Author,
   Image,
   MailLog,
-  Page,
   Payment,
   PaymentMethod,
   PaymentState,
@@ -31,12 +28,12 @@ import fetch from 'node-fetch'
 import {Client, Issuer} from 'openid-client'
 import url from 'url'
 import {ChallengeProvider} from './challenges/challengeProvider'
-import {PublicArticle} from './db/article'
+import {ArticleWithRevisions, PublicArticle} from './db/article'
 import {DefaultBcryptHashCostFactor, DefaultSessionTTL} from './db/common'
 import {InvoiceWithItems} from './db/invoice'
 import {MemberPlanWithPaymentMethods} from './db/memberPlan'
 import {NavigationWithLinks} from './db/navigation'
-import {PublicPage} from './db/page'
+import {PageWithRevisions, PublicPage} from './db/page'
 import {Session, SessionType, TokenSession, UserSession} from './db/session'
 import {unselectPassword} from './db/user'
 import {TokenExpiredError} from './error'
@@ -77,22 +74,14 @@ export interface DataLoaderContext {
 
   readonly images: DataLoader<string, Image | null>
 
-  readonly articles: DataLoader<
-    number,
-    | (Article & {
-        draft: ArticleRevision | null
-        pending: ArticleRevision | null
-        published: ArticleRevision | null
-      })
-    | null
-  >
+  readonly articles: DataLoader<number, ArticleWithRevisions | null>
   readonly publicArticles: DataLoader<number, PublicArticle | null>
 
-  readonly pages: DataLoader<number, Page | null>
+  readonly pages: DataLoader<number, PageWithRevisions | null>
   readonly publicPagesByID: DataLoader<number, PublicPage | null>
   readonly publicPagesBySlug: DataLoader<string, PublicPage | null>
 
-  readonly userRolesByID: DataLoader<number, UserRole | null>
+  readonly userRolesByID: DataLoader<string, UserRole | null>
 
   readonly mailLogsByID: DataLoader<number, MailLog | null>
 
@@ -491,6 +480,23 @@ export async function contextFromRequest(
             id: {
               in: ids as number[]
             }
+          },
+          include: {
+            draft: {
+              include: {
+                properties: true
+              }
+            },
+            pending: {
+              include: {
+                properties: true
+              }
+            },
+            published: {
+              include: {
+                properties: true
+              }
+            }
           }
         }),
         'id'
@@ -582,11 +588,11 @@ export async function contextFromRequest(
 
     userRolesByID: new DataLoader(async ids =>
       createOptionalsArray(
-        ids as number[],
+        ids as string[],
         await prisma.userRole.findMany({
           where: {
             id: {
-              in: ids as number[]
+              in: ids as string[]
             }
           }
         }),

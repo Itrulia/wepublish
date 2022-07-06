@@ -121,7 +121,7 @@ export const GraphQLPeerArticleTeaser = new GraphQLObjectType<PeerArticleTeaser,
       })
     },
 
-    articleID: {type: GraphQLNonNull(GraphQLID)},
+    articleID: {type: GraphQLNonNull(GraphQLInt)},
     article: {
       type: GraphQLArticle,
       resolve: createProxyingResolver(async ({peerID, articleID}, args, context, info) => {
@@ -772,7 +772,7 @@ export const GraphQLArticleTeaserInput = new GraphQLInputObjectType({
     preTitle: {type: GraphQLString},
     title: {type: GraphQLString},
     lead: {type: GraphQLString},
-    articleID: {type: GraphQLNonNull(GraphQLID)}
+    articleID: {type: GraphQLNonNull(GraphQLInt)}
   }
 })
 
@@ -784,8 +784,8 @@ export const GraphQLPeerArticleTeaserInput = new GraphQLInputObjectType({
     preTitle: {type: GraphQLString},
     title: {type: GraphQLString},
     lead: {type: GraphQLString},
-    peerID: {type: GraphQLNonNull(GraphQLID)},
-    articleID: {type: GraphQLNonNull(GraphQLID)}
+    peerID: {type: GraphQLNonNull(GraphQLInt)},
+    articleID: {type: GraphQLNonNull(GraphQLInt)}
   }
 })
 
@@ -797,7 +797,7 @@ export const GraphQLPageTeaserInput = new GraphQLInputObjectType({
     preTitle: {type: GraphQLString},
     title: {type: GraphQLString},
     lead: {type: GraphQLString},
-    pageID: {type: GraphQLNonNull(GraphQLID)}
+    pageID: {type: GraphQLNonNull(GraphQLInt)}
   }
 })
 

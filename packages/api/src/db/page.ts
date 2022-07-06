@@ -1,7 +1,9 @@
+import {
+  MetadataProperty,
+  Page as PrismaPage,
+  PageRevision as PrismaPageRevision
+} from '@prisma/client'
 import {PageBlock} from './block'
-import {MetadataProperty} from '@prisma/client'
-
-// TODO: Remove arg interfaces in favor of explicit arguments.
 
 export interface PageData {
   readonly updatedAt?: Date | null
@@ -71,4 +73,14 @@ export enum PageSort {
   PublishedAt = 'publishedAt',
   UpdatedAt = 'updatedAt',
   PublishAt = 'publishAt'
+}
+
+export type PageRevisionWithProperties = PrismaPageRevision & {
+  properties: MetadataProperty[]
+}
+
+export type PageWithRevisions = PrismaPage & {
+  draft: PageRevisionWithProperties | null
+  pending: PageRevisionWithProperties | null
+  published: PageRevisionWithProperties | null
 }

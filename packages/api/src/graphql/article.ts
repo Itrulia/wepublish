@@ -87,7 +87,7 @@ export const GraphQLArticleInput = new GraphQLInputObjectType({
     canonicalUrl: {type: GraphQLString},
 
     imageID: {type: GraphQLID},
-    authorIDs: {type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLID)))},
+    authorIDs: {type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLInt)))},
 
     shared: {type: GraphQLNonNull(GraphQLBoolean)},
     breaking: {type: GraphQLNonNull(GraphQLBoolean)},
@@ -96,7 +96,7 @@ export const GraphQLArticleInput = new GraphQLInputObjectType({
 
     socialMediaTitle: {type: GraphQLString},
     socialMediaDescription: {type: GraphQLString},
-    socialMediaAuthorIDs: {type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLID)))},
+    socialMediaAuthorIDs: {type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLInt)))},
     socialMediaImageID: {type: GraphQLID},
 
     blocks: {
@@ -188,7 +188,7 @@ export const GraphQLArticleRevision = new GraphQLObjectType<ArticleRevision, Con
 export const GraphQLArticle = new GraphQLObjectType<Article, Context>({
   name: 'Article',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
     shared: {type: GraphQLNonNull(GraphQLBoolean)},
 
     createdAt: {type: GraphQLNonNull(GraphQLDateTime)},
@@ -252,7 +252,7 @@ export const GraphQLPublicArticle: GraphQLObjectType<
 > = new GraphQLObjectType<PublicArticle, Context>({
   name: 'Article',
   fields: {
-    id: {type: GraphQLNonNull(GraphQLID)},
+    id: {type: GraphQLNonNull(GraphQLInt)},
 
     updatedAt: {type: GraphQLNonNull(GraphQLDateTime)},
     publishedAt: {type: GraphQLNonNull(GraphQLDateTime)},
